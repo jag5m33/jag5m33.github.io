@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="523.8pt" height="254.448pt" viewBox="0 0 523.8 254.448" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-22T23:34:39.770078</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 254.448 
+L 523.8 254.448 
+L 523.8 0 
+L 0 0 
+L 0 254.448 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 221.724 53.644032 
+L 302.076 53.644032 
+L 302.076 23.839488 
+L 221.724 23.839488 
+L 221.724 53.644032 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #22223a; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 86.13 114.184512 
+L 196.614 114.184512 
+L 196.614 84.379968 
+L 86.13 84.379968 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: #ecc4cf; stroke: #8b1e3f; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 327.186 114.184512 
+L 437.67 114.184512 
+L 437.67 84.379968 
+L 327.186 84.379968 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: #bfe3dd; stroke: #23877a; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 25.866 179.381952 
+L 96.174 179.381952 
+L 96.174 149.577408 
+L 25.866 149.577408 
+L 25.866 179.381952 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #8b1e3f; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 106.218 179.381952 
+L 176.526 179.381952 
+L 176.526 149.577408 
+L 106.218 149.577408 
+L 106.218 179.381952 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #8b1e3f; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 186.57 179.381952 
+L 256.878 179.381952 
+L 256.878 149.577408 
+L 186.57 149.577408 
+L 186.57 179.381952 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #8b1e3f; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 292.032 179.381952 
+L 372.384 179.381952 
+L 372.384 149.577408 
+L 292.032 149.577408 
+L 292.032 179.381952 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #23877a; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 402.516 179.381952 
+L 482.868 179.381952 
+L 482.868 149.577408 
+L 402.516 149.577408 
+L 402.516 179.381952 
+z
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #23877a; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 261.9 53.644032 
+L 141.372 84.379968 
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 261.9 53.644032 
+L 382.428 84.379968 
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 141.372 114.184512 
+L 61.02 149.577408 
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 141.372 114.184512 
+L 141.372 149.577408 
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 141.372 114.184512 
+L 221.724 149.577408 
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_6">
+    <path d="M 382.428 114.184512 
+L 332.208 149.577408 
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_7">
+    <path d="M 382.428 114.184512 
+L 442.692 149.577408 
+" clip-path="url(#p5f3c65ec86)" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="261.9" y="41.599612" transform="rotate(-0 261.9 41.599612)">Variable</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(109.080125 95.538588)">Categorical</text>
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(120.684266 108.741595)">(labels)</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(353.095813 95.538588)">Numerical</text>
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(350.234953 108.741595)">(quantities)</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="61.02" y="167.337532" transform="rotate(-0 61.02 167.337532)">Nominal</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="141.372" y="167.337532" transform="rotate(-0 141.372 167.337532)">Ordinal</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="221.724" y="167.337102" transform="rotate(-0 221.724 167.337102)">Binary</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="332.208" y="167.337102" transform="rotate(-0 332.208 167.337102)">Discrete</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="442.692" y="167.337102" transform="rotate(-0 442.692 167.337102)">Continuous</text>
+   </g>
+   <g id="text_9">
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(47.611641 205.487275)">state,</text>
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(41.260742 216.889872)">weather</text>
+   </g>
+   <g id="text_10">
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(111.576883 205.487275)">severity 1-4,</text>
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(114.910789 216.889872)">light_score</text>
+   </g>
+   <g id="text_11">
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(190.385133 205.487646)">traffic_signal</text>
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(196.24025 216.890243)">True/False</text>
+   </g>
+   <g id="text_12">
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(312.533352 205.488017)">count of</text>
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(305.255461 216.889872)">constraints</text>
+   </g>
+   <g id="text_13">
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(410.953094 205.487275)">temperature,</text>
+    <text style="font-style: italic; font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(402.303641 216.889872)">national demand</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="261.9" y="241.31952" transform="rotate(-0 261.9 241.31952)">examples from Jag's projects</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p5f3c65ec86">
+   <rect x="10.8" y="10.8" width="502.2" height="232.848"/>
+  </clipPath>
+ </defs>
+</svg>

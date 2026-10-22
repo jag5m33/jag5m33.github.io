@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="643.666875pt" height="326.874375pt" viewBox="0 0 643.666875 326.874375" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-22T23:27:51.747100</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 326.874375 
+L 643.666875 326.874375 
+L 643.666875 0 
+L 0 0 
+L 0 326.874375 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 52.884687 281.073438 
+L 632.866875 281.073438 
+L 632.866875 15.358594 
+L 52.884687 15.358594 
+L 52.884687 281.073438 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 52.884687 281.073438 
+L 181.769618 281.073438 
+L 181.769618 15.358594 
+L 52.884687 15.358594 
+z
+" clip-path="url(#p47f25a3c81)" style="fill: #f3e3b0; opacity: 0.35; stroke: #f3e3b0; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 411.92128 281.073438 
+L 632.866875 281.073438 
+L 632.866875 15.358594 
+L 411.92128 15.358594 
+z
+" clip-path="url(#p47f25a3c81)" style="fill: #ecc4cf; opacity: 0.3; stroke: #ecc4cf; stroke-linejoin: miter"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="mbb1cd07ae3" d="M 0 0 
+L 0 3.5 
+" style="stroke: #6f6c80; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#mbb1cd07ae3" x="66.693787" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="66.693787" y="297.190625" transform="rotate(-0 66.693787 297.190625)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#mbb1cd07ae3" x="158.754452" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="158.754452" y="297.190625" transform="rotate(-0 158.754452 297.190625)">2</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#mbb1cd07ae3" x="250.815117" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="250.815117" y="297.190625" transform="rotate(-0 250.815117 297.190625)">4</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#mbb1cd07ae3" x="342.875781" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="342.875781" y="297.190625" transform="rotate(-0 342.875781 297.190625)">6</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#mbb1cd07ae3" x="434.936446" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="434.936446" y="297.190625" transform="rotate(-0 434.936446 297.190625)">8</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#mbb1cd07ae3" x="526.997111" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="526.997111" y="297.190625" transform="rotate(-0 526.997111 297.190625)">10</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#mbb1cd07ae3" x="619.057775" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="619.057775" y="297.190625" transform="rotate(-0 619.057775 297.190625)">12</text>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="342.875781" y="313.191562" transform="rotate(-0 342.875781 313.191562)">model complexity (polynomial degree)</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_8">
+      <defs>
+       <path id="m8912c2b9c8" d="M 0 0 
+L -3.5 0 
+" style="stroke: #6f6c80; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m8912c2b9c8" x="52.884687" y="281.073438" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #6f6c80" x="45.884687" y="285.632031" transform="rotate(-0 45.884687 285.632031)">0.0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_9">
+      <g>
+       <use xlink:href="#m8912c2b9c8" x="52.884687" y="227.930469" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_10">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #6f6c80" x="45.884687" y="232.489062" transform="rotate(-0 45.884687 232.489062)">0.1</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#m8912c2b9c8" x="52.884687" y="174.7875" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_11">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #6f6c80" x="45.884687" y="179.346094" transform="rotate(-0 45.884687 179.346094)">0.2</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_11">
+      <g>
+       <use xlink:href="#m8912c2b9c8" x="52.884687" y="121.644531" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_12">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #6f6c80" x="45.884687" y="126.203125" transform="rotate(-0 45.884687 126.203125)">0.3</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_12">
+      <g>
+       <use xlink:href="#m8912c2b9c8" x="52.884687" y="68.501563" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_13">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #6f6c80" x="45.884687" y="73.060156" transform="rotate(-0 45.884687 73.060156)">0.4</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_13">
+      <g>
+       <use xlink:href="#m8912c2b9c8" x="52.884687" y="15.358594" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_14">
+      <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #6f6c80" x="45.884687" y="19.917188" transform="rotate(-0 45.884687 19.917188)">0.5</text>
+     </g>
+    </g>
+    <g id="text_15">
+     <text style="font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="19.918125" y="148.216016" transform="rotate(-90 19.918125 148.216016)">mean squared error</text>
+    </g>
+   </g>
+   <g id="line2d_14">
+    <path d="M 66.693787 54.22109 
+L 112.72412 109.83756 
+L 158.754452 112.077109 
+L 204.784784 243.88075 
+L 250.815117 246.120191 
+L 296.845449 252.638879 
+L 342.875781 257.208256 
+L 388.906114 260.416612 
+L 434.936446 263.82315 
+L 480.966778 267.727127 
+L 526.997111 271.125721 
+L 573.027443 273.884988 
+L 619.057775 277.600928 
+" clip-path="url(#p47f25a3c81)" style="fill: none; stroke: #23877a; stroke-width: 2.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_15">
+    <path d="M 66.693787 21.387715 
+L 112.72412 123.993579 
+L 158.754452 119.503698 
+L 204.784784 219.347714 
+L 250.815117 216.852715 
+L 296.845449 216.531649 
+L 342.875781 212.63108 
+L 388.906114 209.361563 
+L 434.936446 204.959288 
+L 480.966778 199.473431 
+L 526.997111 191.82068 
+L 573.027443 166.10594 
+L 619.057775 48.744597 
+" clip-path="url(#p47f25a3c81)" style="fill: none; stroke: #8b1e3f; stroke-width: 2.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_16">
+    <path d="M 66.693787 71.932359 
+L 112.72412 177.221742 
+L 158.754452 177.255313 
+L 204.784784 277.894728 
+L 250.815117 278.048034 
+L 296.845449 281.000931 
+L 342.875781 281.026982 
+L 388.906114 280.983575 
+L 434.936446 280.993158 
+L 480.966778 281.043559 
+L 526.997111 281.030593 
+L 573.027443 280.93203 
+L 619.057775 280.848282 
+" clip-path="url(#p47f25a3c81)" style="fill: none; stroke-dasharray: 5.92,2.56; stroke-dashoffset: 0; stroke: #3a6ea5; stroke-width: 1.6"/>
+   </g>
+   <g id="line2d_17">
+    <path d="M 66.693787 277.589609 
+L 112.72412 275.519871 
+L 158.754452 273.255414 
+L 204.784784 270.426591 
+L 250.815117 268.434032 
+L 296.845449 265.10792 
+L 342.875781 260.928362 
+L 388.906114 256.85727 
+L 434.936446 253.592279 
+L 480.966778 248.217669 
+L 526.997111 240.064666 
+L 573.027443 214.494986 
+L 619.057775 97.20168 
+" clip-path="url(#p47f25a3c81)" style="fill: none; stroke-dasharray: 5.92,2.56; stroke-dashoffset: 0; stroke: #d9822b; stroke-width: 1.6"/>
+   </g>
+   <g id="line2d_18">
+    <path d="M 52.884687 233.244766 
+L 632.866875 233.244766 
+" clip-path="url(#p47f25a3c81)" style="fill: none; stroke-dasharray: 1.2,1.98; stroke-dashoffset: 0; stroke: #6f6c80; stroke-width: 1.2"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 52.884687 281.073438 
+L 52.884687 15.358594 
+" style="fill: none; stroke: #6f6c80; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 52.884687 281.073438 
+L 632.866875 281.073438 
+" style="fill: none; stroke: #6f6c80; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="319.860615" y="244.936219" transform="rotate(-0 319.860615 244.936219)">irreducible noise σ²</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(73.549028 39.900898)">underfitting zone</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(94.15059 51.903633)">high bias</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(482.422202 39.900898)">overfitting zone</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(487.80814 51.903633)">high variance</text>
+   </g>
+   <g id="patch_7">
+    <path d="M 216.516653 129.035997 
+Q 210.77943 173.20104 205.186234 216.257364 
+" style="fill: none; stroke: #22223a; stroke-linecap: round"/>
+    <path d="M 207.684856 212.548336 
+L 205.186234 216.257364 
+L 203.718185 212.033049 
+" style="fill: none; stroke: #22223a; stroke-linecap: round"/>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(191.445446 109.641797)">sweet spot</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(156.925915 121.644531)">(lowest validation error)</text>
+   </g>
+   <g id="patch_8">
+    <path d="M 503.981944 202.595251 
+Q 503.981944 233.601387 503.981944 264.607524 
+" style="fill: none; stroke: #22223a; stroke-linecap: round"/>
+    <path d="M 501.581944 207.395251 
+L 503.981944 202.595251 
+L 506.381944 207.395251 
+" style="fill: none; stroke: #22223a; stroke-linecap: round"/>
+    <path d="M 506.381944 259.807524 
+L 503.981944 264.607524 
+L 501.581944 259.807524 
+" style="fill: none; stroke: #22223a; stroke-linecap: round"/>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(469.786301 219.821763)">gap =</text>
+    <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(457.916145 230.623521)">variance</text>
+    <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(469.777863 241.425982)">signal</text>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_19">
+     <path d="M 253.316641 59.032969 
+L 262.316641 59.032969 
+L 271.316641 59.032969 
+" style="fill: none; stroke: #23877a; stroke-width: 2.2; stroke-linecap: square"/>
+    </g>
+    <g id="text_21">
+     <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #22223a" x="278.516641" y="62.182969" transform="rotate(-0 278.516641 62.182969)">training error</text>
+    </g>
+    <g id="line2d_20">
+     <path d="M 253.316641 72.533672 
+L 262.316641 72.533672 
+L 271.316641 72.533672 
+" style="fill: none; stroke: #8b1e3f; stroke-width: 2.2; stroke-linecap: square"/>
+    </g>
+    <g id="text_22">
+     <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #22223a" x="278.516641" y="75.683672" transform="rotate(-0 278.516641 75.683672)">validation error</text>
+    </g>
+    <g id="line2d_21">
+     <path d="M 368.073672 59.032969 
+L 377.073672 59.032969 
+L 386.073672 59.032969 
+" style="fill: none; stroke-dasharray: 5.92,2.56; stroke-dashoffset: 0; stroke: #3a6ea5; stroke-width: 1.6"/>
+    </g>
+    <g id="text_23">
+     <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #22223a" x="393.273672" y="62.182969" transform="rotate(-0 393.273672 62.182969)">bias²</text>
+    </g>
+    <g id="line2d_22">
+     <path d="M 368.073672 72.533672 
+L 377.073672 72.533672 
+L 386.073672 72.533672 
+" style="fill: none; stroke-dasharray: 5.92,2.56; stroke-dashoffset: 0; stroke: #d9822b; stroke-width: 1.6"/>
+    </g>
+    <g id="text_24">
+     <text style="font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #22223a" x="393.273672" y="75.683672" transform="rotate(-0 393.273672 75.683672)">variance</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p47f25a3c81">
+   <rect x="52.884687" y="15.358594" width="579.982187" height="265.714844"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="682.884844pt" height="237.061969pt" viewBox="0 0 682.884844 237.061969" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-22T23:24:17.640007</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M -0 237.061969 
+L 682.884844 237.061969 
+L 682.884844 0 
+L -0 0 
+L -0 237.061969 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 52.388453 83.892049 
+L 311.300453 83.892049 
+Q 313.532453 83.892049 313.532453 81.230929 
+L 313.532453 51.958609 
+Q 313.532453 49.297489 311.300453 49.297489 
+L 52.388453 49.297489 
+Q 50.156453 49.297489 50.156453 51.958609 
+L 50.156453 81.230929 
+Q 50.156453 83.892049 52.388453 83.892049 
+z
+" clip-path="url(#pce0b7b866e)" style="fill: #ecc4cf; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 85.868453 140.440849 
+L 277.820453 140.440849 
+Q 280.052453 140.440849 280.052453 137.779729 
+L 280.052453 108.507409 
+Q 280.052453 105.846289 277.820453 105.846289 
+L 85.868453 105.846289 
+Q 83.636453 105.846289 83.636453 108.507409 
+L 83.636453 137.779729 
+Q 83.636453 140.440849 85.868453 140.440849 
+z
+" clip-path="url(#pce0b7b866e)" style="fill: #ecc4cf; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 85.868453 200.316049 
+L 277.820453 200.316049 
+Q 280.052453 200.316049 280.052453 197.654929 
+L 280.052453 168.382609 
+Q 280.052453 165.721489 277.820453 165.721489 
+L 85.868453 165.721489 
+Q 83.636453 165.721489 83.636453 168.382609 
+L 83.636453 197.654929 
+Q 83.636453 200.316049 85.868453 200.316049 
+L 85.868453 200.316049 
+z
+" clip-path="url(#pce0b7b866e)" style="fill: none; stroke: #8b1e3f; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="181.844453" y="69.192816" transform="rotate(-0 181.844453 69.192816)">all data (train + validation folds)</text>
+   </g>
+   <g id="patch_5">
+    <path d="M 181.844453 85.224964 
+Q 181.844453 94.869157 181.844453 102.948103 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 184.244453 98.148103 
+L 181.844453 102.948103 
+L 179.444453 98.148103 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="181.844453" y="125.741616" transform="rotate(-0 181.844453 125.741616)">pick the 'best' features using every y</text>
+   </g>
+   <g id="patch_6">
+    <path d="M 181.844453 141.773764 
+Q 181.844453 151.417957 181.844453 159.496903 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 184.244453 154.696903 
+L 181.844453 159.496903 
+L 179.444453 154.696903 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="181.844453" y="185.616816" transform="rotate(-0 181.844453 185.616816)">CV score looks great (validation already seen)</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #8b1e3f" x="181.844453" y="20.677969" transform="rotate(-0 181.844453 20.677969)">Wrong: select on ALL rows, then cross-validate</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_7">
+    <path d="M 387.188453 83.892049 
+L 540.080453 83.892049 
+Q 542.312453 83.892049 542.312453 81.230929 
+L 542.312453 51.958609 
+Q 542.312453 49.297489 540.080453 49.297489 
+L 387.188453 49.297489 
+Q 384.956453 49.297489 384.956453 51.958609 
+L 384.956453 81.230929 
+Q 384.956453 83.892049 387.188453 83.892049 
+z
+" clip-path="url(#p1fd7ae3f1b)" style="fill: #bfe3dd; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 554.588453 83.892049 
+L 646.100453 83.892049 
+Q 648.332453 83.892049 648.332453 81.230929 
+L 648.332453 51.958609 
+Q 648.332453 49.297489 646.100453 49.297489 
+L 554.588453 49.297489 
+Q 552.356453 49.297489 552.356453 51.958609 
+L 552.356453 81.230929 
+Q 552.356453 83.892049 554.588453 83.892049 
+z
+" clip-path="url(#p1fd7ae3f1b)" style="fill: #f3e3b0; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 387.188453 140.440849 
+L 540.080453 140.440849 
+Q 542.312453 140.440849 542.312453 137.779729 
+L 542.312453 108.507409 
+Q 542.312453 105.846289 540.080453 105.846289 
+L 387.188453 105.846289 
+Q 384.956453 105.846289 384.956453 108.507409 
+L 384.956453 137.779729 
+Q 384.956453 140.440849 387.188453 140.440849 
+z
+" clip-path="url(#p1fd7ae3f1b)" style="fill: #bfe3dd; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 554.588453 187.010449 
+L 646.100453 187.010449 
+Q 648.332453 187.010449 648.332453 184.349329 
+L 648.332453 155.077009 
+Q 648.332453 152.415889 646.100453 152.415889 
+L 554.588453 152.415889 
+Q 552.356453 152.415889 552.356453 155.077009 
+L 552.356453 184.349329 
+Q 552.356453 187.010449 554.588453 187.010449 
+L 554.588453 187.010449 
+z
+" clip-path="url(#p1fd7ae3f1b)" style="fill: none; stroke: #23877a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="463.634453" y="69.192816" transform="rotate(-0 463.634453 69.192816)">training folds</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="600.344453" y="69.192816" transform="rotate(-0 600.344453 69.192816)">validation fold</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 463.634453 85.224964 
+Q 463.634453 94.869157 463.634453 102.948103 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 466.034453 98.148103 
+L 463.634453 102.948103 
+L 461.234453 98.148103 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="463.634453" y="125.741616" transform="rotate(-0 463.634453 125.741616)">select features + fit model</text>
+   </g>
+   <g id="patch_12">
+    <path d="M 543.161033 124.569024 
+Q 555.704335 137.280649 567.148241 148.878125 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 565.485154 143.775759 
+L 567.148241 148.878125 
+L 562.068496 147.147175 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 600.344453 85.22872 
+Q 600.344453 117.323476 600.344453 147.852985 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 602.744453 143.052985 
+L 600.344453 147.852985 
+L 597.944453 143.052985 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="600.344453" y="172.311216" transform="rotate(-0 600.344453 172.311216)">honest score</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(401.747734 164.363234)">Pipeline([select, model])</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #6f6c80" transform="translate(418.002422 176.365969)">refits this per fold</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #23877a" x="516.644453" y="20.677969" transform="rotate(-0 516.644453 20.677969)">Right: selection is a step INSIDE each fold</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pce0b7b866e">
+   <rect x="42.344453" y="26.677969" width="279" height="199.584"/>
+  </clipPath>
+  <clipPath id="p1fd7ae3f1b">
+   <rect x="377.144453" y="26.677969" width="279" height="199.584"/>
+  </clipPath>
+ </defs>
+</svg>

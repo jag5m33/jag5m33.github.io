@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="456.97306pt" height="276.624pt" viewBox="0 0 456.97306 276.624" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-22T23:26:04.637943</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 276.624 
+L 456.97306 276.624 
+L 456.97306 0 
+L 0 0 
+L 0 276.624 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 101.703273 135.346605 
+L 231.565091 135.346605 
+L 231.565091 40.453953 
+L 101.703273 40.453953 
+z
+" clip-path="url(#pa016fba52a)" style="fill: #bfe3dd; stroke: #fbf7ee; stroke-width: 3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 231.565091 135.346605 
+L 361.426909 135.346605 
+L 361.426909 40.453953 
+L 231.565091 40.453953 
+z
+" clip-path="url(#pa016fba52a)" style="fill: #ecc4cf; stroke: #fbf7ee; stroke-width: 3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 101.703273 230.239256 
+L 231.565091 230.239256 
+L 231.565091 135.346605 
+L 101.703273 135.346605 
+z
+" clip-path="url(#pa016fba52a)" style="fill: #ecc4cf; stroke: #fbf7ee; stroke-width: 3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 231.565091 230.239256 
+L 361.426909 230.239256 
+L 361.426909 135.346605 
+L 231.565091 135.346605 
+z
+" clip-path="url(#pa016fba52a)" style="fill: #bfe3dd; stroke: #fbf7ee; stroke-width: 3; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="166.634182" y="73.073302" transform="rotate(-0 166.634182 73.073302)">TP = 40</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(136.294299 97.255449)">true positive</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(135.386604 108.658047)">said 1, was 1</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="296.496" y="73.073302" transform="rotate(-0 296.496 73.073302)">FN = 10</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(262.961 97.255449)">false negative</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(245.388227 108.658047)">missed: said 0, was 1</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="166.634182" y="167.965953" transform="rotate(-0 166.634182 167.965953)">FP = 20</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(134.985822 192.1481)">false positive</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(105.450471 203.550698)">false alarm: said 1, was 0</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="296.496" y="167.965953" transform="rotate(-0 296.496 167.965953)">TN = 130</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(264.269477 192.1481)">true negative</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(265.248422 203.550698)">said 0, was 0</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="166.634182" y="28.592372" transform="rotate(-0 166.634182 28.592372)">predicted 1</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="296.496" y="28.592372" transform="rotate(-0 296.496 28.592372)">predicted 0</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #22223a" x="91.963636" y="91.017935" transform="rotate(-0 91.963636 91.017935)">actual 1</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #22223a" x="91.963636" y="185.910586" transform="rotate(-0 91.963636 185.910586)">actual 0</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #6f6c80" x="231.565091" y="250.997023" transform="rotate(-0 231.565091 250.997023)">precision reads DOWN the 'predicted 1' column;  recall reads ACROSS the 'actual 1' row</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pa016fba52a">
+   <rect x="10.8" y="10.8" width="357.12" height="255.024"/>
+  </clipPath>
+ </defs>
+</svg>

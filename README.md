@@ -1,2 +1,49 @@
 # jag5m33.github.io
-Personal portfolio: data science projects, notes and work, presented as an interactive book and mind map. Take a peek into my mind; (the cohesive bit at least)
+
+My portfolio and study notes: a book that opens into a mind map. Topics on the left, my GitHub projects on the right, dashed lines showing which methods each project uses.
+
+Live at **https://jag5m33.github.io**
+
+## How it's put together
+
+| File / folder | What it is |
+|---|---|
+| `index.html` | The page skeleton: book, map, reader |
+| `style.css` | All colours and layout (colours are at the top) |
+| `script.js` | The book animation, the map, and the chapter/project pages |
+| `data.json` | **The map itself**: every topic and every project |
+| `notes/<id>.md` | One chapter per topic, in Markdown |
+| `figures/` | Chart images used in the chapters (SVG) |
+| `figures/_src/` | The Python scripts that draw those charts |
+| `.nojekyll` | Tells GitHub Pages to serve the Markdown files as they are |
+
+## Adding a topic
+
+1. Add it to `data.json` under the right branch, e.g. `{ "id": "kmeans", "label": "K-means" }`.
+   Add `"soon": true` to show it as a placeholder.
+2. Write `notes/kmeans.md`.
+3. Push.
+
+## Writing a chapter
+
+- `# Title`, then one sentence summary underneath.
+- Maths: `$inline$` and `$$display$$` (KaTeX). A literal dollar sign is `\$`.
+- Code: fenced blocks with the language, e.g. ```` ```python ````.
+- Figure: `![Caption.](figures/name.svg)` on its own line.
+- Callout: `> **Key idea:** ...`
+- Link to another chapter: `[Bias & variance](#/t/biasvar)`. Link to a project: `#/p/acc`.
+
+## Adding a project
+
+Add an entry to `projects` in `data.json`: `repo` (owner/name), `code` (file paths to show), `uses` (topic ids, which draws the dashed links), `metrics` and `results` (image URLs).
+
+## Redrawing a figure
+
+```bash
+pip install matplotlib numpy scipy
+python3 figures/_src/<chapter>.py
+```
+
+## Previewing locally
+
+Open the folder in VS Code and use **Live Server**. Opening `index.html` by double-clicking won't work, because browsers block the page from loading `data.json` and the notes from disk.
