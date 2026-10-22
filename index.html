@@ -4,8 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jag Sandhu</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- syntax colouring for the code viewer -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 </head>
 <body>
-  <h1>Hello — site under construction 📖</h1>
+
+  <!-- 1. THE BOOK -->
+  <div class="scene">
+    <div class="book" id="book">
+      <div class="page">
+        <h2>Jag Sandhu</h2>
+        <p>Data · ML · Analysis</p>
+      </div>
+      <div class="cover">
+        <div class="cover-front">
+          <h1>Jag Sandhu</h1>
+          <p>Portfolio</p>
+          <span class="hint">click to open</span>
+        </div>
+        <div class="cover-back"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. THE MIND MAP (drawn by script.js) -->
+  <svg id="map" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet"></svg>
+
+  <!-- 3. THE SIDE PANEL (filled when you click a node) -->
+  <aside id="panel"></aside>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

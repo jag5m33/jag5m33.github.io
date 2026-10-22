@@ -1,0 +1,59 @@
+{
+  "knowledge": [
+    {
+      "id": "stats",
+      "label": "Statistics",
+      "text": "The foundations: describing data, quantifying uncertainty and testing claims.",
+      "children": [
+        { "id": "hypothesis", "label": "Hypothesis testing", "text": "t-tests, chi-squared, p-values and what they actually mean." },
+        { "id": "distributions", "label": "Distributions", "text": "Normal, binomial, Poisson, and when each applies." },
+        { "id": "correlation", "label": "Correlation", "text": "Pearson vs Spearman, and why correlation isn't causation." }
+      ]
+    },
+    {
+      "id": "eda",
+      "label": "EDA",
+      "text": "Exploring data before modelling it.",
+      "children": [
+        { "id": "cleaning", "label": "Data cleaning", "text": "Missing values, duplicates, types, outliers." },
+        { "id": "visualisation", "label": "Visualisation", "text": "Distributions, relationships and trends in plots." },
+        { "id": "features", "label": "Feature engineering", "text": "Building better inputs from raw columns." }
+      ]
+    },
+    {
+      "id": "ml",
+      "label": "ML Models",
+      "text": "Supervised and unsupervised models, from scratch and with sklearn.",
+      "children": [
+        { "id": "linreg", "label": "Linear regression", "text": "Squared-error cost, gradient descent, regularisation." },
+        { "id": "logreg", "label": "Logistic regression", "text": "Sigmoid, log loss, decision boundaries, thresholds." },
+        { "id": "trees", "label": "Decision trees", "text": "Entropy, information gain, no scaling needed." },
+        { "id": "anomaly", "label": "Anomaly detection", "text": "Finding unusual points in time series." }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "olist",
+      "label": "Olist E-commerce",
+      "repo": "jagsandhu/REPLACE-WITH-REPO-NAME",
+      "branch": "main",
+      "summary": "Analysis of Brazilian e-commerce orders: delivery times, reviews and what drives customer satisfaction.",
+      "uses": ["cleaning", "visualisation", "hypothesis", "linreg", "logreg"],
+      "code": ["REPLACE/path/to/script.py"],
+      "results": [
+        { "img": "results/olist/example.png", "caption": "Replace with a real chart" }
+      ]
+    },
+    {
+      "id": "neso",
+      "label": "GB Demand Anomalies",
+      "repo": "jagsandhu/REPLACE-WITH-REPO-NAME",
+      "branch": "main",
+      "summary": "End-to-end anomaly detection on NESO GB electricity demand data. In progress.",
+      "uses": ["cleaning", "distributions", "features", "anomaly"],
+      "code": [],
+      "results": []
+    }
+  ]
+}
