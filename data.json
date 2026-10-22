@@ -3,56 +3,122 @@
     {
       "id": "stats",
       "label": "Statistics",
-      "text": "The foundations: describing data, quantifying uncertainty and testing claims.",
+      "text": "The foundations: describing data, quantifying uncertainty and testing whether a pattern is real.",
       "children": [
-        { "id": "hypothesis", "label": "Hypothesis testing", "text": "t-tests, chi-squared, p-values and what they actually mean." },
-        { "id": "distributions", "label": "Distributions", "text": "Normal, binomial, Poisson, and when each applies." },
-        { "id": "correlation", "label": "Correlation", "text": "Pearson vs Spearman, and why correlation isn't causation." }
+        { "id": "hypothesis", "label": "Hypothesis testing",
+          "text": "<p>Start from a null hypothesis (no effect), compute a test statistic, and ask how surprising it would be if the null were true. That probability is the p-value.</p><ul><li><b>t-test:</b> compare means</li><li><b>Chi-squared:</b> compare category counts</li><li>Small p-value = evidence against the null, <i>not</i> proof of the alternative</li></ul>" },
+        { "id": "distributions", "label": "Distributions",
+          "text": "<p>The shape of a variable decides which summaries and tests are valid.</p><ul><li><b>Normal:</b> symmetric; mean and SD describe it</li><li><b>Skewed:</b> use median and IQR, consider a log transform</li><li><b>Poisson:</b> counts of events per interval</li></ul>" },
+        { "id": "correlation", "label": "Correlation",
+          "text": "<ul><li><b>Pearson:</b> strength of a <i>linear</i> relationship</li><li><b>Spearman:</b> rank-based, catches any monotonic relationship and resists outliers</li><li>Correlation is not causation, and near-zero correlation doesn't rule out a curved relationship</li></ul>" }
       ]
     },
     {
       "id": "eda",
       "label": "EDA",
-      "text": "Exploring data before modelling it.",
+      "text": "Exploring data before modelling it: what's there, what's broken, and what relates to the target.",
       "children": [
-        { "id": "cleaning", "label": "Data cleaning", "text": "Missing values, duplicates, types, outliers." },
-        { "id": "visualisation", "label": "Visualisation", "text": "Distributions, relationships and trends in plots." },
-        { "id": "features", "label": "Feature engineering", "text": "Building better inputs from raw columns." }
+        { "id": "profiling", "label": "Data profiling",
+          "text": "<p>Look at every column on its own before asking what it predicts.</p><ul><li>Shape, dtypes, memory</li><li>Missing values and duplicates</li><li>Cardinality of categoricals</li><li>Ranges and impossible values</li></ul>" },
+        { "id": "visualisation", "label": "Visualisation",
+          "text": "<ul><li><b>One variable:</b> histogram, box plot, bar chart</li><li><b>Two variables:</b> scatter, grouped bars, heatmap</li><li><b>Over time:</b> line plots, seasonal breakdowns, autocorrelation (ACF)</li></ul>" },
+        { "id": "outliers", "label": "Outliers & label checks",
+          "text": "<p>Decide whether unusual values are errors, rare-but-real, or a sign the labels themselves are inconsistent. In the accidents data, two words for the same weather had very different severe rates, which traced back to a change in how the data was recorded.</p>" }
+      ]
+    },
+    {
+      "id": "prep",
+      "label": "Preprocessing",
+      "text": "The bridge between analysis and modelling: turning raw columns and raw text into inputs a model can learn from.",
+      "children": [
+        { "id": "cleaning", "label": "Data cleaning",
+          "text": "<ul><li>Fix types (dates, categories)</li><li>Handle missing values: drop, impute, or flag</li><li>Merge sources with matching columns</li><li>Remove leakage columns that wouldn't exist at prediction time</li></ul>" },
+        { "id": "features", "label": "Feature engineering",
+          "text": "<p>Build better inputs from raw ones using domain knowledge: ratios, counts, time-since, hour and day-of-week from timestamps. Often worth more than changing the algorithm.</p>" },
+        { "id": "scaling", "label": "Scaling & encoding",
+          "text": "<ul><li><b>Z-score:</b> (x − μ) / σ, fit on train only</li><li><b>Needed for:</b> gradient descent, regularised models, neural nets</li><li><b>Not needed for:</b> decision trees, XGBoost</li><li><b>Encoding:</b> one-hot for nominal categories</li></ul>" },
+        { "id": "textclean", "label": "Text cleaning (regex)",
+          "text": "<p>First NLP step: normalise the raw text.</p><ul><li>Lowercase</li><li>Replace money, numbers, emails, URLs with tokens (<code>moneytoken</code>, <code>numtoken</code>)</li><li>Strip list markers like (a), (ii)</li><li>Remove punctuation, collapse spaces</li></ul>" },
+        { "id": "lemmatise", "label": "Tokenise & lemmatise",
+          "text": "<ul><li><b>Tokenisation:</b> split text into words</li><li><b>Tagging:</b> label each token noun, verb, etc.</li><li><b>Lemmatisation:</b> reduce to base form (indemnified → indemnify)</li><li><b>Stop words:</b> drop very common words that carry little meaning</li></ul><p>Done with spaCy, in batches.</p>" },
+        { "id": "tfidf", "label": "TF-IDF",
+          "text": "<p>Turns text into numbers. Each word's weight = how often it appears in this document × how rare it is across all documents.</p><ul><li><b>Sublinear TF:</b> 1 + log(count), so 10 repeats count ~2×, not 10×</li><li><b>n-grams (1–3):</b> keeps short phrases like \"governing law\"</li><li><b>min_df / max_df:</b> drop words too rare or too common</li><li><b>L2 norm:</b> long and short documents become comparable</li></ul>" }
       ]
     },
     {
       "id": "ml",
       "label": "ML Models",
-      "text": "Supervised and unsupervised models, from scratch and with sklearn.",
+      "text": "Supervised models from linear regression to boosted trees, plus unsupervised anomaly detection.",
       "children": [
-        { "id": "linreg", "label": "Linear regression", "text": "Squared-error cost, gradient descent, regularisation." },
-        { "id": "logreg", "label": "Logistic regression", "text": "Sigmoid, log loss, decision boundaries, thresholds." },
-        { "id": "trees", "label": "Decision trees", "text": "Entropy, information gain, no scaling needed." },
-        { "id": "anomaly", "label": "Anomaly detection", "text": "Finding unusual points in time series." }
+        { "id": "linreg", "label": "Linear regression",
+          "text": "<p><b>Model:</b> f = w·x + b</p><p><b>Cost:</b> squared error, J = (1/2m) Σ (f − y)²</p><ul><li>Convex, so gradient descent finds the single minimum</li><li>Update: w := w − α ∂J/∂w (all weights simultaneously)</li><li>Report <b>RMSE</b> (same units as y), MAE, R²</li></ul>" },
+        { "id": "logreg", "label": "Logistic regression",
+          "text": "<p><b>Model:</b> f = sigmoid(w·x + b), an output between 0 and 1</p><p><b>Cost:</b> log loss, which is convex (squared error with a sigmoid is not)</p><ul><li>Decision boundary where w·x + b = 0</li><li>Moving the threshold trades precision against recall</li><li>sklearn applies L2 by default; <code>C</code> = 1/λ</li></ul>" },
+        { "id": "softmax", "label": "Multiclass (softmax)",
+          "text": "<p>Extends logistic regression to N classes. Softmax turns N scores into probabilities that sum to 1; the loss is −log(probability of the true class).</p><p>sklearn's <code>LogisticRegression</code> uses this automatically for more than two classes.</p>" },
+        { "id": "biasvar", "label": "Bias & variance",
+          "text": "<ul><li><b>High bias (underfit):</b> train and validation error both high</li><li><b>High variance (overfit):</b> train error low, validation much higher</li><li>More data fixes variance, not bias</li><li>Learning curves show which one you have</li></ul><p>The trade-off: more model complexity lowers bias but raises variance.</p>" },
+        { "id": "regularisation", "label": "Regularisation",
+          "text": "<p>Adds a penalty on large weights to the cost, so the model can't contort itself to fit noise.</p><ul><li><b>L2 (Ridge):</b> λ Σ w², shrinks weights</li><li><b>L1 (Lasso):</b> λ Σ |w|, drives some to exactly 0</li><li>Bigger λ = simpler model; don't penalise b</li><li>Pick λ at the bottom of the validation-error curve</li></ul>" },
+        { "id": "trees", "label": "Decision trees",
+          "text": "<p>Split the data with yes/no questions, picking each split by the biggest drop in impurity (entropy / information gain, or Gini).</p><ul><li>No scaling needed, handles non-linear patterns</li><li>Overfits easily: control with <code>max_depth</code>, <code>min_samples_leaf</code></li><li>Easy to explain: feature importance, readable rules</li></ul>" },
+        { "id": "xgboost", "label": "XGBoost",
+          "text": "<p><b>How it differs from one decision tree:</b> it builds hundreds of small trees <i>in sequence</i>, each one trained to fix the errors the previous trees made (gradient boosting).</p><ul><li><b>Single tree:</b> one model, high variance, easy to read</li><li><b>Random forest:</b> many trees in parallel, averaged (bagging) → lowers variance</li><li><b>XGBoost:</b> trees in sequence (boosting) → lowers bias, with built-in regularisation to control variance</li></ul><p>Usually the strongest model on tabular data.</p>" },
+        { "id": "anomaly", "label": "Anomaly detection",
+          "text": "<p>Unsupervised: no labels saying what's abnormal. Learn what normal looks like, then flag points far from it.</p><ul><li>Remove expected patterns first (time of day, weekday, season)</li><li>Score what's left: z-scores, Isolation Forest, residuals from a forecast</li><li>Hard part is evaluation, since there's no ground truth</li></ul>" }
       ]
     }
   ],
   "projects": [
     {
-      "id": "olist",
-      "label": "Olist E-commerce",
-      "repo": "jagsandhu/REPLACE-WITH-REPO-NAME",
+      "id": "acc",
+      "label": "US Accidents",
+      "repo": "jag5m33/py_acc",
       "branch": "main",
-      "summary": "Analysis of Brazilian e-commerce orders: delivery times, reviews and what drives customer satisfaction.",
-      "uses": ["cleaning", "visualisation", "hypothesis", "linreg", "logreg"],
-      "code": ["REPLACE/path/to/script.py"],
+      "summary": "Which weather, time-of-day and road features predict whether a US road accident will be severe? 7.7 million accidents, staged EDA, feature engineering, decision tree and XGBoost classifiers, error analysis, and a Power BI dashboard.",
+      "uses": ["profiling", "visualisation", "outliers", "hypothesis", "cleaning", "features", "trees", "xgboost", "biasvar"],
+      "code": ["src/decision_tree.py", "src/xgboost.py", "src/classification_error_analysis.py", "notebooks/eda.ipynb", "notebooks/model.ipynb", "notes.txt"],
+      "metrics": {
+        "title": "Validation results",
+        "columns": ["Model", "Precision", "Recall", "F1", "PR-AUC"],
+        "rows": [
+          ["Baseline", "–", "–", "–", "0.340"],
+          ["Decision tree", "0.783", "0.689", "0.733", "0.822"],
+          ["XGBoost", "0.821", "0.763", "0.791", "0.871"]
+        ]
+      },
       "results": [
-        { "img": "results/olist/example.png", "caption": "Replace with a real chart" }
+        { "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_1.png", "caption": "Power BI dashboard, page 1" },
+        { "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_2.png", "caption": "Power BI dashboard, page 2" },
+        { "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_3.png", "caption": "Power BI dashboard, page 3" }
       ]
     },
     {
-      "id": "neso",
-      "label": "GB Demand Anomalies",
-      "repo": "jagsandhu/REPLACE-WITH-REPO-NAME",
+      "id": "legal",
+      "label": "Legal Clause NLP",
+      "repo": "jag5m33/py_legal_data",
       "branch": "main",
-      "summary": "End-to-end anomaly detection on NESO GB electricity demand data. In progress.",
-      "uses": ["cleaning", "distributions", "features", "anomaly"],
-      "code": [],
+      "summary": "Classify contract clauses into 100 types (LEDGAR / LexGLUE). Regex cleaning, spaCy lemmatisation, TF-IDF with n-grams, multiclass softmax logistic regression, and error analysis showing most mistakes are near-synonym labels.",
+      "uses": ["profiling", "visualisation", "textclean", "lemmatise", "tfidf", "logreg", "softmax", "regularisation", "biasvar"],
+      "code": ["src/clean.py", "src/lemmetizer.py", "src/tf_idf.py", "src/multi_class_lr_softmax.py", "src/classification_error_analysis.py", "notebooks/eda.ipynb", "notebooks/model.ipynb"],
+      "metrics": {
+        "title": "Results",
+        "columns": ["Split", "Accuracy", "Macro F1", "Micro F1"],
+        "rows": [
+          ["Train", "0.899", "0.887", "0.899"],
+          ["Validation", "0.839", "0.780", "0.839"]
+        ]
+      },
+      "results": []
+    },
+    {
+      "id": "elec",
+      "label": "GB Grid Anomalies",
+      "repo": "jag5m33/py_elec_grid_anomaly",
+      "branch": "main",
+      "summary": "In progress. Finding half-hours when GB national electricity demand (NESO, 2018–2023) is unusually high or low for its time of day, weekday and season, using unsupervised anomaly detection.",
+      "uses": ["profiling", "visualisation", "cleaning", "distributions", "features", "anomaly"],
+      "code": ["notebooks/eda.ipynb"],
       "results": []
     }
   ]

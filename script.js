@@ -3,7 +3,8 @@ const book  = document.getElementById("book");
 const map   = document.getElementById("map");
 const panel = document.getElementById("panel");
 
-const W = 1400, H = 900, CX = W / 2, CY = H / 2;   // map drawing space
+const W = 1400, CX = W / 2;                       // map drawing width
+let H = 900, CY = H / 2;                          // height grows with the number of topics
 const SVGNS = "http://www.w3.org/2000/svg";
 
 const dataReady = fetch("data.json").then(r => r.json());
@@ -22,7 +23,7 @@ book.addEventListener("click", async () => {
 });
 
 function reset() {                            // click the centre node to go back
-  panel.classList.remove("open");
+  setPanel(false);
   map.classList.remove("show", "edges-in");
   setTimeout(() => {
     map.innerHTML = "";
@@ -40,6 +41,10 @@ function layout() {
   // LEFT side: knowledge categories and their topics
   const cats = data.knowledge;
   const slots = cats.reduce((s, c) => s + c.children.length, 0) + cats.length - 1;
+  H = Math.max(900, slots * 40 + 120);             // tall enough that labels never overlap
+  CY = H / 2;
+  map.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  list[0].y = CY;
   const gapL = Math.min(60, (H - 100) / Math.max(slots - 1, 1));
   let y = CY - gapL * (slots - 1) / 2;
 
@@ -147,6 +152,11 @@ function highlight(id, on) {
 }
 
 // ============ SIDE PANEL ============
+function setPanel(on) {                       // open/close the panel and squeeze the map beside it
+  panel.classList.toggle("open", on);
+  document.body.classList.toggle("panel-open", on);
+}
+
 function select(n) {
   if (n.type === "centre") return reset();
   if (n.type === "hub") return;
@@ -163,7 +173,7 @@ function select(n) {
       <div class="tab-body"></div>`;
   } else {
     const kicker = n.type === "cat" ? "Topic" : n.parent.label;
-    html += `<p class="kicker">${kicker}</p><h2>${it.label}</h2><p>${it.text || ""}</p>`;
+    html += `<p class="kicker">${kicker}</p><h2>${it.label}</h2><div class="notes">${it.text || ""}</div>`;
     if (n.type === "cat") {
       html += `<h3>Covers</h3><ul>${it.children.map(c => `<li>${c.label}</li>`).join("")}</ul>`;
     }
@@ -174,8 +184,8 @@ function select(n) {
   }
 
   panel.innerHTML = html;
-  panel.classList.add("open");
-  panel.querySelector(".close").onclick = () => panel.classList.remove("open");
+  setPanel(true);
+  panel.querySelector(".close").onclick = () => setPanel(false);
   panel.querySelectorAll("[data-go]").forEach(b => b.onclick = () => select(nodes[b.dataset.go]));
 
   if (n.type === "project") {
@@ -208,10 +218,16 @@ function renderTab(p, tab, body) {
   }
 
   if (tab === "results") {
-    const rs = p.results || [];
-    body.innerHTML = rs.length
-      ? rs.map(r => `<figure><img src="${r.img}" alt="${r.caption || ""}" loading="lazy"><figcaption>${r.caption || ""}</figcaption></figure>`).join("")
-      : `<p class="muted">Results coming soon.</p>`;
+    const rs = p.results || [], m = p.metrics;
+    let html = "";
+    if (m) {
+      html += `<h3>${m.title || "Metrics"}</h3><table class="metrics">
+        <tr>${m.columns.map(c => `<th>${c}</th>`).join("")}</tr>
+        ${m.rows.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}
+      </table>`;
+    }
+    html += rs.map(r => `<figure><img src="${r.img}" alt="${r.caption || ""}" loading="lazy"><figcaption>${r.caption || ""}</figcaption></figure>`).join("");
+    body.innerHTML = html || `<p class="muted">Results coming soon.</p>`;
   }
 }
 
@@ -240,4 +256,4 @@ async function loadCode(p, path, box) {
   }
 }
 
-document.addEventListener("keydown", e => { if (e.key === "Escape") panel.classList.remove("open"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") setPanel(false); });
