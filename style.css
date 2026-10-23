@@ -32,52 +32,26 @@ body {
 }
 
 /* =====================================================================
-   BOOK
+   ORB — landing screen
    ===================================================================== */
-.scene { perspective: 1800px; }
+#intro { position: fixed; inset: 0; outline: none; }
+#orb { position: absolute; inset: 0; transition: opacity .5s ease; }
 
-.book {
-  position: relative;
-  width: 300px;
-  height: 420px;
-  cursor: pointer;
-  transition: transform 1.4s cubic-bezier(.7, 0, .3, 1), opacity .9s ease;
+.intro-text {
+  position: absolute; left: 0; right: 0; top: 78vh;
+  text-align: center; pointer-events: none;
+  transition: opacity .5s ease, transform .6s ease;
 }
-
-.page, .cover { position: absolute; inset: 0; border-radius: 4px 12px 12px 4px; }
-
-.page {
-  background: var(--paper);
-  color: var(--bg);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  box-shadow: 0 20px 50px rgba(0,0,0,.5);
+.intro-text h1 {
+  font-size: clamp(30px, 5vw, 48px); font-weight: normal;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--gold);
 }
-
-.cover {
-  transform-origin: left center;
-  transform-style: preserve-3d;
-  transition: transform 1.4s cubic-bezier(.7, 0, .3, 1);
-  z-index: 2;
-}
-
-.cover-front, .cover-back { position: absolute; inset: 0; border-radius: inherit; backface-visibility: hidden; }
-
-.cover-front {
-  background: linear-gradient(135deg, var(--wine), #5a0f28);
-  border-left: 14px solid #4a0c20;
-  color: var(--gold);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-  box-shadow: 0 20px 50px rgba(0,0,0,.5);
-}
-
-.cover-back { background: #e8e0cf; transform: rotateY(180deg); }
-
-.hint { margin-top: 40px; font-size: 13px; opacity: .6; animation: pulse 2s infinite; }
+.intro-text p { margin-top: 8px; color: var(--muted); letter-spacing: .06em; font-size: 15px; }
+.hint { display: inline-block; margin-top: 22px; font-size: 13px; color: var(--ink); opacity: .6; animation: pulse 2.4s infinite; }
 @keyframes pulse { 50% { opacity: .2; } }
 
-.book.open .cover { transform: rotateY(-180deg); }
-.book.open        { transform: translateX(150px); }
-.book.open.gone   { transform: translateX(150px) scale(.08); opacity: 0; pointer-events: none; }
+#intro.away { pointer-events: none; }
+#intro.away .intro-text { opacity: 0; transform: translateY(14px); }
 
 /* =====================================================================
    MIND MAP
@@ -101,9 +75,11 @@ body.map-open #map-hint { opacity: .8; }
 .node text { fill: var(--ink); font-size: 15px; transition: fill .2s; }
 .node circle { stroke-width: 2; transition: filter .2s; }
 
-.node.centre circle { fill: var(--wine); stroke: var(--gold); stroke-width: 3; }
-.node.centre text   { font-size: 20px; fill: var(--gold); }
-.node.centre .icon  { font-size: 28px; dominant-baseline: middle; }
+.node.centre .hit  { fill: #1c1c33; stroke: rgba(232, 200, 114, .35); stroke-width: 1; transition: stroke .2s; }
+.node.centre .dot  { stroke: none; }
+.node.centre:hover .hit { stroke: var(--gold); filter: none; }
+.node.centre:hover circle { filter: none; }
+.node.centre text  { font-size: 18px; fill: var(--gold); letter-spacing: .12em; text-transform: uppercase; }
 
 .node.left circle          { fill: var(--bg); stroke: var(--gold); }
 .node.branch circle        { fill: var(--gold); }

@@ -1,6 +1,6 @@
 # jag5m33.github.io
 
-My portfolio and study notes: a book that opens into a mind map. Topics on the left, my GitHub projects on the right, dashed lines showing which methods each project uses.
+My portfolio and study notes: a rotating sphere of dots that bursts open into a mind map. Topics on the left, my GitHub projects on the right, dashed lines showing which methods each project uses.
 
 Live at **https://jag5m33.github.io**
 
@@ -8,9 +8,10 @@ Live at **https://jag5m33.github.io**
 
 | File / folder | What it is |
 |---|---|
-| `index.html` | The page skeleton: book, map, reader |
+| `index.html` | The page skeleton: sphere, map, reader |
+| `orb.js` | The dotted sphere on the landing screen and the small one at the centre of the map (dot count, colours and spin speed are at the top) |
 | `style.css` | All colours and layout (colours are at the top) |
-| `script.js` | The book animation, the map, and the chapter/project pages |
+| `script.js` | The map, and the chapter/project pages |
 | `data.json` | **The map itself**: every topic and every project |
 | `notes/<id>.md` | One chapter per topic, in Markdown |
 | `figures/` | Chart images used in the chapters (SVG) |

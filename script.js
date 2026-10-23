@@ -1,6 +1,6 @@
 /* =====================================================================
    Jag Sandhu — portfolio
-   book → expandable mind map → full-screen chapters and project pages
+   orb → expandable mind map → full-screen chapters and project pages
 
    Content lives in two places, so you rarely touch this file:
      data.json        the map: topics (left), projects (right)
@@ -8,7 +8,7 @@
    ===================================================================== */
 
 const SVGNS = "http://www.w3.org/2000/svg";
-const book   = document.getElementById("book");
+const intro  = document.getElementById("intro");
 const map    = document.getElementById("map");
 const reader = document.getElementById("reader");
 const paper  = document.getElementById("paper");
@@ -53,17 +53,24 @@ const ready = fetch("data.json").then(r => r.json()).then(d => {
 });
 
 // ---------------------------------------------------------------------
-// BOOK
+// ORB → MAP
 // ---------------------------------------------------------------------
-book.addEventListener("click", async () => {
+async function enter() {
   if (mapOpen) return;
   await ready;
-  book.classList.add("open");
-  setTimeout(() => {
-    book.classList.add("gone");
-    openMap(true);
-  }, 1600);
-});
+  // the orb bursts, then shrinks into the map's centre node as the map opens
+  Orb.burst(centreOnScreen, () => openMap(true));
+}
+intro.addEventListener("click", enter);
+intro.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); enter(); } });
+
+// where the centre node is on screen right now (it moves while the map settles)
+function centreOnScreen() {
+  const v = view.centre;
+  if (!v || !v.el.isConnected) return null;
+  const b = v.el.querySelector(".hit").getBoundingClientRect();
+  return { x: b.left + b.width / 2, y: b.top + b.height / 2, r: b.width / 2 * 0.8 };
+}
 
 function openMap(animated) {
   mapOpen = true;
@@ -75,14 +82,16 @@ function closeMap() {
   expanded.clear();
   relayout(600);
   setTimeout(() => {
+    const from = centreOnScreen();
     document.body.classList.remove("map-open");
+    Orb.restore(from);                                  // the orb grows back out of the centre node
     setTimeout(() => {
       map.innerHTML = "";
+      edgeLayer = nodeLayer = null;
       for (const k in view) delete view[k];
       for (const k in edgeEls) delete edgeEls[k];
-      book.classList.remove("gone");
-      setTimeout(() => { book.classList.remove("open"); mapOpen = false; }, 900);
-    }, 500);
+      mapOpen = false;
+    }, 700);
   }, 650);
 }
 
@@ -122,7 +131,7 @@ function layout() {
     place(n);
   });
 
-  // centre the left side vertically on the book
+  // centre the left side vertically on the centre node
   const ids = Object.keys(pos).filter(k => k !== "centre");
   const ys = ids.map(k => pos[k].y);
   const mid = (Math.min(...ys) + Math.max(...ys)) / 2;
@@ -171,14 +180,15 @@ function makeNode(id) {
   const side = n.type === "project" || n.type === "hub" ? "right" : n.type === "centre" ? "" : "left";
   const g = el("g", { class: `node ${n.type} ${side} d${n.depth || 0}${n.soon ? " soon" : ""}` });
 
-  const r = n.type === "centre" ? 40 : n.type === "hub" ? 13 : n.type === "project" ? 11
+  const r = n.type === "centre" ? 42 : n.type === "hub" ? 13 : n.type === "project" ? 11
           : n.type === "branch" ? (n.depth === 1 ? 13 : 10) : 7;
-  g.append(el("circle", { r }));
-
   if (n.type === "centre") {
-    const icon = el("text", { "text-anchor": "middle", y: 2, class: "icon" });
-    icon.textContent = "📖";
-    g.append(icon);
+    g.append(el("circle", { r, class: "hit" }));       // dark disc behind, and the click target
+    const dots = el("g");
+    g.append(dots);
+    Orb.mini(dots, 34);                                // small spinning sphere of dots
+  } else {
+    g.append(el("circle", { r }));
   }
 
   const t = el("text");
@@ -390,8 +400,8 @@ async function route() {
     return;
   }
 
-  if (!mapOpen) {                     // arrived straight from a link: skip the book
-    book.classList.add("open", "gone");
+  if (!mapOpen) {                     // arrived straight from a link: skip the intro
+    Orb.hideNow();
     if (kind === "t") reveal(id);
     openMap(false);
   }

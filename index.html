@@ -11,27 +11,19 @@
 </head>
 <body>
 
-  <!-- 1. THE BOOK -->
-  <div class="scene">
-    <div class="book" id="book">
-      <div class="page">
-        <h2>Jag Sandhu</h2>
-        <p>Data · ML · Analysis</p>
-      </div>
-      <div class="cover">
-        <div class="cover-front">
-          <h1>Jag Sandhu</h1>
-          <p>Portfolio</p>
-          <span class="hint">click to open</span>
-        </div>
-        <div class="cover-back"></div>
-      </div>
+  <!-- 1. THE ORB (drawn by orb.js) -->
+  <div id="intro" role="button" tabindex="0" aria-label="Open the map">
+    <canvas id="orb"></canvas>
+    <div class="intro-text">
+      <h1>Jag Sandhu</h1>
+      <p>Data science · Machine learning · Analysis</p>
+      <span class="hint">click the sphere to explore</span>
     </div>
   </div>
 
   <!-- 2. THE MIND MAP (drawn by script.js) -->
   <svg id="map" preserveAspectRatio="xMidYMid meet"></svg>
-  <p id="map-hint">Click a gold branch to open it · click a topic to read it · click the book to close</p>
+  <p id="map-hint">Click a gold branch to open it · click a topic to read it · click the centre sphere to go back</p>
 
   <!-- 3. THE READER (full-screen chapter or project page) -->
   <section id="reader" aria-hidden="true">
@@ -47,6 +39,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="orb.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
