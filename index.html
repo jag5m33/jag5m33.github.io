@@ -41,5 +41,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="orb.js"></script>
   <script src="script.js"></script>
+
+  <!-- visitor stats (GoatCounter): counts every chapter and project page, not just the first load -->
+  <script>
+    window.goatcounter = { no_onload: true };
+    function track() {
+      if (window.goatcounter && window.goatcounter.count)
+        window.goatcounter.count({ path: location.pathname + location.hash });
+    }
+    window.addEventListener("hashchange", track);
+    window.addEventListener("load", track);
+  </script>
+  <script data-goatcounter="https://jag5m33.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
