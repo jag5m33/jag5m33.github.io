@@ -13,6 +13,19 @@ This chapter builds on [Decision trees](#/t/trees): nodes, leaves, purity, and c
 - **Log-odds**: $\log\frac{p}{1-p}$. This is the scale XGBoost adds trees on for classification, the same scale as [logistic regression](#/t/logreg). $p = 0.5$ gives log-odds 0.
 - **Sigmoid**: turns log-odds back into a probability, $p = \frac{1}{1 + e^{-\text{log-odds}}}$.
 
+## How XGBoost builds on decision trees
+
+Each tree in XGBoost is the same kind of tree as in the [trees chapter](#/t/trees): a root question, decision nodes, leaves, splits chosen greedily one node at a time. Three things change:
+
+| | Decision tree | XGBoost tree |
+|---|---|---|
+| What a tree predicts | The class directly (majority in the leaf) | A **correction** (leaf output) added to the running log-odds |
+| What it is trained on | The labels | The **residuals** the earlier trees left behind |
+| How splits are scored | Entropy and information gain | **Similarity score** and its gain (worked below) |
+| How many trees | One | Many **small** trees, built **in sequence** |
+
+[Bagging](#/t/bagging) and [random forest](#/t/randomforest) also combine many trees, but their trees are deep, **independent** and built **in parallel** on random resamples, then averaged. XGBoost's trees depend on each other: tree 2 can't be built until tree 1 has made its predictions. The next section compares the two approaches side by side.
+
 ## One tree vs random forest vs boosting
 
 ![Left: bagging builds independent trees on bootstrap samples and averages them. Right: boosting builds trees in sequence, and each one fits the residuals of the trees before it.](figures/xgboost-bagboost.svg)

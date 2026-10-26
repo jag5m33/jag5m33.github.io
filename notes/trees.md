@@ -341,6 +341,14 @@ What the settings did:
 - **Rarely state of the art alone.** Its main role in practice is as the building block of random forests and gradient boosting.
 - **Interpretability shrinks with depth.** A depth-10 tree with up to 1024 leaves, like mine, is no longer something you read by eye.
 
+## Where trees go next
+
+The same tree, used many times, in three steps:
+
+1. [Bagging](#/t/bagging): grow many deep trees, each on a bootstrap sample of the rows (drawn with replacement), and average their votes. This lowers variance.
+2. [Random forest](#/t/randomforest): bagging plus a random subset of features at every split, so the trees are less alike and the average improves further.
+3. [XGBoost](#/t/xgboost): grow small trees one after another, each fitting the errors the previous trees left. This lowers bias.
+
 ## Quick reference
 
 | Term | Meaning / formula |

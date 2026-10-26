@@ -1,97 +1,249 @@
 {
   "tree": [
     {
-      "id": "stats", "label": "Statistics",
+      "id": "stats",
+      "label": "Statistics",
       "children": [
-        { "id": "descriptive",   "label": "Descriptive statistics" },
-        { "id": "quartiles",     "label": "Quartiles, IQR & outliers" },
-        { "id": "distributions", "label": "Distributions & the CLT" },
-        { "id": "ci",            "label": "Confidence intervals" },
-        { "id": "hypothesis",    "label": "Hypothesis testing" },
-        { "id": "power",         "label": "Power & sample size" },
-        { "id": "effectsize",    "label": "Effect size" },
-        { "id": "correlation",   "label": "Correlation" },
-        { "id": "logs",          "label": "Logs & exponents" }
-      ]
-    },
-    {
-      "id": "eda", "label": "EDA",
-      "children": [
-        { "id": "profiling",   "label": "Data profiling" },
-        { "id": "vartypes",    "label": "Variable types & their charts" },
-        { "id": "unibimulti",  "label": "Uni-, bi- & multivariate" },
-        { "id": "labelchecks", "label": "Label checks" },
-        { "id": "autocorr",    "label": "Autocorrelation" }
-      ]
-    },
-    {
-      "id": "prep", "label": "Preprocessing",
-      "children": [
-        { "id": "cleaning", "label": "Data cleaning" },
-        { "id": "features", "label": "Feature engineering" },
-        { "id": "scaling",  "label": "Scaling & encoding" },
         {
-          "id": "nlp", "label": "NLP text preprocessing",
-          "children": [
-            { "id": "nlpterms",  "label": "Corpus, documents & cleaning" },
-            { "id": "tokenise",  "label": "Tokenise, stem & lemmatise" },
-            { "id": "stopwords", "label": "Stop words" },
-            { "id": "bow",       "label": "Bag of Words" },
-            { "id": "ngrams",    "label": "N-grams" },
-            { "id": "tfidf",     "label": "TF-IDF & its parameters" }
-          ]
+          "id": "descriptive",
+          "label": "Descriptive statistics"
+        },
+        {
+          "id": "quartiles",
+          "label": "Quartiles, IQR & outliers"
+        },
+        {
+          "id": "distributions",
+          "label": "Distributions & the CLT"
+        },
+        {
+          "id": "ci",
+          "label": "Confidence intervals"
+        },
+        {
+          "id": "hypothesis",
+          "label": "Hypothesis testing"
+        },
+        {
+          "id": "power",
+          "label": "Power & sample size"
+        },
+        {
+          "id": "effectsize",
+          "label": "Effect size"
+        },
+        {
+          "id": "correlation",
+          "label": "Correlation"
+        },
+        {
+          "id": "logs",
+          "label": "Logs & exponents"
         }
       ]
     },
     {
-      "id": "ml", "label": "Machine learning",
+      "id": "eda",
+      "label": "EDA",
       "children": [
         {
-          "id": "supervised", "label": "Supervised",
+          "id": "profiling",
+          "label": "Data profiling"
+        },
+        {
+          "id": "vartypes",
+          "label": "Variable types & their charts"
+        },
+        {
+          "id": "unibimulti",
+          "label": "Uni-, bi- & multivariate"
+        },
+        {
+          "id": "labelchecks",
+          "label": "Label checks"
+        },
+        {
+          "id": "autocorr",
+          "label": "Autocorrelation"
+        }
+      ]
+    },
+    {
+      "id": "prep",
+      "label": "Preprocessing",
+      "children": [
+        {
+          "id": "cleaning",
+          "label": "Data cleaning"
+        },
+        {
+          "id": "features",
+          "label": "Feature engineering"
+        },
+        {
+          "id": "scaling",
+          "label": "Scaling & encoding"
+        }
+      ]
+    },
+    {
+      "id": "nlp",
+      "label": "NLP",
+      "children": [
+        {
+          "id": "nlpterms",
+          "label": "Corpus, documents & cleaning"
+        },
+        {
+          "id": "tokenise",
+          "label": "Tokenise, stem & lemmatise"
+        },
+        {
+          "id": "stopwords",
+          "label": "Stop words"
+        },
+        {
+          "id": "bow",
+          "label": "Bag of Words"
+        },
+        {
+          "id": "ngrams",
+          "label": "N-grams"
+        },
+        {
+          "id": "tfidf",
+          "label": "TF-IDF & its parameters"
+        }
+      ]
+    },
+    {
+      "id": "ml",
+      "label": "Machine learning",
+      "children": [
+        {
+          "id": "supervised",
+          "label": "Supervised",
           "children": [
-            { "id": "supintro", "label": "What supervised means" },
             {
-              "id": "regression", "label": "Regression",
+              "id": "supintro",
+              "label": "What supervised means"
+            },
+            {
+              "id": "regression",
+              "label": "Regression",
               "children": [
-                { "id": "linreg",     "label": "Linear regression" },
-                { "id": "regmetrics", "label": "Regression metrics" }
+                {
+                  "id": "linreg",
+                  "label": "Linear regression"
+                },
+                {
+                  "id": "regmetrics",
+                  "label": "Regression metrics"
+                }
               ]
             },
             {
-              "id": "classification", "label": "Classification",
+              "id": "classification",
+              "label": "Classification",
               "children": [
-                { "id": "logreg",     "label": "Logistic regression" },
-                { "id": "softmax",    "label": "Multiclass (softmax)" },
-                { "id": "trees",      "label": "Decision trees" },
-                { "id": "xgboost",    "label": "XGBoost" },
-                { "id": "clsmetrics", "label": "Classification metrics" }
+                {
+                  "id": "logreg",
+                  "label": "Logistic regression"
+                },
+                {
+                  "id": "softmax",
+                  "label": "Multiclass (softmax)"
+                },
+                {
+                  "id": "naivebayes",
+                  "label": "Naive Bayes"
+                },
+                {
+                  "id": "clsmetrics",
+                  "label": "Classification metrics"
+                }
+              ]
+            },
+            {
+              "id": "treemodels",
+              "label": "Tree models",
+              "children": [
+                {
+                  "id": "trees",
+                  "label": "Decision trees"
+                },
+                {
+                  "id": "bagging",
+                  "label": "Bagging & bootstrap"
+                },
+                {
+                  "id": "randomforest",
+                  "label": "Random forest"
+                },
+                {
+                  "id": "xgboost",
+                  "label": "XGBoost"
+                }
               ]
             }
           ]
         },
         {
-          "id": "unsupervised", "label": "Unsupervised",
+          "id": "unsupervised",
+          "label": "Unsupervised",
           "children": [
-            { "id": "unsupintro",   "label": "What unsupervised means" },
-            { "id": "unsupmetrics", "label": "Unsupervised metrics" },
-            { "id": "anomaly",      "label": "Anomaly detection", "soon": true },
-            { "id": "kmeans",       "label": "K-means", "soon": true },
-            { "id": "hierarchical", "label": "Hierarchical clustering", "soon": true },
-            { "id": "dbscan",       "label": "DBSCAN", "soon": true },
-            { "id": "pca",          "label": "PCA", "soon": true }
+            {
+              "id": "unsupintro",
+              "label": "What unsupervised means"
+            },
+            {
+              "id": "unsupmetrics",
+              "label": "Unsupervised metrics"
+            },
+            {
+              "id": "anomaly",
+              "label": "Anomaly detection",
+              "soon": true
+            },
+            {
+              "id": "kmeans",
+              "label": "K-means",
+              "soon": true
+            },
+            {
+              "id": "hierarchical",
+              "label": "Hierarchical clustering",
+              "soon": true
+            },
+            {
+              "id": "dbscan",
+              "label": "DBSCAN",
+              "soon": true
+            },
+            {
+              "id": "pca",
+              "label": "PCA",
+              "soon": true
+            }
           ]
         },
         {
-          "id": "mathml", "label": "Mathematics of ML",
+          "id": "mathml",
+          "label": "Maths of ML",
           "children": [
-            { "id": "biasvar",        "label": "Bias & variance" },
-            { "id": "regularisation", "label": "Regularisation" }
+            {
+              "id": "biasvar",
+              "label": "Bias & variance"
+            },
+            {
+              "id": "regularisation",
+              "label": "Regularisation"
+            }
           ]
         }
       ]
     }
   ],
-
   "projects": [
     {
       "id": "acc",
@@ -99,21 +251,86 @@
       "repo": "jag5m33/py_acc",
       "branch": "main",
       "summary": "Which weather, time-of-day and road features predict whether a US road accident will be severe? 7.7 million accidents, staged EDA, feature engineering, decision tree and XGBoost classifiers, error analysis, and a Power BI dashboard.",
-      "uses": ["descriptive", "quartiles", "hypothesis", "profiling", "vartypes", "unibimulti", "labelchecks", "cleaning", "features", "scaling", "trees", "xgboost", "clsmetrics", "biasvar"],
-      "code": ["src/decision_tree.py", "src/xgboost.py", "src/classification_error_analysis.py", "notebooks/eda.ipynb", "notebooks/model.ipynb", "notes.txt"],
+      "uses": [
+        "descriptive",
+        "quartiles",
+        "hypothesis",
+        "profiling",
+        "vartypes",
+        "unibimulti",
+        "labelchecks",
+        "cleaning",
+        "features",
+        "scaling",
+        "clsmetrics",
+        "biasvar"
+      ],
+      "code": [
+        "src/decision_tree.py",
+        "src/xgboost.py",
+        "src/classification_error_analysis.py",
+        "notebooks/eda.ipynb",
+        "notebooks/model.ipynb",
+        "notes.txt"
+      ],
       "metrics": {
         "title": "Validation results",
-        "columns": ["Model", "Precision", "Recall", "F1", "PR-AUC"],
+        "columns": [
+          "Model",
+          "Precision",
+          "Recall",
+          "F1",
+          "PR-AUC"
+        ],
         "rows": [
-          ["Baseline", "–", "–", "–", "0.340"],
-          ["Decision tree", "0.783", "0.689", "0.733", "0.822"],
-          ["XGBoost", "0.821", "0.763", "0.791", "0.871"]
+          [
+            "Baseline",
+            "–",
+            "–",
+            "–",
+            "0.340"
+          ],
+          [
+            "Decision tree",
+            "0.783",
+            "0.689",
+            "0.733",
+            "0.822"
+          ],
+          [
+            "XGBoost",
+            "0.821",
+            "0.763",
+            "0.791",
+            "0.871"
+          ]
         ]
       },
       "results": [
-        { "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_1.png", "caption": "Power BI dashboard, page 1" },
-        { "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_2.png", "caption": "Power BI dashboard, page 2" },
-        { "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_3.png", "caption": "Power BI dashboard, page 3" }
+        {
+          "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_1.png",
+          "caption": "Power BI dashboard, page 1"
+        },
+        {
+          "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_2.png",
+          "caption": "Power BI dashboard, page 2"
+        },
+        {
+          "img": "https://raw.githubusercontent.com/jag5m33/py_acc/main/dashboard_viz/page_3.png",
+          "caption": "Power BI dashboard, page 3"
+        }
+      ],
+      "models": [
+        {
+          "id": "acc-tree",
+          "label": "Decision tree",
+          "topic": "trees"
+        },
+        {
+          "id": "acc-xgb",
+          "label": "XGBoost",
+          "topic": "xgboost"
+        }
       ]
     },
     {
@@ -121,28 +338,105 @@
       "label": "Legal Clause NLP",
       "repo": "jag5m33/py_legal_data",
       "branch": "main",
-      "summary": "Classify contract clauses into 100 types (LEDGAR / LexGLUE). Regex cleaning, spaCy lemmatisation, stop words, TF-IDF with n-grams, multiclass softmax logistic regression, and error analysis showing most mistakes are near-synonym labels.",
-      "uses": ["descriptive", "profiling", "unibimulti", "labelchecks", "nlpterms", "tokenise", "stopwords", "bow", "ngrams", "tfidf", "logreg", "softmax", "clsmetrics", "regularisation", "biasvar"],
-      "code": ["src/clean.py", "src/lemmetizer.py", "src/tf_idf.py", "src/multi_class_lr_softmax.py", "src/classification_error_analysis.py", "notebooks/eda.ipynb", "notebooks/model.ipynb"],
+      "summary": "Classify contract clauses into 100 types (LEDGAR / LexGLUE). Regex cleaning, spaCy lemmatisation, stop words, TF-IDF with n-grams, then two models on the same features: multiclass softmax logistic regression, and a Complement Naive Bayes model (in progress) built for the imbalanced classes. Error analysis shows most mistakes are near-synonym labels.",
+      "uses": [
+        "descriptive",
+        "profiling",
+        "unibimulti",
+        "labelchecks",
+        "nlpterms",
+        "tokenise",
+        "stopwords",
+        "bow",
+        "ngrams",
+        "tfidf",
+        "clsmetrics",
+        "regularisation",
+        "biasvar"
+      ],
+      "code": [
+        "src/clean.py",
+        "src/lemmetizer.py",
+        "src/tf_idf.py",
+        "src/multi_class_lr_softmax.py",
+        "src/complement_nb.py",
+        "src/classification_error_analysis.py",
+        "PIPELINE_NOTES.md",
+        "notebooks/eda.ipynb",
+        "notebooks/preprocess.ipynb",
+        "notebooks/model_mcc.ipynb",
+        "notebooks/model_nb.ipynb"
+      ],
       "metrics": {
-        "title": "Results",
-        "columns": ["Split", "Accuracy", "Macro F1", "Micro F1"],
+        "title": "Softmax logistic regression results (Naive Bayes results coming)",
+        "columns": [
+          "Split",
+          "Accuracy",
+          "Macro F1",
+          "Micro F1"
+        ],
         "rows": [
-          ["Train", "0.899", "0.887", "0.899"],
-          ["Validation", "0.839", "0.780", "0.839"]
+          [
+            "Train",
+            "0.899",
+            "0.887",
+            "0.899"
+          ],
+          [
+            "Validation",
+            "0.839",
+            "0.780",
+            "0.839"
+          ]
         ]
       },
-      "results": []
+      "results": [],
+      "models": [
+        {
+          "id": "legal-lr",
+          "label": "Softmax logistic regression",
+          "topic": "softmax"
+        },
+        {
+          "id": "legal-nb",
+          "label": "Complement Naive Bayes",
+          "topic": "naivebayes",
+          "status": "in progress"
+        }
+      ]
     },
     {
       "id": "elec",
       "label": "GB Grid Anomalies",
       "repo": "jag5m33/py_elec_grid_anomaly",
       "branch": "main",
-      "summary": "In progress. Finding half-hours when GB national electricity demand (NESO, 2018–2023) is unusually high or low for its time of day, weekday and season, using unsupervised anomaly detection.",
-      "uses": ["descriptive", "distributions", "profiling", "vartypes", "autocorr", "cleaning", "features", "anomaly"],
-      "code": ["notebooks/eda.ipynb"],
-      "results": []
+      "summary": "In progress. Finding half-hours when GB national electricity demand (NESO, 2018–2023) is unusually high or low for its time of day, weekday and season. EDA is done; next, an MSTL decomposition strips out the normal daily, weekly and yearly pattern so the anomaly detection can work on what's left.",
+      "uses": [
+        "descriptive",
+        "distributions",
+        "profiling",
+        "vartypes",
+        "cleaning",
+        "features"
+      ],
+      "code": [
+        "notebooks/eda.ipynb"
+      ],
+      "results": [],
+      "models": [
+        {
+          "id": "elec-mstl",
+          "label": "MSTL baseline",
+          "topic": "autocorr",
+          "status": "in progress"
+        },
+        {
+          "id": "elec-anom",
+          "label": "Anomaly detection",
+          "topic": "anomaly",
+          "status": "planned"
+        }
+      ]
     }
   ]
 }

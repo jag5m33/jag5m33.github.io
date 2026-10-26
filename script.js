@@ -1,10 +1,17 @@
 /* =====================================================================
    Jag Sandhu — portfolio
-   orb → expandable mind map → full-screen chapters and project pages
+   orb → spider-web map → full-screen chapters and project pages
 
    Content lives in two places, so you rarely touch this file:
-     data.json        the map: topics (left), projects (right)
+     data.json        the map: notes (left half), projects + models (right half)
      notes/<id>.md    one chapter per topic, written in Markdown
+
+   The map is a radial tree. Everything is always open:
+     - notes fan out across the LEFT half, numbered in reading order
+     - projects and the models inside them fan out across the RIGHT half
+     - dashed threads join a model or project to the notes it uses
+       (they light up when you hover)
+   Scroll to zoom, drag to move, click a gold branch to zoom into it.
    ===================================================================== */
 
 const SVGNS = "http://www.w3.org/2000/svg";
@@ -14,19 +21,23 @@ const reader = document.getElementById("reader");
 const paper  = document.getElementById("paper");
 const crumbs = document.getElementById("crumbs");
 
-// layout settings (map units, not pixels)
-const ROW      = 40;     // vertical gap between topics
-const GROUP    = 24;     // extra gap between the top-level branches
-const COL      = 200;    // horizontal gap between levels
-const FIRST    = 230;    // distance from the centre to the first column
-const HUB_X    = 230, PROJ_X = 450, PROJ_ROW = 110;
+// ---------------- layout settings (map units) ----------------
+const LEFT_SPAN  = 70;                    // notes fan ±70° around due left
+const RIGHT_SPAN = 62;                    // projects fan ±62° around due right
+const RING       = [0, 215, 360, 490];    // radius of branch levels 1, 2, 3
+const LEAF_R     = 640;                   // every note sits on this outer ring
+const PROJ_R     = 300, MODEL_R = 580;    // right half: projects, then their models
+const SQUASH     = 0.6;                   // < 1 flattens the web to suit wide screens
+const GAP_TOP    = 1.8, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
+// --------------------------------------------------------------
 
 let data;
-const byId = {};                  // every node, by id
-const expanded = new Set();       // branches currently open
-const view = {};                  // id -> { el, x, y, o } what's on screen now
-const edgeEls = {};               // "from>to" -> path element
-let vb = { x: -700, y: -450, w: 1400, h: 900 };
+const byId = {};               // every node, by id
+const order = [];              // notes in reading order (the numbered sequence)
+const view = {};               // id -> { el, x, y, o } what's on screen now
+const edgeEls = {};            // "from>to" -> path element
+let vb = { x: -800, y: -500, w: 1600, h: 1000 };
+let home = null;               // the view box that fits the whole web
 let mapOpen = false;
 
 // ---------------------------------------------------------------------
@@ -34,21 +45,25 @@ let mapOpen = false;
 // ---------------------------------------------------------------------
 const ready = fetch("data.json").then(r => r.json()).then(d => {
   data = d;
-  byId.centre = { id: "centre", label: "Jag Sandhu", type: "centre" };
-  byId.hub    = { id: "hub", label: "Projects", type: "hub", parent: "centre" };
+  byId.centre = { id: "centre", label: "Jag Sandhu", type: "centre", depth: 0 };
 
   (function index(list, parent, depth) {
-    list.forEach((n, i) => {
+    list.forEach(n => {
       n.parent = parent;
       n.depth = depth;
       n.type = n.children ? "branch" : "leaf";
       n.siblings = list;
       byId[n.id] = n;
       if (n.children) index(n.children, n.id, depth + 1);
+      else { order.push(n); n.num = order.length; }
     });
   })(data.tree, "centre", 1);
 
-  data.projects.forEach(p => { p.type = "project"; p.parent = "hub"; byId[p.id] = p; });
+  data.projects.forEach(p => {
+    p.type = "project"; p.parent = "centre"; p.depth = 1;
+    byId[p.id] = p;
+    (p.models || []).forEach(m => { m.type = "model"; m.parent = p.id; m.depth = 2; m.project = p; byId[m.id] = m; });
+  });
   return d;
 });
 
@@ -72,95 +87,119 @@ function centreOnScreen() {
   return { x: b.left + b.width / 2, y: b.top + b.height / 2, r: b.width / 2 * 0.8 };
 }
 
+const phone = () => window.innerWidth < 700;
+
 function openMap(animated) {
   mapOpen = true;
   document.body.classList.add("map-open");
-  relayout(animated ? 1100 : 0, true);
+  if (phone()) { buildIndex(); document.body.classList.add("list-mode"); return; }
+  document.body.classList.remove("list-mode");
+  build(animated);
+}
+
+// phone view: the web as a numbered list, same order and same links
+function buildIndex() {
+  const box = document.getElementById("index");
+  if (box.dataset.built) return;
+  const list = items => items.map(n => n.children
+    ? `<li class="group"><h3>${n.label}</h3><ol>${list(n.children)}</ol></li>`
+    : `<li class="${n.soon ? "soon" : ""}"><a href="#/t/${n.id}"><span class="num">${n.num}</span>${n.label}${n.soon ? " <em>soon</em>" : ""}</a></li>`).join("");
+  box.innerHTML = `
+    <header><button type="button" id="index-back">← Sphere</button><h1>Jag Sandhu</h1></header>
+    <section><h2>Notes</h2>${data.tree.map(t => `<h3 class="top">${t.label}</h3><ol>${list(t.children)}</ol>`).join("")}</section>
+    <section><h2>Projects</h2>${data.projects.map(p => `
+      <a class="proj" href="#/p/${p.id}"><strong>${p.label}</strong>
+        <span>${(p.models || []).map(m => m.label + (m.status ? ` (${m.status})` : "")).join(" · ")}</span></a>`).join("")}</section>`;
+  box.dataset.built = "1";
+  document.getElementById("index-back").onclick = closeMap;
 }
 
 function closeMap() {
-  expanded.clear();
-  relayout(600);
+  if (document.body.classList.contains("list-mode")) {
+    document.body.classList.remove("map-open", "list-mode");
+    Orb.restore(null);
+    mapOpen = false;
+    return;
+  }
+  flyTo(home, 400);
   setTimeout(() => {
     const from = centreOnScreen();
     document.body.classList.remove("map-open");
     Orb.restore(from);                                  // the orb grows back out of the centre node
     setTimeout(() => {
       map.innerHTML = "";
-      edgeLayer = nodeLayer = null;
+      layers = null;
       for (const k in view) delete view[k];
       for (const k in edgeEls) delete edgeEls[k];
       mapOpen = false;
     }, 700);
-  }, 650);
+  }, 420);
 }
 
 // ---------------------------------------------------------------------
-// WHAT'S VISIBLE, AND WHERE IT GOES
+// LAYOUT: angles and radii for every node
 // ---------------------------------------------------------------------
-function isVisible(id) {
-  const n = byId[id];
-  if (!n || n.type === "centre" || n.type === "hub" || n.type === "project") return true;
-  let p = n.parent;
-  while (p !== "centre") {
-    if (!expanded.has(p)) return false;
-    p = byId[p].parent;
-  }
-  return true;
-}
+const rad = d => d * Math.PI / 180;
+// polar → screen. SQUASH flattens the circle into an ellipse.
+const P = (deg, r) => ({ x: r * Math.cos(rad(deg)), y: r * Math.sin(rad(deg)) * SQUASH, a: deg, r });
 
 function layout() {
-  const pos = { centre: { x: 0, y: 0 } };
-  let y = 0, first = true;
+  const pos = { centre: { x: 0, y: 0, a: 180, r: 0 } };
 
-  function place(n) {
-    const x = -FIRST - (n.depth - 1) * COL;
-    if (n.children && expanded.has(n.id)) {
-      const ys = n.children.map(place);
-      pos[n.id] = { x, y: (ys[0] + ys[ys.length - 1]) / 2 };
-    } else {
-      pos[n.id] = { x, y };
-      y += ROW;
-    }
-    return pos[n.id].y;
-  }
+  // ---- left half: one slot per note, with gaps between groups ----
+  let slots = 0;
+  (function count(list, depth) {
+    list.forEach((n, i) => {
+      if (i > 0) slots += depth === 1 ? GAP_TOP : (n.children || list[i - 1].children ? GAP_SUB : 0);
+      if (n.children) count(n.children, depth + 1); else slots += 1;
+    });
+  })(data.tree, 1);
+  slots -= 1;
 
-  data.tree.forEach(n => {
-    if (!first) y += GROUP;
-    first = false;
-    place(n);
+  // top of the half-circle first, so reading order runs top → bottom
+  const start = 180 + LEFT_SPAN, step = (2 * LEFT_SPAN) / Math.max(slots, 1);
+  let s = 0;
+  (function place(list, depth) {
+    list.forEach((n, i) => {
+      if (i > 0) s += depth === 1 ? GAP_TOP : (n.children || list[i - 1].children ? GAP_SUB : 0);
+      if (n.children) {
+        place(n.children, depth + 1);
+        const kids = n.children.map(c => pos[c.id].a);
+        const a = (Math.min(...kids) + Math.max(...kids)) / 2;
+        pos[n.id] = P(a, RING[depth]);
+      } else {
+        pos[n.id] = P(start - s * step, LEAF_R);
+        s += 1;
+      }
+    });
+  })(data.tree, 1);
+
+  // ---- right half: projects, each with its models ----
+  const projs = data.projects;
+  const nModels = projs.reduce((k, p) => k + Math.max(1, (p.models || []).length), 0) + (projs.length - 1) * 1.2;
+  const rstep = (2 * RIGHT_SPAN) / Math.max(nModels - 1, 1);
+  let t = 0;
+  projs.forEach((p, i) => {
+    if (i > 0) t += 1.2;
+    const ms = p.models || [];
+    const first = t;
+    ms.forEach(m => { pos[m.id] = P(-RIGHT_SPAN + t * rstep, MODEL_R); t += 1; });
+    if (!ms.length) t += 1;
+    const a = -RIGHT_SPAN + ((first + Math.max(t - 1, first)) / 2) * rstep;
+    pos[p.id] = P(a, PROJ_R);
   });
-
-  // centre the left side vertically on the centre node
-  const ids = Object.keys(pos).filter(k => k !== "centre");
-  const ys = ids.map(k => pos[k].y);
-  const mid = (Math.min(...ys) + Math.max(...ys)) / 2;
-  ids.forEach(k => pos[k].y -= mid);
-
-  // right side
-  pos.hub = { x: HUB_X, y: 0 };
-  const ps = data.projects;
-  ps.forEach((p, i) => pos[p.id] = { x: PROJ_X, y: (i - (ps.length - 1) / 2) * PROJ_ROW });
 
   return pos;
 }
 
-function edgesFor(visibleIds) {
+// tree edges, plus dashed threads from projects/models to the notes they use
+function edgeList() {
   const out = [];
-  const seen = new Set();
-  visibleIds.forEach(id => {
-    const n = byId[id];
-    if (id !== "centre") out.push({ from: n.parent, to: id, kind: "tree" });
+  Object.values(byId).forEach(n => { if (n.id !== "centre") out.push({ from: n.parent, to: n.id, kind: "tree" }); });
+  data.projects.forEach(p => {
+    (p.uses || []).forEach(u => byId[u] && out.push({ from: u, to: p.id, kind: "cross" }));
+    (p.models || []).forEach(m => m.topic && byId[m.topic] && out.push({ from: m.topic, to: m.id, kind: "cross model" }));
   });
-  // dashed links from topics to the projects that use them;
-  // if a topic is folded away, the link starts from its nearest visible branch
-  data.projects.forEach(p => (p.uses || []).forEach(u => {
-    let a = u;
-    while (byId[a] && !isVisible(a)) a = byId[a].parent;
-    if (!byId[a] || a === "centre") return;
-    const key = a + ">" + p.id;
-    if (!seen.has(key)) { seen.add(key); out.push({ from: a, to: p.id, kind: "cross" }); }
-  }));
   return out;
 }
 
@@ -173,15 +212,47 @@ function el(tag, attrs = {}) {
   return e;
 }
 
-let edgeLayer, nodeLayer;
+let layers = null;
 
-function makeNode(id) {
+function makeLayers() {
+  layers = { web: el("g", { class: "web" }), edges: el("g"), nodes: el("g") };
+  map.append(layers.web, layers.edges, layers.nodes);
+
+  // the "spider web": faint rings at each level, and a few spokes
+  const rings = [...RING.slice(1), LEAF_R];
+  rings.forEach(r => {
+    const leftArc = arc(180 - LEFT_SPAN - 4, 180 + LEFT_SPAN + 4, r);
+    layers.web.append(el("path", { d: leftArc, class: "ring" }));
+  });
+  [PROJ_R, MODEL_R].forEach(r => layers.web.append(el("path", { d: arc(-RIGHT_SPAN - 6, RIGHT_SPAN + 6, r), class: "ring right" })));
+  for (let a = 180 - LEFT_SPAN; a <= 180 + LEFT_SPAN + 0.1; a += LEFT_SPAN / 4) {
+    const p = P(a, LEAF_R + 10);
+    layers.web.append(el("line", { x1: 0, y1: 0, x2: p.x, y2: p.y, class: "spoke" }));
+  }
+  for (let a = -RIGHT_SPAN; a <= RIGHT_SPAN + 0.1; a += RIGHT_SPAN / 2) {
+    const p = P(a, MODEL_R + 10);
+    layers.web.append(el("line", { x1: 0, y1: 0, x2: p.x, y2: p.y, class: "spoke right" }));
+  }
+}
+
+function arc(a0, a1, r) {
+  let d = "";
+  for (let a = a0; a <= a1 + 0.01; a += 2) {
+    const p = P(a, r);
+    d += (d ? "L" : "M") + p.x.toFixed(1) + "," + p.y.toFixed(1);
+  }
+  return d;
+}
+
+function makeNode(id, p) {
   const n = byId[id];
-  const side = n.type === "project" || n.type === "hub" ? "right" : n.type === "centre" ? "" : "left";
-  const g = el("g", { class: `node ${n.type} ${side} d${n.depth || 0}${n.soon ? " soon" : ""}` });
+  const side = n.type === "project" || n.type === "model" ? "right" : n.type === "centre" ? "" : "left";
+  const cls = ["node", n.type, side, "d" + n.depth];
+  if (n.soon) cls.push("soon");
+  if (n.status) cls.push("pending");
+  const g = el("g", { class: cls.join(" ") });
 
-  const r = n.type === "centre" ? 42 : n.type === "hub" ? 13 : n.type === "project" ? 11
-          : n.type === "branch" ? (n.depth === 1 ? 13 : 10) : 7;
+  const r = { centre: 42, branch: n.depth === 1 ? 12 : 9, leaf: 6.5, project: 12, model: 7.5 }[n.type];
   if (n.type === "centre") {
     g.append(el("circle", { r, class: "hit" }));       // dark disc behind, and the click target
     const dots = el("g");
@@ -191,167 +262,228 @@ function makeNode(id) {
     g.append(el("circle", { r }));
   }
 
+  // labels: notes and models radiate outwards along their spoke;
+  // branches and projects sit level, just outside their dot
   const t = el("text");
+  if (n.type === "centre") {
+    t.setAttribute("y", 68); t.setAttribute("text-anchor", "middle");
+    t.textContent = n.label;
+  } else if (n.type === "leaf" || n.type === "model") {
+    const ang = Math.atan2(p.y, p.x) * 180 / Math.PI;     // the label follows the spoke on screen
+    const flip = Math.cos(rad(ang)) < 0;                  // left half: turn text the right way up
+    t.setAttribute("transform", `rotate(${flip ? ang + 180 : ang})`);
+    t.setAttribute("x", flip ? -(r + 8) : r + 8);
+    t.setAttribute("y", 4.5);
+    t.setAttribute("text-anchor", flip ? "end" : "start");
+    if (n.type === "leaf") {
+      const num = el("tspan", { class: "num" }); num.textContent = n.num + "  ";
+      const lab = el("tspan"); lab.textContent = n.label + (n.soon ? " · soon" : "");
+      // number sits next to the dot: before the label on the right, after it on the left
+      if (flip) { lab.textContent += "  "; t.append(lab); num.textContent = String(n.num); t.append(num); }
+      else { t.append(num, lab); }
+    } else {
+      t.textContent = n.label + (n.status ? ` · ${n.status}` : "");
+    }
+  } else {
+    // branches and projects: level text placed away from the centre
+    const outward = p.x <= 0 ? -1 : 1;
+    t.setAttribute("x", outward * (r + 8));
+    t.setAttribute("y", p.y > 20 ? r + 17 : -r - 6);      // lower half: label under the dot
+    t.setAttribute("text-anchor", outward < 0 ? "end" : "start");
+    t.textContent = n.label;
+  }
   g.append(t);
-  g._label = t;
-  g._r = r;
 
-  g.addEventListener("click", e => { e.stopPropagation(); onNodeClick(id); });
-  g.addEventListener("mouseenter", () => hot(id, true));
-  g.addEventListener("mouseleave", () => hot(id, false));
-  nodeLayer.append(g);
+  g.addEventListener("click", e => { e.stopPropagation(); if (!dragged) onNodeClick(id); });
+  g.addEventListener("mouseenter", () => focus(id, true));
+  g.addEventListener("mouseleave", () => focus(id, false));
+  layers.nodes.append(g);
   return g;
 }
 
-// label sits left of topics, above open branches, right of projects
-function placeLabel(id) {
-  const n = byId[id], g = view[id].el, t = g._label, r = g._r;
-  let txt = n.label, x = 0, y = 0, anchor = "start";
-  if (n.type === "centre")       { y = 66; anchor = "middle"; }
-  else if (n.type === "hub")     { y = -24; anchor = "middle"; }
-  else if (n.type === "project") { x = r + 10; y = 5; }
-  else if (n.type === "branch" && expanded.has(id)) { y = -20; anchor = "middle"; txt += "  −"; }
-  else {
-    x = -r - 10; y = 5; anchor = "end";
-    if (n.type === "branch") txt += "  +";
-    if (n.soon) txt += " · soon";
-  }
-  t.textContent = txt;
-  t.setAttribute("x", x); t.setAttribute("y", y); t.setAttribute("text-anchor", anchor);
-  g.classList.toggle("expanded", expanded.has(id));
-}
-
+// curved edge that follows the web: d3-style radial link through the mid-ring
 function curve(a, b, kind) {
-  if (kind === "cross") {
-    const mid = (a.y + b.y) / 2;
-    const bend = mid <= 0 ? Math.min(a.y, b.y) - 160 : Math.max(a.y, b.y) + 160;
-    return `M${a.x},${a.y} Q${(a.x + b.x) / 2},${bend} ${b.x},${b.y}`;
+  if (kind.startsWith("cross")) {
+    // threads between the halves bow through the space above/below the centre
+    const my = (a.y + b.y) / 2;
+    return `M${a.x},${a.y} Q${(a.x + b.x) / 2 * 0.25},${my * 1.25} ${b.x},${b.y}`;
   }
-  const mx = (a.x + b.x) / 2;
-  return `M${a.x},${a.y} C${mx},${a.y} ${mx},${b.y} ${b.x},${b.y}`;
+  const pa = polar(a), pb = polar(b);
+  const angA = pa.r < 1 ? pb.a : pa.a;
+  const m = (pa.r + pb.r) / 2;
+  const c1 = P(angA, m), c2 = P(pb.a, m);
+  return `M${a.x},${a.y} C${c1.x},${c1.y} ${c2.x},${c2.y} ${b.x},${b.y}`;
 }
+const polar = p => ({ a: Math.atan2(p.y / SQUASH, p.x) * 180 / Math.PI, r: Math.hypot(p.x, p.y / SQUASH) });
 
 // ---------------------------------------------------------------------
-// ANIMATION: move everything from where it is to where it should be
+// BUILD + OPENING ANIMATION: everything grows out of the centre
 // ---------------------------------------------------------------------
 let anim = null;
 
-function relayout(duration = 700, stagger = false) {
-  if (!edgeLayer) {
-    edgeLayer = el("g"); nodeLayer = el("g");
-    map.append(edgeLayer, nodeLayer);
-  }
-
+function build(animated) {
+  if (!layers) makeLayers();
   const pos = layout();
-  const visibleIds = Object.keys(byId).filter(id => isVisible(id) && pos[id]);
-  const targets = {};
-  visibleIds.forEach(id => targets[id] = { x: pos[id].x, y: pos[id].y, o: 1 });
+  const ids = Object.keys(byId);
+  const D = animated ? 1300 : 0;
 
-  // nodes being hidden fold back into their nearest visible parent
-  Object.keys(view).forEach(id => {
-    if (!targets[id]) {
-      let p = byId[id].parent;
-      while (p !== "centre" && !targets[p]) p = byId[p].parent;
-      targets[id] = { x: targets[p].x, y: targets[p].y, o: 0, remove: true };
-    }
+  // nodes start at the centre and fly out, inner rings first
+  ids.forEach(id => {
+    if (view[id]) return;
+    const p = pos[id];
+    const delay = animated ? (byId[id].depth || 0) * 160 + (p.r / LEAF_R) * 120 : 0;
+    view[id] = { el: makeNode(id, p), x: 0, y: 0, o: 0, tx: p.x, ty: p.y, delay };
   });
 
-  // new nodes start at their parent (or the centre)
-  visibleIds.forEach((id, i) => {
-    if (!view[id]) {
-      let p = byId[id].parent, start = { x: 0, y: 0 };
-      while (p && p !== "centre") { if (view[p]) { start = view[p]; break; } p = byId[p].parent; }
-      view[id] = { el: makeNode(id), x: start.x, y: start.y, o: 0, delay: stagger ? i * 35 : 0 };
-    }
-  });
-  visibleIds.forEach(placeLabel);
-
-  // edges
-  const edges = edgesFor(visibleIds);
-  const keep = new Set();
-  edges.forEach(e => {
+  edgeList().forEach(e => {
     const key = e.from + ">" + e.to;
-    keep.add(key);
-    if (!edgeEls[key]) {
-      const p = el("path", { class: "edge " + e.kind });
-      p.dataset.from = e.from; p.dataset.to = e.to;
-      p._o = 0;
-      edgeLayer.append(p);
-      edgeEls[key] = p;
-    }
-    edgeEls[key]._target = 1;
+    if (edgeEls[key]) return;
+    const path = el("path", { class: "edge " + e.kind });
+    path.dataset.from = e.from; path.dataset.to = e.to;
+    layers.edges.append(path);
+    edgeEls[key] = path;
   });
-  Object.keys(edgeEls).forEach(k => { if (!keep.has(k)) edgeEls[k]._target = 0; });
 
-  // view box: fit everything that will be visible
-  const xs = visibleIds.map(id => pos[id].x), ys = visibleIds.map(id => pos[id].y);
-  const pad = 70;
-  const box = {
-    x: Math.min(...xs) - 240, y: Math.min(...ys) - pad,
-    w: Math.max(...xs) + 260 - (Math.min(...xs) - 240), h: Math.max(...ys) - Math.min(...ys) + pad * 2 + 40
+  // fit the whole web, including where each angled label ends, to the screen
+  const xs = [], ys = [];
+  ids.forEach(id => {
+    const p = pos[id], n = byId[id];
+    xs.push(p.x); ys.push(p.y);
+    if (n.type === "leaf" || n.type === "model") {
+      const len = 20 + (n.label.length + (n.soon ? 7 : 0) + (n.status ? n.status.length + 3 : 0) + 4) * 7.3;
+      const d = Math.hypot(p.x, p.y) || 1;
+      xs.push(p.x + p.x / d * len); ys.push(p.y + p.y / d * len);
+    }
+  });
+  const pad = 30;
+  home = {
+    x: Math.min(...xs) - pad, y: Math.min(...ys) - pad,
+    w: Math.max(...xs) - Math.min(...xs) + pad * 2, h: Math.max(...ys) - Math.min(...ys) + pad * 2 + 30
   };
-  box.h = Math.max(box.h, 700);
-  box.y = Math.min(box.y, -box.h / 2);
+  vb = { ...home };
+  setVB();
 
-  // tween
-  const from = {};
-  Object.keys(view).forEach(id => from[id] = { x: view[id].x, y: view[id].y, o: view[id].o });
-  const vbFrom = { ...vb };
-  const eFrom = {};
-  Object.keys(edgeEls).forEach(k => eFrom[k] = edgeEls[k]._o);
-  const maxDelay = Math.max(0, ...Object.values(view).map(v => v.delay || 0));
-  const total = duration + maxDelay;
   const t0 = performance.now();
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const maxDelay = Math.max(...Object.values(view).map(v => v.delay));
   if (anim) cancelAnimationFrame(anim);
 
-  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-  function frame(now) {
+  (function frame(now) {
     const el_ = now - t0;
     for (const id in view) {
-      const v = view[id], f = from[id], tg = targets[id];
-      if (!tg || !f) continue;
-      const k = duration ? ease(Math.min(1, Math.max(0, (el_ - (v.delay || 0)) / duration))) : 1;
-      v.x = f.x + (tg.x - f.x) * k;
-      v.y = f.y + (tg.y - f.y) * k;
-      v.o = f.o + (tg.o - f.o) * k;
+      const v = view[id];
+      const k = D ? ease(Math.min(1, Math.max(0, (el_ - v.delay) / D))) : 1;
+      v.x = v.tx * k; v.y = v.ty * k; v.o = k;
       v.el.setAttribute("transform", `translate(${v.x},${v.y})`);
       v.el.style.opacity = v.o;
     }
-    const kAll = total ? ease(Math.min(1, el_ / total)) : 1;
-    for (const key in edgeEls) {
-      const p = edgeEls[key], a = view[p.dataset.from], b = view[p.dataset.to];
-      if (!a || !b) continue;
-      p.setAttribute("d", curve(a, b, p.classList.contains("cross") ? "cross" : "tree"));
-      // edges fade in at the end of the move, fade out at the start
-      const target = p._target;
-      const ke = target ? Math.max(0, (kAll - .6) / .4) : Math.min(1, kAll / .4);
-      p._o = (eFrom[key] ?? 0) + (target - (eFrom[key] ?? 0)) * ke;
-      p.style.opacity = p._o;
-    }
-    vb.x = vbFrom.x + (box.x - vbFrom.x) * kAll;
-    vb.y = vbFrom.y + (box.y - vbFrom.y) * kAll;
-    vb.w = vbFrom.w + (box.w - vbFrom.w) * kAll;
-    vb.h = vbFrom.h + (box.h - vbFrom.h) * kAll;
-    map.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+    drawEdges();
+    const done = !D || el_ > D + maxDelay;
+    map.classList.toggle("settled", done);
+    if (!done) anim = requestAnimationFrame(frame);
+    else anim = null;
+  })(t0);
+}
 
-    if (el_ < total) { anim = requestAnimationFrame(frame); return; }
-
-    // tidy up
-    for (const id in view) {
-      view[id].delay = 0;
-      if (targets[id] && targets[id].remove) { view[id].el.remove(); delete view[id]; }
-    }
-    for (const key in edgeEls) if (!edgeEls[key]._target) { edgeEls[key].remove(); delete edgeEls[key]; }
-    anim = null;
+function drawEdges() {
+  for (const key in edgeEls) {
+    const p = edgeEls[key], a = view[p.dataset.from], b = view[p.dataset.to];
+    if (!a || !b) continue;
+    p.setAttribute("d", curve(a, b, p.getAttribute("class").includes("cross") ? "cross" : "tree"));
+    p.style.opacity = Math.min(a.o, b.o);
   }
-  anim = requestAnimationFrame(frame);
 }
 
-function hot(id, on) {
-  map.querySelectorAll(`.edge[data-from="${id}"], .edge[data-to="${id}"]`)
-     .forEach(p => p.classList.toggle("hot", on));
+// ---------------------------------------------------------------------
+// HOVER: light up a node's path to the centre and its threads
+// ---------------------------------------------------------------------
+function focus(id, on) {
+  map.querySelectorAll(".lit, .hot").forEach(x => x.classList.remove("lit", "hot"));
+  map.classList.toggle("focus", on && id !== "centre");
+  if (!on || id === "centre") return;
+
+  // the hovered node and everything below it...
+  const below = new Set([id]);
+  (function down(x) { (x.children || x.models || []).forEach(c => { below.add(c.id); down(c); }); })(byId[id]);
+  // ...plus its path back to the centre
+  const lit = new Set(below);
+  let n = byId[id];
+  while (n && n.parent) { lit.add(n.parent); n = byId[n.parent]; }
+
+  Object.values(edgeEls).forEach(p => {
+    const f = p.dataset.from, t = p.dataset.to;
+    if (p.getAttribute("class").includes("cross")) {
+      // threads across the halves that start or end at the hovered part
+      if (below.has(f) || below.has(t)) { p.classList.add("hot"); lit.add(f); lit.add(t); }
+    } else if (lit.has(f) && lit.has(t)) {
+      p.classList.add("hot");
+    }
+  });
+  lit.forEach(x => view[x] && view[x].el.classList.add("lit"));
 }
+
+// ---------------------------------------------------------------------
+// ZOOM AND PAN: wheel to zoom, drag to move, buttons in the corner
+// ---------------------------------------------------------------------
+function setVB() { map.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`); }
+
+function toMap(cx, cy) {                    // screen pixel → map units
+  const pt = map.createSVGPoint(); pt.x = cx; pt.y = cy;
+  return pt.matrixTransform(map.getScreenCTM().inverse());
+}
+
+function zoomAt(cx, cy, factor) {
+  const p = toMap(cx, cy);
+  const w = Math.min(home.w * 1.5, Math.max(home.w / 6, vb.w * factor));
+  const k = w / vb.w;
+  vb = { x: p.x - (p.x - vb.x) * k, y: p.y - (p.y - vb.y) * k, w: vb.w * k, h: vb.h * k };
+  setVB();
+}
+
+let flight = null;
+function flyTo(box, ms = 600) {
+  if (!box) return;
+  const from = { ...vb }, t0 = performance.now();
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  if (flight) cancelAnimationFrame(flight);
+  (function f(now) {
+    const k = ease(Math.min(1, (now - t0) / ms));
+    for (const key of ["x", "y", "w", "h"]) vb[key] = from[key] + (box[key] - from[key]) * k;
+    setVB();
+    if (k < 1) flight = requestAnimationFrame(f);
+  })(t0);
+}
+
+map.addEventListener("wheel", e => {
+  if (!mapOpen) return;
+  e.preventDefault();
+  zoomAt(e.clientX, e.clientY, Math.exp(e.deltaY * 0.0015));
+}, { passive: false });
+
+let drag = null, dragged = false;
+map.addEventListener("pointerdown", e => {
+  if (!mapOpen) return;
+  drag = { x: e.clientX, y: e.clientY, vb: { ...vb } };
+  dragged = false;
+});
+window.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (Math.hypot(dx, dy) > 4) { dragged = true; map.classList.add("dragging"); }
+  if (!dragged) return;
+  const ctm = map.getScreenCTM();
+  vb = { ...drag.vb, x: drag.vb.x - dx / ctm.a, y: drag.vb.y - dy / ctm.d };
+  setVB();
+});
+window.addEventListener("pointerup", () => {
+  drag = null;
+  map.classList.remove("dragging");
+  setTimeout(() => dragged = false, 0);
+});
+
+document.getElementById("zoom-in").onclick  = () => zoomAt(innerWidth / 2, innerHeight / 2, 0.75);
+document.getElementById("zoom-out").onclick = () => zoomAt(innerWidth / 2, innerHeight / 2, 1.33);
+document.getElementById("zoom-fit").onclick = () => flyTo(home);
 
 // ---------------------------------------------------------------------
 // CLICKS
@@ -359,30 +491,28 @@ function hot(id, on) {
 function onNodeClick(id) {
   const n = byId[id];
   if (n.type === "centre") return closeMap();
-  if (n.type === "hub") return;
   if (n.type === "project") return go(`#/p/${id}`);
+  if (n.type === "model") return go(`#/p/${n.project.id}`);
   if (n.type === "leaf") return go(`#/t/${id}`);
-
-  // branch: open it, and fold away its siblings so the map stays readable
-  if (expanded.has(id)) {
-    collapse(id);
-  } else {
-    n.siblings.forEach(s => { if (s.id !== id) collapse(s.id); });
-    expanded.add(id);
-  }
-  relayout(700);
+  zoomToBranch(id);
 }
 
-function collapse(id) {
-  expanded.delete(id);
-  (byId[id].children || []).forEach(c => collapse(c.id));
+// zoom so a branch and everything under it fills the screen
+function zoomToBranch(id) {
+  const ids = [id];
+  (function down(x) { (x.children || []).forEach(c => { ids.push(c.id); down(c); }); })(byId[id]);
+  const xs = ids.map(i => view[i].tx), ys = ids.map(i => view[i].ty);
+  const pad = 260;
+  let box = { x: Math.min(...xs, 0) - pad, y: Math.min(...ys) - 80, w: 0, h: 0 };
+  box.w = Math.max(...xs, 0) + 120 - box.x;
+  box.h = Math.max(...ys) + 80 - box.y;
+  // keep the screen's shape
+  const aspect = innerWidth / innerHeight;
+  if (box.w / box.h < aspect) { const w = box.h * aspect; box.x -= (w - box.w) / 2; box.w = w; }
+  else { const h = box.w / aspect; box.y -= (h - box.h) / 2; box.h = h; }
+  flyTo(box);
 }
 
-// make sure a topic is visible on the map (used when arriving by link)
-function reveal(id) {
-  let p = byId[id] && byId[id].parent;
-  while (p && p !== "centre") { expanded.add(p); p = byId[p].parent; }
-}
 
 // ---------------------------------------------------------------------
 // ROUTER: #/t/<topic>  #/p/<project>  (empty = map)
@@ -402,7 +532,6 @@ async function route() {
 
   if (!mapOpen) {                     // arrived straight from a link: skip the intro
     Orb.hideNow();
-    if (kind === "t") reveal(id);
     openMap(false);
   }
 
@@ -453,18 +582,18 @@ async function showTopic(id) {
     }
   }
 
-  // footer: projects that use this topic, and previous / next topic
-  const used = data.projects.filter(p => (p.uses || []).includes(id));
+  // footer: projects that use this topic, and previous / next in the reading order
+  const used = data.projects.filter(p => (p.uses || []).includes(id) || (p.models || []).some(m => m.topic === id));
   let foot = "";
   if (used.length) {
     foot += `<h3>Used in my projects</h3>` +
       used.map(p => `<a class="chip" href="#/p/${p.id}">${p.label} →</a>`).join("");
   }
-  const sib = n.siblings, i = sib.indexOf(n);
-  const prev = sib[i - 1], next = sib[i + 1];
+  const path = order.filter(o => !o.soon || o.id === id), i = path.indexOf(n);
+  const prev = path[i - 1], next = path[i + 1];
   foot += `<nav class="pager">
-      ${prev && !prev.children ? `<a href="#/t/${prev.id}">← ${prev.label}</a>` : "<span></span>"}
-      ${next && !next.children ? `<a href="#/t/${next.id}">${next.label} →</a>` : "<span></span>"}
+      ${prev ? `<a href="#/t/${prev.id}">← ${prev.num}. ${prev.label}</a>` : "<span></span>"}
+      ${next ? `<a href="#/t/${next.id}">${next.num}. ${next.label} →</a>` : "<span></span>"}
     </nav>`;
 
   paper.innerHTML = body + `<footer class="chapter-foot">${foot}</footer>`;

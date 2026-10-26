@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="579.6pt" height="292.501969pt" viewBox="0 0 579.6 292.501969" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-26T16:19:29.522182</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 292.501969 
+L 579.6 292.501969 
+L 579.6 0 
+L 0 0 
+L 0 292.501969 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 208.246154 87.936311 
+L 371.353846 87.936311 
+Q 377.792308 87.936311 377.792308 81.626439 
+L 377.792308 40.086447 
+Q 377.792308 33.776575 371.353846 33.776575 
+L 208.246154 33.776575 
+Q 201.807692 33.776575 201.807692 40.086447 
+L 201.807692 81.626439 
+Q 201.807692 87.936311 208.246154 87.936311 
+z
+" clip-path="url(#p67e945f79d)" style="fill: #f3e3b0; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 52.65 172.06794 
+L 205.026923 172.06794 
+Q 211.465385 172.06794 211.465385 165.758068 
+L 211.465385 124.218076 
+Q 211.465385 117.908204 205.026923 117.908204 
+L 52.65 117.908204 
+Q 46.211538 117.908204 46.211538 124.218076 
+L 46.211538 165.758068 
+Q 46.211538 172.06794 52.65 172.06794 
+z
+" clip-path="url(#p67e945f79d)" style="fill: #f3e3b0; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 374.573077 172.06794 
+L 526.95 172.06794 
+Q 533.388462 172.06794 533.388462 165.758068 
+L 533.388462 124.218076 
+Q 533.388462 117.908204 526.95 117.908204 
+L 374.573077 117.908204 
+Q 368.134615 117.908204 368.134615 124.218076 
+L 368.134615 165.758068 
+Q 368.134615 172.06794 374.573077 172.06794 
+z
+" clip-path="url(#p67e945f79d)" style="fill: #f3e3b0; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 33.871154 235.166662 
+L 95.036538 235.166662 
+Q 101.475 235.166662 101.475 228.856789 
+L 101.475 208.349705 
+Q 101.475 202.039833 95.036538 202.039833 
+L 33.871154 202.039833 
+Q 27.432692 202.039833 27.432692 208.349705 
+L 27.432692 228.856789 
+Q 27.432692 235.166662 33.871154 235.166662 
+z
+" clip-path="url(#p67e945f79d)" style="fill: #bfe3dd; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 162.640385 235.166662 
+L 223.805769 235.166662 
+Q 230.244231 235.166662 230.244231 228.856789 
+L 230.244231 208.349705 
+Q 230.244231 202.039833 223.805769 202.039833 
+L 162.640385 202.039833 
+Q 156.201923 202.039833 156.201923 208.349705 
+L 156.201923 228.856789 
+Q 156.201923 235.166662 162.640385 235.166662 
+z
+" clip-path="url(#p67e945f79d)" style="fill: #ecc4cf; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 355.794231 235.166662 
+L 416.959615 235.166662 
+Q 423.398077 235.166662 423.398077 228.856789 
+L 423.398077 208.349705 
+Q 423.398077 202.039833 416.959615 202.039833 
+L 355.794231 202.039833 
+Q 349.355769 202.039833 349.355769 208.349705 
+L 349.355769 228.856789 
+Q 349.355769 235.166662 355.794231 235.166662 
+z
+" clip-path="url(#p67e945f79d)" style="fill: #bfe3dd; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 484.563462 235.166662 
+L 545.728846 235.166662 
+Q 552.167308 235.166662 552.167308 228.856789 
+L 552.167308 208.349705 
+Q 552.167308 202.039833 545.728846 202.039833 
+L 484.563462 202.039833 
+Q 478.125 202.039833 478.125 208.349705 
+L 478.125 228.856789 
+Q 478.125 235.166662 484.563462 235.166662 
+z
+" clip-path="url(#p67e945f79d)" style="fill: #e6dfcc; stroke: #22223a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(275.266484 51.921619)">ROOT</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(220.394336 63.324216)">drawn this time: {Whiskers}</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(248.141016 74.726814)">split on Whiskers</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(113.51229 136.053248)">NODE</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(71.768696 147.455845)">new draw: {Ear shape}</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(85.214165 158.858443)">split on Ear shape</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(435.435367 136.053248)">NODE</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(390.984273 147.455845)">new draw: {Face shape}</text>
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(404.429742 158.858443)">split on Face shape</text>
+   </g>
+   <g id="patch_9">
+    <path d="M 255.694407 87.739705 
+Q 206.633847 102.92309 158.961758 117.676768 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 164.256738 118.550372 
+L 158.961758 117.676768 
+L 162.837629 113.964946 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="text_4">
+    <text style="font-style: italic; font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #6f6c80" x="198.588462" y="97.664031" transform="rotate(-0 198.588462 97.664031)">present</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 323.905593 87.739705 
+Q 372.966153 102.92309 420.638242 117.676768 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 416.762371 113.964946 
+L 420.638242 117.676768 
+L 415.343262 118.550372 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="text_5">
+    <text style="font-style: italic; font-size: 9px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="381.011538" y="97.664031" transform="rotate(-0 381.011538 97.664031)">absent</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="64.453846" y="221.201294" transform="rotate(-0 64.453846 221.201294)">leaf</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="193.223077" y="221.201294" transform="rotate(-0 193.223077 221.201294)">leaf</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="386.376923" y="221.201294" transform="rotate(-0 386.376923 221.201294)">leaf</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="515.146154" y="221.200903" transform="rotate(-0 515.146154 221.200903)">...</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 111.152079 171.435374 
+Q 91.281585 186.527444 72.4795 200.808034 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 77.75358 199.816024 
+L 72.4795 200.808034 
+L 74.850339 195.993564 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 146.524844 171.435374 
+Q 166.395338 186.527444 185.197423 200.808034 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 182.826584 195.993564 
+L 185.197423 200.808034 
+L 179.923343 199.816024 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 433.075156 171.435374 
+Q 413.204662 186.527444 394.402577 200.808034 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 399.676657 199.816024 
+L 394.402577 200.808034 
+L 396.773416 195.993564 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 468.447921 171.435374 
+Q 488.318415 186.527444 507.1205 200.808034 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 504.749661 195.993564 
+L 507.1205 200.808034 
+L 501.84642 199.816024 
+z
+" style="fill: #6f6c80; stroke: #6f6c80; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(40.7 254.636628)">Each gold box = one split. Before EVERY split, the forest draws a fresh random subset of features</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(55.960938 266.639362)">(size max_features) and picks the best split among those only. The root is just the first draw.</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="289.8" y="20.677969" transform="rotate(-0 289.8 20.677969)">One tree in a random forest (illustration, max_features = 1)</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p67e945f79d">
+   <rect x="10.8" y="26.677969" width="558" height="255.024"/>
+  </clipPath>
+ </defs>
+</svg>

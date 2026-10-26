@@ -23,7 +23,15 @@
 
   <!-- 2. THE MIND MAP (drawn by script.js) -->
   <svg id="map" preserveAspectRatio="xMidYMid meet"></svg>
-  <p id="map-hint">Click a gold branch to open it · click a topic to read it · click the centre sphere to go back</p>
+  <p id="map-hint">Notes on the left, projects on the right · hover to see what connects · scroll to zoom, drag to move · click the centre sphere to go back</p>
+  <div id="zoom" aria-label="Zoom">
+    <button id="zoom-in" type="button" title="Zoom in">+</button>
+    <button id="zoom-out" type="button" title="Zoom out">−</button>
+    <button id="zoom-fit" type="button" title="Show everything">⤢</button>
+  </div>
+
+  <!-- 2b. PHONE VIEW: the same map as a numbered list (small screens only) -->
+  <nav id="index" aria-label="Contents"></nav>
 
   <!-- 3. THE READER (full-screen chapter or project page) -->
   <section id="reader" aria-hidden="true">

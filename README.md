@@ -1,6 +1,6 @@
 # jag5m33.github.io
 
-My portfolio and study notes: a rotating sphere of dots that bursts open into a mind map. Topics on the left, my GitHub projects on the right, dashed lines showing which methods each project uses.
+My portfolio and study notes: a rotating sphere of dots that bursts open into a spider-web map. My notes fan out across the left half, numbered in reading order; my projects and the models inside them fan out across the right half. Dashed threads join each project and model to the notes it uses (hover to light them up). On phones the map becomes a numbered list.
 
 Live at **https://jag5m33.github.io**
 
@@ -25,6 +25,8 @@ Live at **https://jag5m33.github.io**
 2. Write `notes/kmeans.md`.
 3. Push.
 
+The numbers on the map are worked out automatically from the order in `data.json`, so put a topic where it belongs in the learning sequence and everything after it renumbers itself. The "previous / next" links at the bottom of each chapter follow the same order.
+
 ## Writing a chapter
 
 - `# Title`, then one sentence summary underneath.
@@ -36,7 +38,16 @@ Live at **https://jag5m33.github.io**
 
 ## Adding a project
 
-Add an entry to `projects` in `data.json`: `repo` (owner/name), `code` (file paths to show), `uses` (topic ids, which draws the dashed links), `metrics` and `results` (image URLs).
+Add an entry to `projects` in `data.json`:
+
+- `repo` (owner/name) and `code` (file paths to show in the Code tab)
+- `models`: the models inside the project, drawn as branches on the right half, e.g.
+  `{ "id": "legal-nb", "label": "Complement Naive Bayes", "topic": "naivebayes", "status": "in progress" }`.
+  `topic` draws a thread to that chapter; `status` is optional and shows the model as dashed until it's done.
+- `uses`: other topic ids the project relies on (EDA, cleaning…), drawn as threads from the project
+- `metrics` and `results` (image URLs) for the Results tab
+
+To change the shape of the web, edit the layout settings at the top of `script.js` (`LEFT_SPAN`, `RING`, `LEAF_R`, `SQUASH`…).
 
 ## Redrawing a figure
 
