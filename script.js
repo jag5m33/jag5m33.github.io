@@ -43,7 +43,7 @@ let mapOpen = false;
 // ---------------------------------------------------------------------
 // LOAD
 // ---------------------------------------------------------------------
-const ready = fetch("data.json").then(r => r.json()).then(d => {
+const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
   data = d;
   byId.centre = { id: "centre", label: "Jag Sandhu", type: "centre", depth: 0 };
 
@@ -572,7 +572,7 @@ async function showTopic(id) {
     paper.innerHTML = `<p class="muted">Loading…</p>`;
     try {
       if (!noteCache[id]) {
-        const r = await fetch(`notes/${id}.md`);
+        const r = await fetch(`notes/${id}.md`, { cache: "no-cache" });
         if (!r.ok) throw new Error(r.status);
         noteCache[id] = await r.text();
       }
