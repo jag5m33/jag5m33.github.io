@@ -1,177 +1,189 @@
 # Regression metrics
 
-Regression metrics turn a list of prediction errors into one number, and each metric answers a slightly different question about how wrong the model is.
+Regression metrics turn a list of prediction errors into one number, and each one answers a slightly different question about how wrong a model that predicts numbers is.
 
-## The running example
+## The running example: six house prices
 
 Let's say a model has predicted the prices of six houses (in £k):
 
-| House | Actual y | Predicted ŷ | Error e = y − ŷ | e² | abs(e) |
+| House | Actual y | Predicted ŷ | Error y − ŷ | Error² | Size of error |
 |---|---|---|---|---|---|
 | 1 | 200 | 210 | −10 | 100 | 10 |
 | 2 | 250 | 240 | 10 | 100 | 10 |
 | 3 | 310 | 330 | −20 | 400 | 20 |
 | 4 | 180 | 170 | 10 | 100 | 10 |
-| 5 | 420 | 380 | 40 | 1600 | 40 |
+| 5 | 420 | 380 | 40 | 1,600 | 40 |
 | 6 | 300 | 310 | −10 | 100 | 10 |
-| **Sum** | | | **10** | **2400** | **100** |
+| **Sum** | | | **10** | **2,400** | **100** |
 
-- **Error** (or **residual**): how far off one prediction is.
-- $n$: the number of predictions. Here $n = 6$.
+- **Error** (also called the **residual**): actual minus predicted, for one house.
+- $n$: the number of predictions, here 6.
 
-The plain errors add up to only 10, because positives and negatives cancel. That's why every metric first squares the errors or drops their sign.
+The plain errors add up to only 10 because positives and negatives cancel. That's why every metric first **squares** the errors or **drops their sign**.
 
-## 1. MSE: mean squared error
+> **Key idea:** most regression metrics don't care which model made the predictions. [Linear regression](#/t/linreg), a [decision tree](#/t/trees) regressor, a [random forest](#/t/randomforest) or [XGBoost](#/t/xgboost) regressor can all be scored with every metric below. What changes the choice is **which errors hurt**.
+
+## MSE: mean squared error
+
+> **What you need to know**
+> - **In plain words:** the average of the squared errors
+> - **In context:** 2,400 / 6 = **400** (£k²)
+> - **Best with:** any regressor; it's what linear regression **minimises** while training
+> - **Use it when:** training and comparing models; rarely for reporting, because the units are squared
+> - **Watch out:** £k² means nothing to a manager; take the square root (RMSE) before you report
 
 $$
-\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2
+\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2
 $$
 
-- **In words:** the average of the squared errors.
-- **Example:** 2400 / 6 = **400**.
-- **Units:** squared (£k²), which is hard to read. MSE is for training and comparing models, not for reporting.
-- Big errors count much more: house 5 alone gives 1600 of the 2400.
+$y_i$ is the actual value, $\hat{y}_i$ the prediction, and the sum runs over all $n$ rows. House 5 alone gives 1,600 of the 2,400: squaring makes big misses count much more.
 
-> **Key idea:** the linear regression cost $J$ is just MSE divided by 2 (see [Linear regression](#/t/linreg)). Minimising one minimises the other.
+Andrew Ng's cost $J$ is MSE with $\frac{1}{2m}$ in front instead of $\frac{1}{n}$; the ½ only tidies the gradient-descent maths and doesn't change which model is best.
 
-## 2. RMSE: root mean squared error
+## RMSE: root mean squared error
+
+> **What you need to know**
+> - **In plain words:** the square root of MSE, so it's back in the units of y: "a typical miss"
+> - **In context:** $\sqrt{400}$ = **20**, so a typical prediction is off by about **£20k**
+> - **Best with:** any regressor; the usual headline score for linear regression and for tree/forest/XGBoost regressors
+> - **Use it when:** big errors are much worse than small ones: under-forecasting peak electricity demand, under-stocking before Christmas, a house valuation that's off by £150k
+> - **Watch out:** one bad outlier can dominate it (see below)
 
 $$
 \text{RMSE} = \sqrt{\text{MSE}}
 $$
 
-- **In words:** the square root of MSE, which puts it back into the original units.
-- **Example:** $\sqrt{400}$ = **20**, i.e. **£20k**.
-- **Say it like this:** "A typical prediction is off by about £20k, with big misses weighted more."
+## MAE: mean absolute error
 
-## 3. MAE: mean absolute error
+> **What you need to know**
+> - **In plain words:** the average size of a miss, ignoring whether it was too high or too low
+> - **In context:** 100 / 6 = **16.7**, so a typical miss of about **£16.7k**
+> - **Best with:** any regressor
+> - **Use it when:** outliers are noise you don't want to chase (a typo'd sale price), or every £ of error costs the same (delivery-time estimates)
+> - **Watch out:** it treats one £40k miss the same as four £10k misses; if big misses are much worse, use RMSE
 
 $$
-\text{MAE} = \frac{1}{n}\sum_{i=1}^{n}\left\lvert y_i - \hat{y}_i\right\rvert
+\text{MAE} = \frac{1}{n}\sum_{i=1}^{n}\lvert y_i - \hat{y}_i \rvert
 $$
 
-- **In words:** the average size of a miss, ignoring its direction.
-- **Example:** 100 / 6 = **16.67**, i.e. about **£16.7k**.
-- Every pound of error counts the same, so MAE is **less affected by outliers** than RMSE.
+The bars $\lvert\ \rvert$ mean "drop the minus sign".
 
-## 4. RMSE vs MAE when an outlier appears
+### RMSE vs MAE when one house goes badly wrong
 
-Now say house 5 is badly predicted at 220 instead of 380 (an error of 200):
+Now say house 5 is predicted at 220 instead of 380 (a miss of 200):
 
-| | Original | House 5 badly wrong |
-|---|---|---|
-| MAE | 16.7 | 43.3 |
-| RMSE | 20.0 | 82.5 |
-
-MAE grew 2.6 times; RMSE grew 4.1 times. Squaring blows up the one big miss.
+| | Original | House 5 badly wrong | Grew by |
+|---|---|---|---|
+| MAE | 16.7 | 43.3 | 2.6 times |
+| RMSE | 20.0 | 82.5 | 4.1 times |
 
 ![Each house's share of the total error. Left: original predictions; house 5 already dominates MSE (red bars) more than MAE (teal bars). Right: with house 5 badly wrong, it supplies 98% of the MSE but a smaller share of the MAE.](figures/regmetrics-outlier.svg)
 
-In the figure, look at house 5's red bar on the right: under MSE one bad prediction becomes almost the whole score.
+In the figure, look at house 5's red bar on the right: under squared error one bad prediction becomes almost the whole score.
 
-**Which to use:**
+> **Say it like this:** "I report both. If RMSE is much bigger than MAE, a few big misses are hiding in there."
 
-- Big errors are especially bad (e.g. under-forecasting peak electricity demand) → **RMSE**.
-- Every unit of error costs the same, or there are outliers → **MAE**.
-- Report both. If RMSE is much bigger than MAE, there are a few big misses.
+## R²: how much better than guessing the mean?
 
-## 5. R²: how much better than guessing the mean?
-
-R² compares your model with the laziest possible model: **always predict the average price**.
+> **What you need to know**
+> - **In plain words:** the share of the variation in y that the model explains, compared with a lazy model that always predicts the **average**
+> - **In context:** the mean price is £276.7k; always predicting it gives squared errors totalling 38,133; our model's total is 2,400; so R² = 1 − 2,400 / 38,133 = **0.937**
+> - **Best with:** any regressor; it's what `.score()` returns for every sklearn regressor; most often quoted for linear regression
+> - **Use it when:** explaining a model to non-specialists ("explains 94% of the variation"); comparing models **on the same data**
+> - **Watch out:** it is **not** "94% accurate"; and it always rises on training data when you add features, even useless ones
+>
+> **Skip:** the "sum of squares" names beyond the two totals below
 
 $$
 R^2 = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
 $$
 
-- $SS_{\text{res}}$: the sum of squared errors of **your model** = 2400.
-- $SS_{\text{tot}}$: the sum of squared errors of the **"always predict the mean"** model. The mean price is 276.67, and this comes to 38,133.
+$SS_{\text{res}}$ is the sum of squared errors of **your model** (2,400). $SS_{\text{tot}}$ is the sum of squared errors of the **"always predict the mean"** model (38,133).
 
-**Example:** $R^2 = 1 - 2400 / 38133 = $ **0.937**.
+![Left: the gold lines are the misses of a model that always predicts the mean price; their squares add to 38,133. Right: the teal lines are your model's misses; their squares add to 2,400. R² is how much of the left-hand total the model removed.](figures/regmetrics-r2.svg)
 
-![Left: the gold vertical lines are the misses of a model that always predicts the mean price; their squares add to SS_tot = 38,133. Right: the teal lines are the misses of your model; their squares add to SS_res = 2,400. R² is how much of the left-hand total the model removed.](figures/regmetrics-r2.svg)
-
-In the figure, the gold misses on the left are long and the teal misses on the right are short. The model removed about 94% of the squared miss.
-
-> **Say it like this:** "The model explains about 94% of the variation in house prices." It does **not** mean "94% accurate".
+In the figure, the gold misses on the left are long and the teal ones on the right are short: the model removed about 94% of the squared miss.
 
 | R² | Meaning |
 |---|---|
-| 1 | Perfect predictions |
-| 0 | No better than always predicting the mean |
-| Below 0 | Worse than predicting the mean (possible on test data) |
+| 1 | perfect predictions |
+| 0 | no better than always predicting the mean (the **baseline**) |
+| below 0 | worse than the mean: a model predicting 400 for every house scores −2.39 |
 
-**Traps:**
+## Adjusted R²: the noise tax
 
-- R² **always goes up** on training data when you add features, even pure noise.
-- R² can be **negative** on test data. A broken model predicting 400 for every house scores −2.39. That means "throw it away", not a bug.
-- Only compare R² between models on the **same** data.
+> **What you need to know**
+> - **In plain words:** R² with a small penalty for every feature you add
+> - **In context:** our R² of 0.937 on 6 houses becomes 0.921 if the model used 1 feature, 0.895 with 2 and 0.843 with 3
+> - **Best with:** linear regression with several features
+> - **Use it when:** deciding whether an extra feature is worth keeping
+> - **Watch out:** it's a training-data check; validation scores are still the real test
+>
+> **Skip:** the formula
 
-## 6. Adjusted R²: the noise tax
+From Jag's statistics notes: **"Plain r² asks 'how well did I fit?' Adjusted r² asks 'how well did I fit, given how many chances I gave myself?'"** A junk feature nudges R² up by luck, and the penalty cancels it; a useful feature beats the penalty.
 
-$$
-R^2_{\text{adj}} = 1 - (1 - R^2)\frac{n - 1}{n - p - 1}
-$$
+![50 rows with one real feature, then pure-noise columns added one at a time. Plain R² (red) climbs steadily on nothing but noise. Adjusted R² (teal) stays around its starting value.](figures/regmetrics-adjr2.svg)
 
-- $n$: number of rows. $p$: number of features.
-- It charges a small "tax" for every feature you add.
+In the figure, the rising red line is an illusion; the flat teal line is the honest verdict that nothing useful was added. More in [Correlation](#/t/correlation).
 
-From Jag's statistics notes:
+## MAPE: mean absolute percentage error
 
-> **Plain r² asks "how well did I fit?" Adjusted r² asks "how well did I fit, given how many chances I gave myself?"**
+> **What you need to know**
+> - **In plain words:** the average miss as a percentage of the true value
+> - **In context:** the six misses are 5.0%, 4.0%, 6.5%, 5.6%, 9.5% and 3.3% of the true prices; their average is **5.6%**
+> - **Best with:** any regressor
+> - **Use it when:** talking to stakeholders ("off by about 6% on average"); comparing across scales (cheap and expensive products)
+> - **Watch out:** it **breaks when y is zero or near zero** (you divide by y); sklearn returns 0.056, not 5.6, so multiply by 100
+>
+> **Skip:** the formula
 
-- A **junk** feature raises plain R² a little by luck; the tax cancels it, so adjusted R² stays flat or drops.
-- A **useful** feature raises R² by much more than the tax, so adjusted R² still goes up.
+## Which one?
 
-**Example:** our R² of 0.937 with $n = 6$ gives an adjusted R² of 0.921 if it used 1 feature, 0.895 with 2 features, and 0.843 with 3.
+| Situation | Use | Why |
+|---|---|---|
+| Report a typical miss in real units | RMSE or MAE | same units as y |
+| Big misses are much worse (peak demand, stock-outs) | **RMSE** | squaring punishes big misses |
+| Outliers are noise; every £ costs the same | **MAE** | each unit of error counts once |
+| Explain to non-specialists how much it captures | **R²** | 0 = mean baseline, 1 = perfect |
+| Is this extra feature worth it? | adjusted R² (and validation RMSE) | penalises useless features |
+| Percentages for a business audience, y never near 0 | MAPE | easy to read |
+| Training a linear regression | MSE | it's the cost being minimised |
 
-![50 rows with one real feature, then pure-noise columns added one at a time. Plain R² (red) climbs steadily from 0.58 to 0.74 on nothing but noise. Adjusted R² (teal) wanders around its starting value and ends lower than it began.](figures/regmetrics-adjr2.svg)
+> **Trap:** one number hides **where** the errors are. Always plot the residuals too ([Linear regression](#/t/linreg) shows what good and bad patterns look like).
 
-In the figure, the red line rising is an illusion; the flat teal line is the honest verdict that nothing useful was added.
-
-## 7. MAPE: mean absolute percentage error
-
-- **In words:** the average miss as a percentage of the true value.
-- **Example:** the six % misses are 5.00, 4.00, 6.45, 5.56, 9.52, 3.33, which average to **5.64%**.
-- Easy for stakeholders, but it **breaks when y is zero or close to zero** (you divide by y).
-- sklearn's `mean_absolute_percentage_error` returns 0.0564, not 5.64. Multiply by 100.
-
-## 8. Always look at the residuals
-
-One number hides **where** the errors are.
-
-![Simulated 80 houses. Left: predicted vs actual; a good model's points hug the dashed diagonal. Right: residuals against the prediction; a shapeless band around zero, mostly inside ±1 RMSE (shaded), is what you want.](figures/regmetrics-residuals.svg)
-
-In the figure, the right panel shows no pattern, which is good. A curve or a funnel shape would mean the model is missing something (examples in [Linear regression](#/t/linreg)).
-
-## 9. Code
+## Code
 
 ```python
 import numpy as np
-from sklearn.metrics import (mean_squared_error, mean_absolute_error,
-                             r2_score, mean_absolute_percentage_error)
+from sklearn.metrics import (mean_squared_error, root_mean_squared_error,
+                             mean_absolute_error, r2_score)
 
-y_true = np.array([200, 250, 310, 180, 420, 300])   # actual prices (GBP k)
-y_pred = np.array([210, 240, 330, 170, 380, 310])   # predictions
+y_true = np.array([200, 250, 310, 180, 420, 300])   # actual prices (£k)
+y_pred = np.array([210, 240, 330, 170, 380, 310])   # model's predictions
 
-mse  = mean_squared_error(y_true, y_pred)            # 400.0
-rmse = np.sqrt(mse)                                  # 20.0, back in GBP k
-mae  = mean_absolute_error(y_true, y_pred)           # 16.67
-r2   = r2_score(y_true, y_pred)                      # 0.937
-mape = mean_absolute_percentage_error(y_true, y_pred) * 100   # 5.64 (%)
-
-n, p = len(y_true), 1                                # rows, features
-adj_r2 = 1 - (1 - r2) * (n - 1) / (n - p - 1)        # 0.921 (no sklearn function)
+print(mean_squared_error(y_true, y_pred))         # MSE  = 400.0
+print(root_mean_squared_error(y_true, y_pred))    # RMSE = 20.0, in £k
+print(mean_absolute_error(y_true, y_pred))        # MAE  = 16.67
+print(r2_score(y_true, y_pred))                   # R²   = 0.937
 ```
 
-> **Trap:** old tutorials write `mean_squared_error(..., squared=False)` for RMSE. That option has been removed from recent sklearn. Use `np.sqrt(...)` or `root_mean_squared_error`.
+> **Trap:** old tutorials write `mean_squared_error(..., squared=False)` for RMSE. That option has been removed from recent sklearn; use `root_mean_squared_error` or `np.sqrt(...)`.
+
+## Interview one-liners
+
+- **RMSE vs MAE?** "RMSE punishes big misses more because it squares them; MAE treats every unit of error the same, so it's less affected by outliers."
+- **What does R² of 0.94 mean?** "The model explains about 94% of the variation in y compared with always predicting the mean. Not 94% accuracy."
+- **Can R² be negative?** "Yes, on new data, if the model is worse than predicting the mean."
+- **Why adjusted R²?** "Plain R² always rises when you add features; adjusted R² only rises if the feature helps more than chance."
 
 ## Quick reference
 
 | Metric | In words | Example | Better |
 |---|---|---|---|
-| MSE | Average squared miss | 400 | Lower |
-| RMSE | Square root of MSE; typical miss in y's units | £20k | Lower |
-| MAE | Average size of a miss; robust to outliers | £16.7k | Lower |
-| R² | Share of variation explained vs predicting the mean | 0.937 | Higher (max 1) |
-| Adjusted R² | R² with a tax per feature | 0.921 | Higher |
-| MAPE | Average % miss; breaks near y = 0 | 5.64% | Lower |
+| MSE | average squared miss | 400 | lower |
+| RMSE | √MSE; typical miss in y's units | £20k | lower |
+| MAE | average size of a miss | £16.7k | lower |
+| R² | variation explained vs predicting the mean | 0.937 | higher (max 1) |
+| Adjusted R² | R² with a penalty per feature | 0.921 (1 feature) | higher |
+| MAPE | average % miss; breaks near y = 0 | 5.6% | lower |

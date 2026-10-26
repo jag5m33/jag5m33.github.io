@@ -64,7 +64,7 @@ In the figure, the two features move together, so one arrow (PC1) describes almo
 - **Algorithms always return something.** K-means gives you $k$ clusters even on random noise.
 - **Scores measure shape, not usefulness.** A score can say clusters are tight and well separated, not that they mean anything for the business.
 
-So unsupervised work is judged with its own scores (inertia, silhouette), checks that results are stable, and common sense about the domain. See [Unsupervised metrics](#/t/unsupmetrics).
+So unsupervised work is judged with its own scores (inertia, silhouette), checks that results are stable, and common sense about the domain. See [Clustering & anomaly metrics](#/t/unsupmetrics).
 
 > **Trap:** accuracy, precision and recall need true labels. They don't apply to a clustering.
 

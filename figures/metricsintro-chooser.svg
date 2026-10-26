@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="607.5pt" height="320.976pt" viewBox="0 0 607.5 320.976" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-26T18:00:24.235406</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 320.976 
+L 607.5 320.976 
+L 607.5 0 
+L 0 0 
+L 0 320.976 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 169.272 54.70848 
+L 438.228 54.70848 
+Q 444.924 54.70848 444.924 48.72096 
+L 444.924 27.76464 
+Q 444.924 21.77712 438.228 21.77712 
+L 169.272 21.77712 
+Q 162.576 21.77712 162.576 27.76464 
+L 162.576 48.72096 
+Q 162.576 54.70848 169.272 54.70848 
+z
+" clip-path="url(#p9bced8e54b)" style="fill: #f3e3b0; stroke: #6f6c80; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 21.402 117.07848 
+L 195.498 117.07848 
+Q 202.194 117.07848 202.194 111.09096 
+L 202.194 82.65024 
+Q 202.194 76.66272 195.498 76.66272 
+L 21.402 76.66272 
+Q 14.706 76.66272 14.706 82.65024 
+L 14.706 111.09096 
+Q 14.706 117.07848 21.402 117.07848 
+z
+" clip-path="url(#p9bced8e54b)" style="fill: #f3e3b0; stroke: #6f6c80; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 21.402 284.23008 
+L 195.498 284.23008 
+Q 202.194 284.23008 202.194 278.24256 
+L 202.194 132.54624 
+Q 202.194 126.55872 195.498 126.55872 
+L 21.402 126.55872 
+Q 14.706 126.55872 14.706 132.54624 
+L 14.706 278.24256 
+Q 14.706 284.23008 21.402 284.23008 
+z
+" clip-path="url(#p9bced8e54b)" style="fill: #bfe3dd; stroke: #6f6c80; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 216.702 117.07848 
+L 390.798 117.07848 
+Q 397.494 117.07848 397.494 111.09096 
+L 397.494 82.65024 
+Q 397.494 76.66272 390.798 76.66272 
+L 216.702 76.66272 
+Q 210.006 76.66272 210.006 82.65024 
+L 210.006 111.09096 
+Q 210.006 117.07848 216.702 117.07848 
+z
+" clip-path="url(#p9bced8e54b)" style="fill: #f3e3b0; stroke: #6f6c80; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 216.702 284.23008 
+L 390.798 284.23008 
+Q 397.494 284.23008 397.494 278.24256 
+L 397.494 132.54624 
+Q 397.494 126.55872 390.798 126.55872 
+L 216.702 126.55872 
+Q 210.006 126.55872 210.006 132.54624 
+L 210.006 278.24256 
+Q 210.006 284.23008 216.702 284.23008 
+z
+" clip-path="url(#p9bced8e54b)" style="fill: #bfe3dd; stroke: #6f6c80; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 412.002 117.07848 
+L 586.098 117.07848 
+Q 592.794 117.07848 592.794 111.09096 
+L 592.794 82.65024 
+Q 592.794 76.66272 586.098 76.66272 
+L 412.002 76.66272 
+Q 405.306 76.66272 405.306 82.65024 
+L 405.306 111.09096 
+Q 405.306 117.07848 412.002 117.07848 
+z
+" clip-path="url(#p9bced8e54b)" style="fill: #f3e3b0; stroke: #6f6c80; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 412.002 284.23008 
+L 586.098 284.23008 
+Q 592.794 284.23008 592.794 278.24256 
+L 592.794 132.54624 
+Q 592.794 126.55872 586.098 126.55872 
+L 412.002 126.55872 
+Q 405.306 126.55872 405.306 132.54624 
+L 405.306 278.24256 
+Q 405.306 284.23008 412.002 284.23008 
+z
+" clip-path="url(#p9bced8e54b)" style="fill: #bfe3dd; stroke: #6f6c80; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="303.75" y="41.230554" transform="rotate(-0 303.75 41.230554)">Do you have the true answers (labels)?</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(34.637461 93.297114)">Yes, predicting a number</text>
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(72.374297 105.899985)">(regression)</text>
+   </g>
+   <g id="patch_9">
+    <path d="M 301.762312 54.931922 
+Q 206.098734 65.685742 111.879503 76.2772 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 116.917562 78.125973 
+L 111.879503 76.2772 
+L 116.381357 73.356017 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 108.45 118.582182 
+Q 108.45 121.571436 108.45 123.107246 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 110.85 118.307246 
+L 108.45 123.107246 
+L 106.05 118.307246 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="27.54" y="141.999825" transform="rotate(-0 27.54 141.999825)">outliers are just noise</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="27.54" y="154.733219" transform="rotate(-0 27.54 154.733219)">→ MAE</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="27.54" y="171.937425" transform="rotate(-0 27.54 171.937425)">big misses are much worse</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="27.54" y="184.670819" transform="rotate(-0 27.54 184.670819)">→ RMSE</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="27.54" y="201.875025" transform="rotate(-0 27.54 201.875025)">how much is explained?</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="27.54" y="214.608419" transform="rotate(-0 27.54 214.608419)">→ R²</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(238.399805 93.297114)">Yes, predicting a class</text>
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(260.130703 105.899985)">(classification)</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 303.75 56.710411 
+Q 303.75 65.68554 303.75 73.207225 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 306.15 68.407225 
+L 303.75 73.207225 
+L 301.35 68.407225 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 303.75 118.582182 
+Q 303.75 121.571436 303.75 123.107246 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 306.15 118.307246 
+L 303.75 123.107246 
+L 301.35 118.307246 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="222.84" y="141.999825" transform="rotate(-0 222.84 141.999825)">balanced classes</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="222.84" y="154.733219" transform="rotate(-0 222.84 154.733219)">→ accuracy, F1</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="222.84" y="171.937425" transform="rotate(-0 222.84 171.937425)">a miss is costly</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="222.84" y="184.671229" transform="rotate(-0 222.84 184.671229)">→ recall</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="222.84" y="201.875025" transform="rotate(-0 222.84 201.875025)">a false alarm is costly</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="222.84" y="214.608829" transform="rotate(-0 222.84 214.608829)">→ precision</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="222.84" y="231.812253" transform="rotate(-0 222.84 231.812253)">rare positives</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="222.84" y="244.546019" transform="rotate(-0 222.84 244.546019)">→ PR-AUC</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="222.84" y="261.750225" transform="rotate(-0 222.84 261.750225)">many classes, all matter</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="222.84" y="274.483619" transform="rotate(-0 222.84 274.483619)">→ macro F1</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(471.564609 93.297114)">No labels</text>
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(454.886836 105.899985)">(unsupervised)</text>
+   </g>
+   <g id="patch_13">
+    <path d="M 305.737688 54.931922 
+Q 401.401266 65.685742 495.620497 76.2772 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 491.118643 73.356017 
+L 495.620497 76.2772 
+L 490.582438 78.125973 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 499.05 118.582182 
+Q 499.05 121.571436 499.05 123.107246 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 501.45 118.307246 
+L 499.05 123.107246 
+L 496.65 118.307246 
+" style="fill: none; stroke: #6f6c80; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="418.14" y="141.999825" transform="rotate(-0 418.14 141.999825)">clusters</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="418.14" y="154.733629" transform="rotate(-0 418.14 154.733629)">→ silhouette, elbow</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="418.14" y="171.937425" transform="rotate(-0 418.14 171.937425)">anomalies</text>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="418.14" y="184.671229" transform="rotate(-0 418.14 184.671229)">→ stability, sense</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 9.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #6f6c80" x="418.14" y="201.875025" transform="rotate(-0 418.14 201.875025)">a few known anomalies</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="418.14" y="214.608829" transform="rotate(-0 418.14 214.608829)">→ precision@k</text>
+   </g>
+   <g id="text_27">
+    <text style="font-style: italic; font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #8b1e3f" x="303.75" y="304.18848" transform="rotate(-0 303.75 304.18848)">Whatever you pick, compare it with a baseline: always predict the mean, or the majority class.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p9bced8e54b">
+   <rect x="10.8" y="10.8" width="585.9" height="299.376"/>
+  </clipPath>
+ </defs>
+</svg>

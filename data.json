@@ -135,10 +135,6 @@
                 {
                   "id": "linreg",
                   "label": "Linear regression"
-                },
-                {
-                  "id": "regmetrics",
-                  "label": "Regression metrics"
                 }
               ]
             },
@@ -157,10 +153,6 @@
                 {
                   "id": "naivebayes",
                   "label": "Naive Bayes"
-                },
-                {
-                  "id": "clsmetrics",
-                  "label": "Classification metrics"
                 }
               ]
             },
@@ -195,10 +187,6 @@
             {
               "id": "unsupintro",
               "label": "What unsupervised means"
-            },
-            {
-              "id": "unsupmetrics",
-              "label": "Unsupervised metrics"
             },
             {
               "id": "anomaly",
@@ -240,6 +228,28 @@
               "label": "Regularisation"
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "evaluation",
+      "label": "Evaluation metrics",
+      "children": [
+        {
+          "id": "metricsintro",
+          "label": "Choosing the right metric"
+        },
+        {
+          "id": "regmetrics",
+          "label": "Regression metrics"
+        },
+        {
+          "id": "clsmetrics",
+          "label": "Classification metrics"
+        },
+        {
+          "id": "unsupmetrics",
+          "label": "Clustering & anomaly metrics"
         }
       ]
     }

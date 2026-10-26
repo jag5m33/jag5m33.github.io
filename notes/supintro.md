@@ -39,17 +39,7 @@ In the figure, the gold line on the left gives a number for any size. The dashed
 
 No. A regression error is a distance ("off by £20k"). A classification error is a wrong category ("called it benign, it was malignant"). So each family has its own metrics.
 
-| Family | Metric | Read it as |
-|---|---|---|
-| Regression | MAE | typical miss, in the units of y |
-| Regression | RMSE | typical miss, with big misses counted more |
-| Regression | R² | share of the variation in y the model explains |
-| Classification | Accuracy | share of predictions that are right |
-| Classification | Precision | of those called positive, how many really were |
-| Classification | Recall | of the real positives, how many were caught |
-| Classification | F1 | one score that balances precision and recall |
-
-Full chapters: [Regression metrics](#/t/regmetrics) and [Classification metrics](#/t/clsmetrics).
+The metrics have their own section of the notes: start with [Choosing the right metric](#/t/metricsintro), then [Regression metrics](#/t/regmetrics) and [Classification metrics](#/t/clsmetrics).
 
 ## Train, validation and test
 

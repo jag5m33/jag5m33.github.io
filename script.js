@@ -28,7 +28,7 @@ const RING       = [0, 215, 360, 490];    // radius of branch levels 1, 2, 3
 const LEAF_R     = 640;                   // every note sits on this outer ring
 const PROJ_R     = 300, MODEL_R = 580;    // right half: projects, then their models
 const SQUASH     = 0.6;                   // < 1 flattens the web to suit wide screens
-const GAP_TOP    = 1.8, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
+const GAP_TOP    = 2.4, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
 // --------------------------------------------------------------
 
 let data;
@@ -266,8 +266,8 @@ function makeNode(id, p) {
   // branches and projects sit level, just outside their dot
   const t = el("text");
   if (n.type === "centre") {
-    t.setAttribute("y", 68); t.setAttribute("text-anchor", "middle");
-    t.textContent = n.label;
+    const tip = el("title"); tip.textContent = "Jag Sandhu · click to go back";
+    g.append(tip);                                         // name shows on hover; the web needs the space
   } else if (n.type === "leaf" || n.type === "model") {
     const ang = Math.atan2(p.y, p.x) * 180 / Math.PI;     // the label follows the spoke on screen
     const flip = Math.cos(rad(ang)) < 0;                  // left half: turn text the right way up
@@ -285,11 +285,14 @@ function makeNode(id, p) {
       t.textContent = n.label + (n.status ? ` · ${n.status}` : "");
     }
   } else {
-    // branches and projects: level text placed away from the centre
+    // branches and projects: level text placed away from the centre;
+    // the main note branches put theirs on the inner side, where there's free space
     const outward = p.x <= 0 ? -1 : 1;
-    t.setAttribute("x", outward * (r + 8));
-    t.setAttribute("y", p.y > 20 ? r + 17 : -r - 6);      // lower half: label under the dot
-    t.setAttribute("text-anchor", outward < 0 ? "end" : "start");
+    const inner = n.type === "branch" && n.depth === 1;
+    const dir = inner ? -outward : outward;
+    t.setAttribute("x", dir * (r + 8));
+    t.setAttribute("y", inner ? 6 : (p.y > 20 ? r + 17 : -r - 6));   // lower half: label under the dot
+    t.setAttribute("text-anchor", dir < 0 ? "end" : "start");
     t.textContent = n.label;
   }
   g.append(t);
