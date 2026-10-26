@@ -30,16 +30,16 @@ rng = np.random.default_rng(0)
 x = rng.lognormal(mean=3.5, sigma=0.6, size=400)
 x = np.append(x, [400, 520])[:, None]
 scalers = [("original", None), ("min-max", MinMaxScaler()), ("standard (z-score)", StandardScaler()),
-           ("robust (median/IQR)", RobustScaler()), ("max-abs", MaxAbsScaler())]
-fig, axes = plt.subplots(len(scalers), 1, figsize=(9, 8.5))
-for ax, (name, s), col in zip(axes, scalers, [MUTED, BLUE, TEAL, GOLD, ORANGE]):
+           ("robust (median/IQR)", RobustScaler())]
+fig, axes = plt.subplots(len(scalers), 1, figsize=(9, 7))
+for ax, (name, s), col in zip(axes, scalers, [MUTED, BLUE, TEAL, GOLD]):
     v = x.ravel() if s is None else s.fit_transform(x).ravel()
     ax.hist(v, bins=60, color=col, alpha=0.85)
     lo, hi = v.min(), v.max()
     ax.text(1.01, 0.5, f"{name}\nrange {lo:.2f} to {hi:.2f}", transform=ax.transAxes, va="center", fontsize=10)
     ax.set_yticks([]); ax.spines["left"].set_visible(False)
     med = np.median(v); ax.axvline(med, color=INK, lw=1, ls="--")
-axes[0].set_title("Same right-skewed feature, five scalers (dashed line = median)")
+axes[0].set_title("Same right-skewed feature, three scalers (dashed line = median)")
 axes[-1].set_xlabel("value after scaling (each panel has its own x-axis)")
 fig.tight_layout(); save(fig, "scaling-skewed")
 

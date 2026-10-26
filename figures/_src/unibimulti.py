@@ -33,8 +33,8 @@ order = ["summer", "spring/autumn", "winter"]
 sns.boxplot(data=df, x="season", y="demand", order=order, ax=axes[0], color=LIGHT_TEAL, linecolor=TEAL, width=0.5)
 axes[0].set_title("Box plot per group"); axes[0].set_ylabel("demand (MW)"); axes[0].set_xlabel("")
 sns.violinplot(data=df, x="season", y="demand", order=order, ax=axes[1], color=LIGHT_GOLD, linecolor=GOLD, inner="quartile", cut=0)
-axes[1].set_title("Violin: shape + quartiles"); axes[1].set_ylabel(""); axes[1].set_xlabel("")
-axes[1].annotate("two bulges = day\nand night groups", xy=(2, 34000), xytext=(0.6, 41500), fontsize=9.5, color=MUTED,
+axes[1].set_title("Violin: shape + quartiles"); axes[1].set_ylim(top=41500); axes[1].set_ylabel(""); axes[1].set_xlabel("")
+axes[1].annotate("two bulges = day\nand night groups", xy=(2, 34000), xytext=(0.55, 37600), fontsize=9.5, color=MUTED,
                  arrowprops=dict(arrowstyle="->", color=MUTED))
 fig.tight_layout()
 save(fig, "unibimulti-catnum")
