@@ -6,15 +6,18 @@
       "children": [
         {
           "id": "descriptive",
-          "label": "Descriptive statistics"
+          "label": "Descriptive statistics",
+          "short": "Descriptive stats"
         },
         {
           "id": "quartiles",
-          "label": "Quartiles, IQR & outliers"
+          "label": "Quartiles, IQR & outliers",
+          "short": "Quartiles & outliers"
         },
         {
           "id": "distributions",
-          "label": "Distributions & the CLT"
+          "label": "Distributions & the CLT",
+          "short": "Distributions & CLT"
         },
         {
           "id": "ci",
@@ -26,7 +29,8 @@
         },
         {
           "id": "power",
-          "label": "Power & sample size"
+          "label": "Power & sample size",
+          "short": "Power"
         },
         {
           "id": "effectsize",
@@ -52,11 +56,13 @@
         },
         {
           "id": "vartypes",
-          "label": "Variable types & their charts"
+          "label": "Variable types & their charts",
+          "short": "Variable types"
         },
         {
           "id": "unibimulti",
-          "label": "Uni-, bi- & multivariate"
+          "label": "Uni-, bi- & multivariate",
+          "short": "Uni/bi/multivariate"
         },
         {
           "id": "labelchecks",
@@ -92,11 +98,13 @@
       "children": [
         {
           "id": "nlpterms",
-          "label": "Corpus, documents & cleaning"
+          "label": "Corpus, documents & cleaning",
+          "short": "Corpus & cleaning"
         },
         {
           "id": "tokenise",
-          "label": "Tokenise, stem & lemmatise"
+          "label": "Tokenise, stem & lemmatise",
+          "short": "Tokenise & lemmatise"
         },
         {
           "id": "stopwords",
@@ -112,7 +120,8 @@
         },
         {
           "id": "tfidf",
-          "label": "TF-IDF & its parameters"
+          "label": "TF-IDF & its parameters",
+          "short": "TF-IDF"
         }
       ]
     },
@@ -123,17 +132,20 @@
         {
           "id": "vectors",
           "label": "Vectors, scalars & basis vectors",
-          "soon": true
+          "soon": true,
+          "short": "Vectors & scalars"
         },
         {
           "id": "span",
           "label": "Linear combinations & span",
-          "soon": true
+          "soon": true,
+          "short": "Combinations & span"
         },
         {
           "id": "lintransform",
           "label": "Linear transformations & matrices (2D & 3D)",
-          "soon": true
+          "soon": true,
+          "short": "Linear transformations"
         },
         {
           "id": "matmul",
@@ -148,17 +160,20 @@
         {
           "id": "inverse",
           "label": "Inverse matrices, column space & null space",
-          "soon": true
+          "soon": true,
+          "short": "Inverse & null space"
         },
         {
           "id": "nonsquare",
           "label": "Non-square matrices",
-          "soon": true
+          "soon": true,
+          "short": "Non-square matrices"
         },
         {
           "id": "dotproduct",
           "label": "Dot products, duality & cosine similarity",
-          "soon": true
+          "soon": true,
+          "short": "Dot products & cosine"
         },
         {
           "id": "crossproduct",
@@ -168,17 +183,20 @@
         {
           "id": "changebasis",
           "label": "Change of basis",
-          "soon": true
+          "soon": true,
+          "short": "Change of basis"
         },
         {
           "id": "eigen",
           "label": "Eigenvalues & eigenvectors",
-          "soon": true
+          "soon": true,
+          "short": "Eigenvectors"
         },
         {
           "id": "vectorspaces",
           "label": "Abstract vector spaces",
-          "soon": true
+          "soon": true,
+          "short": "Vector spaces"
         },
         {
           "id": "multicollinearity",
@@ -195,7 +213,8 @@
           "label": "PCA",
           "soon": true
         }
-      ]
+      ],
+      "short": "Linear algebra"
     },
     {
       "id": "ml",
@@ -207,7 +226,8 @@
           "children": [
             {
               "id": "supintro",
-              "label": "What supervised means"
+              "label": "What supervised means",
+              "short": "Supervised basics"
             },
             {
               "id": "regression",
@@ -229,7 +249,8 @@
                 },
                 {
                   "id": "softmax",
-                  "label": "Multiclass (softmax)"
+                  "label": "Multiclass (softmax)",
+                  "short": "Softmax"
                 },
                 {
                   "id": "naivebayes",
@@ -247,7 +268,8 @@
                 },
                 {
                   "id": "bagging",
-                  "label": "Bagging & bootstrap"
+                  "label": "Bagging & bootstrap",
+                  "short": "Bagging"
                 },
                 {
                   "id": "randomforest",
@@ -267,7 +289,8 @@
           "children": [
             {
               "id": "unsupintro",
-              "label": "What unsupervised means"
+              "label": "What unsupervised means",
+              "short": "Unsupervised basics"
             },
             {
               "id": "isoforest",
@@ -276,7 +299,8 @@
             {
               "id": "anomaly",
               "label": "Anomaly detection",
-              "soon": true
+              "soon": true,
+              "short": "Anomaly detection"
             },
             {
               "id": "kmeans",
@@ -286,7 +310,8 @@
             {
               "id": "hierarchical",
               "label": "Hierarchical clustering",
-              "soon": true
+              "soon": true,
+              "short": "Hierarchical"
             },
             {
               "id": "dbscan",
@@ -309,7 +334,8 @@
             }
           ]
         }
-      ]
+      ],
+      "short": "Machine learning"
     },
     {
       "id": "evaluation",
@@ -317,7 +343,8 @@
       "children": [
         {
           "id": "metricsintro",
-          "label": "Choosing the right metric"
+          "label": "Choosing the right metric",
+          "short": "Choosing a metric"
         },
         {
           "id": "regmetrics",
@@ -329,9 +356,11 @@
         },
         {
           "id": "unsupmetrics",
-          "label": "Clustering & anomaly metrics"
+          "label": "Clustering & anomaly metrics",
+          "short": "Clustering metrics"
         }
-      ]
+      ],
+      "short": "Metrics"
     }
   ],
   "projects": [
@@ -485,13 +514,15 @@
         {
           "id": "legal-lr",
           "label": "Softmax logistic regression",
-          "topic": "softmax"
+          "topic": "softmax",
+          "short": "Logistic regression"
         },
         {
           "id": "legal-nb",
           "label": "Complement Naive Bayes",
           "topic": "naivebayes",
-          "status": "in progress"
+          "status": "in progress",
+          "short": "Complement NB"
         }
       ]
     },

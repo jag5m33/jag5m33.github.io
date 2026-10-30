@@ -22,12 +22,12 @@ const paper  = document.getElementById("paper");
 const crumbs = document.getElementById("crumbs");
 
 // ---------------- layout settings (map units) ----------------
-const LEFT_SPAN  = 70;                    // notes fan ±70° around due left
-const RIGHT_SPAN = 62;                    // projects fan ±62° around due right
-const RING       = [0, 215, 360, 490];    // radius of branch levels 1, 2, 3
+const LEFT_SPAN  = 118;                   // notes wrap ±118° around due left (most of the circle)
+const RIGHT_SPAN = 34;                    // projects fan ±34° around due right
+const RING       = [0, 300, 415, 520];    // radius of branch levels 1, 2, 3
 const LEAF_R     = 640;                   // every note sits on this outer ring
 const PROJ_R     = 300, MODEL_R = 580;    // right half: projects, then their models
-const SQUASH     = 0.6;                   // < 1 flattens the web to suit wide screens
+const SQUASH     = 0.8;                   // < 1 flattens the web to suit wide screens
 const GAP_TOP    = 2.4, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
 // --------------------------------------------------------------
 
@@ -277,23 +277,31 @@ function makeNode(id, p) {
     t.setAttribute("text-anchor", flip ? "end" : "start");
     if (n.type === "leaf") {
       const num = el("tspan", { class: "num" }); num.textContent = n.num + "  ";
-      const lab = el("tspan"); lab.textContent = n.label + (n.soon ? " (coming up soon)" : "");
+      const lab = el("tspan"); lab.textContent = (n.short || n.label);   // "coming up soon" topics are shown dashed and faded
       // number sits next to the dot: before the label on the right, after it on the left
       if (flip) { lab.textContent += "  "; t.append(lab); num.textContent = String(n.num); t.append(num); }
       else { t.append(num, lab); }
     } else {
-      t.textContent = n.label + (n.status ? ` · ${n.status}` : "");
+      t.textContent = (n.short || n.label) + (n.status ? ` · ${n.status}` : "");
     }
   } else {
-    // branches and projects: level text placed away from the centre;
-    // the main note branches put theirs on the inner side, where there's free space
-    const outward = p.x <= 0 ? -1 : 1;
     const inner = n.type === "branch" && n.depth === 1;
-    const dir = inner ? -outward : outward;
-    t.setAttribute("x", dir * (r + 8));
-    t.setAttribute("y", inner ? 6 : (p.y > 20 ? r + 17 : -r - 6));   // lower half: label under the dot
-    t.setAttribute("text-anchor", dir < 0 ? "end" : "start");
-    t.textContent = n.label;
+    if (inner) {
+      // main note branches: label runs along the spoke, in the empty space towards the centre
+      const ang = Math.atan2(p.y, p.x) * 180 / Math.PI;
+      const flip = Math.cos(rad(ang)) < 0;
+      t.setAttribute("transform", `rotate(${flip ? ang + 180 : ang})`);
+      t.setAttribute("x", flip ? r + 8 : -(r + 8));
+      t.setAttribute("y", 6);
+      t.setAttribute("text-anchor", flip ? "start" : "end");
+    } else {
+      // sub-branches and projects: level text placed away from the centre
+      const outward = p.x <= 0 ? -1 : 1;
+      t.setAttribute("x", outward * (r + 8));
+      t.setAttribute("y", p.y > 20 ? r + 17 : -r - 6);   // lower half: label under the dot
+      t.setAttribute("text-anchor", outward < 0 ? "end" : "start");
+    }
+    t.textContent = n.short || n.label;
   }
   g.append(t);
 
@@ -353,7 +361,7 @@ function build(animated) {
     const p = pos[id], n = byId[id];
     xs.push(p.x); ys.push(p.y);
     if (n.type === "leaf" || n.type === "model") {
-      const len = 20 + (n.label.length + (n.soon ? 18 : 0) + (n.status ? n.status.length + 3 : 0) + 4) * 7.3;
+      const len = 20 + ((n.short || n.label).length + (n.status ? n.status.length + 3 : 0) + 4) * 7.3;
       const d = Math.hypot(p.x, p.y) || 1;
       xs.push(p.x + p.x / d * len); ys.push(p.y + p.y / d * len);
     }

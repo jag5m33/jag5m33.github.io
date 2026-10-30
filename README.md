@@ -1,6 +1,6 @@
 # jag5m33.github.io
 
-My portfolio and study notes: a rotating sphere of dots that bursts open into a spider-web map. My notes fan out across the left half, numbered in reading order; my projects and the models inside them fan out across the right half. Dashed threads join each project and model to the notes it uses (hover to light them up). On phones the map becomes a numbered list.
+My portfolio and study notes: a rotating sphere of dots that bursts open into a spider-web map. My notes wrap around most of the circle, numbered in reading order; my projects and the models inside them fan out on the right. Dashed threads join each project and model to the notes it uses (hover to light them up). On phones the map becomes a numbered list.
 
 Live at **https://jag5m33.github.io**
 
@@ -47,7 +47,7 @@ Add an entry to `projects` in `data.json`:
 - `uses`: other topic ids the project relies on (EDA, cleaning…), drawn as threads from the project
 - `metrics` and `results` (image URLs) for the Results tab
 
-To change the shape of the web, edit the layout settings at the top of `script.js` (`LEFT_SPAN`, `RING`, `LEAF_R`, `SQUASH`…).
+To change the shape of the web, edit the layout settings at the top of `script.js` (`LEFT_SPAN`, `RING`, `LEAF_R`, `SQUASH`…). A topic or model can have a `"short"` label in `data.json`, used on the map instead of its full title to keep the web uncluttered.
 
 ## Redrawing a figure
 
