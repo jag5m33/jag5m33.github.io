@@ -103,7 +103,7 @@ function buildIndex() {
   if (box.dataset.built) return;
   const list = items => items.map(n => n.children
     ? `<li class="group"><h3>${n.label}</h3><ol>${list(n.children)}</ol></li>`
-    : `<li class="${n.soon ? "soon" : ""}"><a href="#/t/${n.id}"><span class="num">${n.num}</span>${n.label}${n.soon ? " <em>soon</em>" : ""}</a></li>`).join("");
+    : `<li class="${n.soon ? "soon" : ""}"><a href="#/t/${n.id}"><span class="num">${n.num}</span>${n.label}${n.soon ? " <em>(coming up soon)</em>" : ""}</a></li>`).join("");
   box.innerHTML = `
     <header><button type="button" id="index-back">← Sphere</button><h1>Jag Sandhu</h1></header>
     <section><h2>Notes</h2>${data.tree.map(t => `<h3 class="top">${t.label}</h3><ol>${list(t.children)}</ol>`).join("")}</section>
@@ -277,7 +277,7 @@ function makeNode(id, p) {
     t.setAttribute("text-anchor", flip ? "end" : "start");
     if (n.type === "leaf") {
       const num = el("tspan", { class: "num" }); num.textContent = n.num + "  ";
-      const lab = el("tspan"); lab.textContent = n.label + (n.soon ? " · soon" : "");
+      const lab = el("tspan"); lab.textContent = n.label + (n.soon ? " (coming up soon)" : "");
       // number sits next to the dot: before the label on the right, after it on the left
       if (flip) { lab.textContent += "  "; t.append(lab); num.textContent = String(n.num); t.append(num); }
       else { t.append(num, lab); }
@@ -353,7 +353,7 @@ function build(animated) {
     const p = pos[id], n = byId[id];
     xs.push(p.x); ys.push(p.y);
     if (n.type === "leaf" || n.type === "model") {
-      const len = 20 + (n.label.length + (n.soon ? 7 : 0) + (n.status ? n.status.length + 3 : 0) + 4) * 7.3;
+      const len = 20 + (n.label.length + (n.soon ? 18 : 0) + (n.status ? n.status.length + 3 : 0) + 4) * 7.3;
       const d = Math.hypot(p.x, p.y) || 1;
       xs.push(p.x + p.x / d * len); ys.push(p.y + p.y / d * len);
     }
@@ -570,7 +570,7 @@ async function showTopic(id) {
 
   let body;
   if (n.soon) {
-    body = `<h1>${n.label}</h1><div class="soon-box"><p>Coming soon.</p><p class="muted">This chapter gets written once I've studied the topic.</p></div>`;
+    body = `<h1>${n.label}</h1><div class="soon-box"><p>Coming up soon.</p><p class="muted">I'm studying this now; my notes will go here as I write them up.</p></div>`;
   } else {
     paper.innerHTML = `<p class="muted">Loading…</p>`;
     try {

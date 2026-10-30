@@ -4,7 +4,9 @@ Regularisation adds a charge for large weights to the cost function, so the mode
 
 ## 1. The problem it solves
 
-- **Overfitting (high variance):** the model fits the training data, noise and all, so closely that it does badly on new data. See [Bias & variance](#/t/biasvar).
+Jag's notes: **regularisation aims to reduce overfitting** (reduce model complexity).
+
+- **Overfitting (high variance):** the model "struggles with new unseen data"; it "memorises training data"; its training cost is almost zero, $J(\theta) \approx 0$. See [Bias & variance](#/t/biasvar).
 - Overfit models usually have **large weights**: big slopes let a line or curve bend sharply to hit every point.
 - **Regularisation** adds a **penalty** to the cost that grows with the size of the weights. Now the model has two goals: fit the data, **and** keep the weights small.
 
@@ -28,14 +30,16 @@ In the figure, the steep red line shoots away from the test points. Its test err
 
 ### Add the ridge penalty
 
-Ridge changes the cost to:
+Ridge adds a penalty to the cost from [Linear regression](#/t/linreg):
 
 $$
-\text{cost} = \sum (y - \hat{y})^2 + \lambda \cdot (\text{slope})^2
+J(\theta) = \frac{1}{2m}\sum_{i=1}^{m}\left(h_\theta(x^{(i)}) - y^{(i)}\right)^2 + \lambda\,(\text{slope})^2
 $$
 
-- The first part says "fit the data". The second says "keep the slope small".
-- $\lambda$ (lambda): how much you charge for a big slope. Take $\lambda = 1$.
+- The first part says "fit the data". The second says "keep the slope small". ($\theta_1$ = slope = $w$.)
+- In Jag's words: "if the first part is 0 due to overfitting, add λ(slope)² to ensure it counteracts overfitting."
+- $\lambda$ (lambda): the **regularisation parameter**, the value multiplied by slope² to lessen or increase the effect. It "controls how extreme you counteract overfitting".
+- For the hand example we drop the $\frac{1}{2m}$ and just add up the squared errors (Krish Naik's simple version), with $\lambda = 1$. The idea is identical; the $\frac{1}{2m}$ just makes the penalty count for relatively more, so the best line comes out flatter still.
 
 Now score some lines:
 
@@ -52,39 +56,37 @@ Now score some lines:
 
 In the figure, the training error (blue) wants slope 2 and the penalty (gold) wants slope 0. The total (black) is a compromise, with its lowest point in between. A bigger λ pushes that lowest point towards a flatter line.
 
+The cost function is minimised as usual, but now the minimum sits on a flatter line → less overfitting → **lower validation error**.
+
 > **Key idea:** regularisation accepts a **slightly worse fit on training data** (a bit more bias) in exchange for a **much steadier model** (a lot less variance).
 
 ## 3. L2 (Ridge) and L1 (Lasso)
 
-Both add a penalty on the weights to the model's usual cost. They differ in how they measure "big".
+Both add a penalty on the slopes (weights) to the usual cost. They differ in how they measure "big". With lots of features there are lots of slopes, one per feature, so the penalty adds them all up.
 
-### L2 / Ridge: penalise squared weights
-
-$$
-\text{L2 penalty} = \lambda \sum_{j} w_j^2
-$$
-
-- $w_j$: the weight of feature $j$. $\lambda$: the strength.
-- **Example:** weights 3 and −1 with $\lambda = 1$: penalty $= 3^2 + (-1)^2 = 10$.
-- Shrinks **all** weights towards zero, big ones most, but **never exactly to zero**. Every feature stays in.
-- With two near-identical features, Ridge **shares** the weight between them. That's why it calms down multicollinearity (see [Linear regression](#/t/linreg)).
-
-### L1 / Lasso: penalise absolute weights
+### L2 / Ridge: penalise squared slopes
 
 $$
-\text{L1 penalty} = \lambda \sum_{j} \lvert w_j \rvert
+J(\theta) = \frac{1}{2m}\sum_{i=1}^{m}\left(h_\theta(x^{(i)}) - y^{(i)}\right)^2 + \lambda \sum_{j} \theta_j^2
 $$
 
-- **Example:** the same weights 3 and −1: penalty $= 3 + 1 = 4$.
-- Pushes some weights to **exactly zero**, switching those features off. So Lasso does **automatic feature selection**.
+- $\theta_j$: the slope (weight) of feature $j$. $\lambda$: the strength.
+- **Example:** slopes 3 and −1 with $\lambda = 1$: penalty $= 3^2 + (-1)^2 = 10$.
+- Shrinks **all** slopes towards zero, big ones most, but **never exactly to zero**. Every feature stays in.
+- With two near-identical features, Ridge **shares** the weight between them, which calms down multicollinearity (see [Linear regression](#/t/linreg)).
 
-### Why L1 hits zero and L2 doesn't (one picture)
+### L1 / Lasso: penalise absolute slopes
 
-![Left (Ridge): oval cost contours centred on the unpenalised best weights, and a teal circle for the L2 budget. The smallest contour that touches the circle touches it at a point where both weights are non-zero. Right (Lasso): the same contours and a red diamond for the L1 budget. The contour first touches the diamond at its corner on the w1 axis, where w2 is exactly 0.](figures/regularisation-geometry.svg)
+$$
+J(\theta) = \frac{1}{2m}\sum_{i=1}^{m}\left(h_\theta(x^{(i)}) - y^{(i)}\right)^2 + \lambda \sum_{j} \lvert \theta_j \rvert
+$$
 
-Think of the penalty as a "budget" for the weights. L2's budget is a round **circle**; L1's is a **diamond** with sharp corners sitting on the axes. The answer is where the cost ovals first touch the budget (gold star). On the circle that's usually a point where both weights are non-zero. On the diamond it's often a **corner**, where one weight is exactly 0.
+- $\lvert \theta_j \rvert$: the **modulus** (absolute value) of each slope. No squaring, as there is in L2.
+- In Jag's words: the "overfitting equation + λ × sum of (absolute) coefficients".
+- **Example:** the same slopes 3 and −1: penalty $= 3 + 1 = 4$.
+- Features with small coefficients have little effect on the output, so Lasso **neglects** them: it drives their slopes to **exactly zero**. That's **automatic feature selection**.
 
-> **Say it like this:** "Ridge shrinks all the weights but keeps every feature. Lasso shrinks some weights all the way to zero, so it also picks features."
+> **Say it like this (Jag's summary):** "L1 helps with feature selection / importance + reduces overfitting. L2 reduces overfitting."
 
 ## 4. λ in plain words
 
@@ -168,20 +170,6 @@ for model in [LinearRegression(), Ridge(alpha=1.0), Lasso(alpha=1.0, max_iter=10
 
 With no penalty the model nearly memorises the training rows and fails on validation. Both penalties raise training error but lower validation error. Lasso wins **here** because only 5 features really matter.
 
-### Logistic regression: the C setting
-
-```python
-from sklearn.linear_model import LogisticRegression
-
-# L2 (the default). C = 1/lambda, so SMALL C = STRONG regularisation
-l2 = LogisticRegression(C=0.1)
-# L1 (lasso-style); needs the liblinear or saga solver
-# (sklearn 1.8+ spelling; older versions write penalty="l1")
-l1 = LogisticRegression(C=0.1, l1_ratio=1.0, solver="liblinear")
-```
-
-On 20 scaled features, L2 keeps all 20 weights; L1 sets 15 of them to exactly zero.
-
 Jag's LEDGAR classifier ([multi_class_lr_softmax.py](https://github.com/jag5m33/py_legal_data/blob/main/src/multi_class_lr_softmax.py)) uses L2 with `C=1.0`; lowering C is the first lever to try against its 11-point train/validation gap.
 
 ## 7. Caveats
@@ -211,9 +199,10 @@ Jag's LEDGAR classifier ([multi_class_lr_softmax.py](https://github.com/jag5m33/
 | Term | Meaning |
 |---|---|
 | Regularisation | Cost = usual error + penalty on weight size |
-| L2 / Ridge | Penalty $\lambda\sum w_j^2$; shrinks, never exactly zero |
-| L1 / Lasso | Penalty $\lambda\sum \lvert w_j \rvert$; some weights exactly zero |
-| λ | Price for big weights: 0 = none, large = underfit |
+| Overfitting | Memorises training data, $J(\theta) \approx 0$, high validation error |
+| L2 / Ridge | Cost + $\lambda\sum \theta_j^2$; shrinks, never exactly zero; reduces overfitting |
+| L1 / Lasso | Cost + $\lambda\sum \lvert \theta_j \rvert$; small slopes go to exactly zero; feature selection + reduces overfitting |
+| λ | Regularisation parameter: how hard you counteract overfitting; 0 = none, large = underfit |
 | sklearn Ridge / Lasso | `alpha` = λ (bigger = stronger) |
 | sklearn LogisticRegression | `C` = 1/λ (bigger = weaker) |
 | b | Not penalised |

@@ -5,14 +5,35 @@ Naive Bayes picks the class that most likely produced the features it sees, usin
 ## Bayes' theorem in one example
 
 $$
-P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \times P(\text{class})}{P(\text{features})}
+P(A \mid B) = \frac{P(B \mid A) \times P(A)}{P(B)}
 $$
 
 | Part | Name | Plain meaning |
 |---|---|---|
-| $P(\text{class})$ | **Prior** | how common the class is before looking at anything |
-| $P(\text{features} \mid \text{class})$ | **Likelihood** | how typical these features are for that class |
-| $P(\text{class} \mid \text{features})$ | **Posterior** | how likely the class is **after** seeing the features: what we want |
+| $P(A)$ | **Prior** | how common A is before looking at anything |
+| $P(B \mid A)$ | **Likelihood** | how typical the evidence B is when A is true |
+| $P(B)$ | **Marginal probability** | how common the evidence B is overall |
+| $P(A \mid B)$ | **Posterior** | how likely A is **after** seeing B: what we want |
+
+In a classifier, A is the **class** and B is the **features**.
+
+### Where it comes from: two marbles
+
+A bag has **3 red and 2 black** marbles. Take two out, one after the other, without putting the first back. The second draw **depends** on the first.
+
+- Event **A** = first marble is black: $P(A) = 2/5$.
+- Event **B** = second marble is black, given A happened: only 1 black left out of 4, so $P(B \mid A) = 1/4$.
+- Both black: $P(A \cap B) = P(A) \times P(B \mid A) = 2/5 \times 1/4 = 1/10$.
+
+$A \cap B$ ("A and B") is the same event as $B \cap A$, so the two ways of writing it must be equal:
+
+$$
+P(B \mid A) \times P(A) = P(A \mid B) \times P(B)
+$$
+
+Divide both sides by $P(B)$ and you have **Bayes' theorem**. That's the whole derivation.
+
+### A medical test
 
 A disease affects 1% of people. A test catches 90% of people who have it, and wrongly flags 5% of healthy people. You test positive. How likely is it that you're ill?
 
@@ -23,6 +44,20 @@ Only **90 of 585** positives are really ill: **15.4%**. The healthy group is so 
 > **Say it like this:** "The posterior is the prior updated by the evidence. A rare class needs strong evidence before it becomes the most likely answer."
 
 ## The core (every variant)
+
+With features $x_1 \dots x_n$ and class $y$, Bayes' theorem plus the naive assumption gives:
+
+$$
+P(y \mid x_1, \dots, x_n) = \frac{P(y) \times P(x_1 \mid y) \times \dots \times P(x_n \mid y)}{P(x_1) \times \dots \times P(x_n)}
+$$
+
+The bottom line is the **same for every class** (it only depends on the record), so we can drop it. The answer is then "directly proportional" ($\propto$) to the top:
+
+$$
+P(y \mid x_1, \dots, x_n) \propto P(y) \times \prod_{i} P(x_i \mid y)
+$$
+
+$\prod$ means "multiply them all". **Prediction = argmax**: work this out for every class and pick the biggest. If it comes to P(yes) = 0.7 vs P(no) = 0.3, predict yes.
 
 ```
 P(class | features)  ∝  P(class)  ×  P(feature 1 | class) × P(feature 2 | class) × …
@@ -74,18 +109,52 @@ new          0.00    0.71    0.00     0.71
 
 > **What you need to know**
 > - features are **categories**; likelihood = share of the class's rows with that category
-> - it's the classic "weather / play tennis" Naive Bayes
+> - it's the classic "weather / play tennis" Naive Bayes, worked below
 > - **can't use TF-IDF** (numbers, not categories), so it's not for LEDGAR
 >
-> **Skip:** the counting tables
+> **Skip:** memorising the tables; know the steps (count, divide, multiply, compare)
 
-```
-outlook   temp   windy   play?
-sunny     hot    no      no
-rainy     mild   yes     yes
-```
+### Worked example: should we play tennis today?
 
-**Likelihood:** P(outlook = sunny | play = no) = share of "no" rows that are sunny.
+14 past days: **Yes 9, No 5**, so the priors are P(Yes) = 9/14 and P(No) = 5/14. Two features: outlook and temperature.
+
+**Outlook** (as in Jag's notes):
+
+| Outlook | Yes | No | P(x \| Yes) | P(x \| No) |
+|---|---|---|---|---|
+| Sunny | 2 | 3 | 2/9 | 3/5 |
+| Overcast | 3 | 2 | 3/9 | 2/5 |
+| Rainy | 4 | 0 | 4/9 | 0/5 |
+
+> **Check:** in the standard play-tennis dataset the counts are Overcast 4 Yes / 0 No and Rainy 3 Yes / 2 No, so the Overcast and Rainy rows look swapped. It doesn't change the calculation below, which only uses Sunny.
+
+Notice P(Rainy | No) = 0/5. A zero likelihood would wipe out "No" for every rainy day, whatever the other features say. That's what smoothing (`alpha`, below) prevents.
+
+**Temperature:**
+
+| Temperature | Yes | No | P(x \| Yes) | P(x \| No) |
+|---|---|---|---|---|
+| Hot | 2 | 2 | 2/9 | 2/5 |
+| Mild | 4 | 2 | 4/9 | 2/5 |
+| Cool | 3 | 1 | 3/9 | 1/5 |
+
+**Today = (Sunny, Hot).** Multiply prior × likelihoods for each class:
+
+$$
+P(\text{Yes} \mid \text{today}) \propto \tfrac{2}{9} \times \tfrac{2}{9} \times \tfrac{9}{14} = \tfrac{2}{63} = 0.0317
+$$
+
+$$
+P(\text{No} \mid \text{today}) \propto \tfrac{3}{5} \times \tfrac{2}{5} \times \tfrac{5}{14} = 0.0857
+$$
+
+These don't add to 1 (we dropped the bottom line), so **normalise**: divide each by their total.
+
+- P(Yes) = 0.0317 / (0.0317 + 0.0857) = **0.27**
+- P(No) = 0.0857 / (0.0317 + 0.0857) = **0.73**
+
+**"Today play tennis = NO (0.73)."**
+
 **Use when:** features are labels from a small set (survey answers, colour, region).
 
 ## 2. MultinomialNB: on TF-IDF
@@ -308,7 +377,10 @@ class ComplementNaiveBayes:
 
 | Term | Meaning |
 |---|---|
+| Bayes' theorem | $P(A \mid B) = P(B \mid A)\,P(A)\,/\,P(B)$ |
 | Prior / likelihood / posterior | how common the class is / how typical the features are for it / the answer after seeing the features |
+| Marginal probability | P(B): how common the evidence is overall; same for every class, so dropped |
+| Predict | argmax over classes of prior × likelihoods; normalise to get probabilities |
 | Naive assumption | features independent within a class, so likelihoods multiply |
 | Logs | add log-probabilities instead of multiplying tiny numbers |
 | `alpha` | smoothing so unseen words don't give zero |

@@ -2,6 +2,15 @@
 
 Bagging trains many copies of the same model on random resamples of the training rows and combines their votes, which smooths out the wobbles that make a single deep decision tree unreliable.
 
+> **What you need to know**
+> - **bootstrap sampling = sampling with replacement**: a row goes back in the pot after it's drawn, so rows can repeat
+> - draw a new training set of size M from the full sample, train a tree, put the rows back, resample, train the next tree
+> - repeats make every sample (and so every tree) a bit different
+> - when predicting, the trees **vote** on the final verdict (classification) or are averaged (regression)
+> - bagged decision trees lead straight to the [random forest](#/t/randomforest) algorithm
+>
+> **Skip:** the probability maths behind the "63%" figure; just know the idea
+
 ## Terms used below
 
 This chapter builds on [Decision trees](#/t/trees) and reuses the same 10 animals (ear shape, face shape, whiskers, cat or not).
@@ -12,17 +21,19 @@ This chapter builds on [Decision trees](#/t/trees) and reuses the same 10 animal
 
 ## Why combine many models?
 
-Ask one person to guess the number of sweets in a jar and they may be way off. Average the guesses of 100 people and the answer is often surprisingly close: some guess too high, some too low, and the errors cancel.
+Ask one person to guess the number of sweets in a jar and they may be way off. Average 100 people's guesses and the errors cancel, **as long as people make different mistakes**.
 
-**The catch:** this only works if people make **different** mistakes. If all 100 copied the same wrong guess, the average would be just as wrong.
+A single deep decision tree is like one wild guesser: a few changed rows can give a completely different tree. Bagging gives every tree a slightly different version of the data, so each tree makes different mistakes, and the vote cancels many of them out.
 
-A single deep decision tree is like one wild guesser: it fits its training data very closely, so a few changed rows can give a completely different tree. Bagging gives every tree a slightly different version of the data, so each tree makes different mistakes, and the vote cancels many of them out.
+## Bootstrap sampling (= sampling with replacement)
 
-> **Key idea:** averaging many different trees smooths out their mistakes, but only if the trees really are different.
+My notes' heading for this is "sampling with replacement with bagged decision trees", and it leads to the random forest algorithm. The steps:
 
-## Bootstrap sampling
+1. From the large total sample, create a **new training set of size M** by drawing rows at random.
+2. **Train** a tree on it, then **put the rows back**.
+3. **Resample** and train the next tree. Samples will repeat, so you get different results / different trees.
 
-A **bootstrap sample** is a new dataset made by drawing rows from the original **at random, with replacement**, until it has the same number of rows as the original.
+A **bootstrap sample** is exactly this: rows drawn **at random, with replacement**, usually until it has as many rows as the original.
 
 - **With replacement**: a row goes back into the pot after it is drawn, so it can be drawn again. The same row can appear 2, 3 or more times.
 - Because some rows repeat, other rows are **never drawn**. Those left-out rows are the **out-of-bag (OOB)** rows for that sample.
@@ -33,20 +44,13 @@ In the figure, look at sample 1: rows 3, 5 and 9 each appear twice, so rows 6, 8
 
 ### About 63% unique rows
 
-On average, a bootstrap sample contains only about **63%** of the original rows; the other **37%** are left out. With 1,000 rows, expect about 632 different rows in each sample. (The chance a given row is never picked is $(1 - 1/n)^n$, which settles at about 0.37 for any decent-sized dataset.)
+On average, a bootstrap sample contains only about **63%** of the different original rows; the other **37%** are left out. With 1,000 rows, expect about 632 different rows in each sample.
 
 > **Say it like this:** "Each bootstrap sample is the same size as the data, but because rows can repeat, it only contains about 63% of the distinct rows. The other 37% are out-of-bag."
 
 ## Out-of-bag rows: a free validation set
 
-Every tree has its own OOB rows: rows it never saw while training. So you can test each row using only the trees that didn't train on it:
-
-1. For each training row, find the trees that left it out (about a third of them).
-2. Let only those trees vote on that row.
-3. Compare the vote with the true label.
-4. The accuracy over all rows is the **OOB score**.
-
-It's fair because no row is judged by a tree that trained on it, and you didn't have to set any data aside.
+Every tree has its own OOB rows: rows it never saw while training. Score each row using only the trees that left it out, and the accuracy over all rows is the **OOB score**: a validation score without setting any data aside.
 
 > **Trap:** the OOB score replaces a validation split, not a final untouched test set.
 
@@ -56,9 +60,11 @@ It's fair because no row is judged by a tree that trained on it, and you didn't 
 
 1. Choose how many trees to grow (`n_estimators`).
 2. For each tree: draw a bootstrap sample and grow **one deep tree** on it.
-3. Combine:
-   - **Classification**: majority vote (sklearn averages the predicted probabilities, which is nearly the same).
+3. Combine: "when predicting, get the trees to **VOTE** on the final verdict".
+   - **Classification**: majority vote.
    - **Regression**: average the predicted numbers.
+
+Why it works, in my words: "sample with replacement allows small changes to be seen over many trees → find the average of all changes".
 
 The trees are **independent**: tree 7 doesn't know tree 6 exists. So they can be trained at the same time, unlike [XGBoost](#/t/xgboost) where each tree depends on the one before.
 
@@ -72,20 +78,17 @@ To keep it hand-sized, grow a **stump** (a tree with just one split) on each of 
 | 2 | 1, 2, 3, 3, 6, 7, 8, 9, 9, 10 | Ear shape | floppy: 1 cat of 7 | 0.14 | not cat |
 | 3 | 2, 3, 4, 5, 5, 6, 7, 7, 8, 10 | Ear shape | floppy: 1 cat of 5 | 0.20 | not cat |
 
-- **Majority vote:** 1 cat, 2 not cat, so the ensemble says **not cat**.
-- **Averaged probability** (sklearn's way): $(0.80 + 0.14 + 0.20)/3 = 0.38$, below 0.5, so also **not cat**.
+**Vote:** 1 cat, 2 not cat, so the ensemble says **not cat**.
 
 ![The three stumps. Tree 1 happened to get a sample where whiskers split best; trees 2 and 3 chose ear shape. The outlined leaf is where the new animal lands in each tree.](figures/bagging-votes.svg)
 
 In the figure, tree 1 asks a different question at its root: its sample had no whisker-less cats, so whiskers looked perfect. That is the bootstrap creating variety. But notice that two of the three trees still chose ear shape: bagging alone often produces trees that look alike. Keep that in mind for random forests.
 
-(Numbers from sklearn's `DecisionTreeClassifier(max_depth=1, criterion="entropy")` on samples drawn with `np.random.default_rng(2)`.)
-
 ### What it does to the decision boundary
 
 ![Left: one fully grown tree on a noisy two-moons dataset, with a jagged boundary and small islands around single points. Right: 200 bagged trees, with a smoother boundary.](figures/bagging-boundary.svg)
 
-In the figure, the single tree (left) draws tiny boxes around individual noisy points. Each bagged tree does the same, but around **different** points. Averaging 200 of them keeps the shape they agree on and washes out most of the islands. Test accuracy rose from 0.883 (one tree) to 0.925 (bagging). The OOB score was 0.889.
+In the figure, the single tree (left) draws tiny boxes around individual noisy points. Each bagged tree does this around **different** points, so the vote of 200 washes most islands out. Test accuracy rose from 0.883 (one tree) to 0.925 (bagging). The OOB score was 0.889.
 
 ## What bagging fixes, and what it doesn't
 
@@ -116,11 +119,19 @@ print("test acc:", round(bag.score(X_te, y_te), 3))   # 0.925
 print("OOB     :", round(bag.oob_score_, 3))           # 0.889
 ```
 
+## Interview one-liners
+
+- **What is bootstrap sampling?** Sampling with replacement: draw rows at random, put each back, so rows can repeat.
+- **What is bagging?** Train one tree per bootstrap sample, then let the trees vote (or average).
+- **What does it reduce?** Variance: one deep tree is unstable, the vote of many is steadier. Not bias.
+- **What is the OOB score?** Each row scored only by trees that never saw it: free validation.
+- **Bagging vs random forest?** Random forest is bagging plus a random subset of features at each split.
+
 ## Assumptions & caveats
 
 - **Needs an unstable base model.** Bagging helps deep trees. Bagging [linear regression](#/t/linreg) changes almost nothing, because every copy comes out nearly the same.
 - **Doesn't fix bias.**
-- **Rows treated as independent.** For time series or several rows per patient, random resampling mixes past and future (or the same patient across samples), and the OOB score looks too good.
+- **Rows treated as independent.** For time series, random resampling mixes past and future, and the OOB score looks too good.
 - **Class imbalance.** A rare class can be almost missing from some samples. Use `class_weight` and judge with precision/recall ([Classification metrics](#/t/clsmetrics)).
 - **No scaling needed** with trees.
 
@@ -141,8 +152,7 @@ print("OOB     :", round(bag.oob_score_, 3))           # 0.889
 
 ## Limitations
 
-- You can't draw 200 trees as one flowchart.
-- After a few dozen trees, adding more barely helps.
+- You can't draw 200 trees as one flowchart, and after a few dozen trees more barely helps.
 - In practice people usually go straight to [random forest](#/t/randomforest) or [XGBoost](#/t/xgboost).
 
 ## Quick reference
@@ -150,10 +160,10 @@ print("OOB     :", round(bag.oob_score_, 3))           # 0.889
 | Term | Meaning |
 |---|---|
 | Bagging | one model per bootstrap sample, then vote or average |
-| Bootstrap sample | n rows drawn with replacement from n rows |
+| Bootstrap sampling | sampling with replacement; new training set of size M per tree |
 | Unique rows per sample | about 63% |
 | OOB rows | the ~37% a given tree never saw |
 | OOB score | each row judged only by trees that didn't train on it |
-| Combine | majority vote (classification), average (regression) |
+| Combine | trees VOTE (classification), average (regression) |
 | Reduces | variance, not bias |
 | sklearn | `BaggingClassifier(DecisionTreeClassifier(), n_estimators=..., oob_score=True)` |

@@ -61,22 +61,6 @@ ax.set_aspect("equal"); ax.set_xlim(-2, 2); ax.set_ylim(-2, 2)
 ax.set_xlabel("x₁"); ax.set_ylabel("x₂"); ax.set_title("features x₁², x₂², w = [1, 1], b = −1: a circle")
 fig.tight_layout(); save(fig, "logreg-boundaries")
 
-# 4. non-convex vs convex (computed on a tiny 1-D dataset)
-x = np.array([-4, -3, -1, 1, 3, 4.0]); y = np.array([0, 0, 1, 0, 1, 1.0])
-ws = np.linspace(-6, 6, 400)
-mse = [np.mean((sig(w * x) - y) ** 2) / 2 for w in ws]
-ll = [np.mean(-(y * np.log(sig(w * x)) + (1 - y) * np.log(1 - sig(w * x)))) for w in ws]
-fig, axes = plt.subplots(1, 2, figsize=(10, 3.6))
-axes[0].plot(ws, mse, color=WINE); axes[0].set_title("Squared error + sigmoid: NOT convex")
-axes[0].annotate("flat plateaus: gradient ≈ 0,\ngradient descent stalls", xy=(-5, mse[40]), xytext=(-4.5, 0.2),
-                 fontsize=10, color=WINE, arrowprops=dict(arrowstyle="->", color=WINE))
-axes[1].plot(ws, ll, color=TEAL); axes[1].set_title("Log loss: convex bowl, one minimum")
-i = int(np.argmin(ll)); axes[1].scatter([ws[i]], [ll[i]], color=GOLD, s=60, zorder=3)
-axes[1].annotate("single global minimum", xy=(ws[i], ll[i]), xytext=(ws[i] - 4.5, ll[i] + 1.3), color=GOLD,
-                 arrowprops=dict(arrowstyle="->", color=GOLD))
-for ax in axes: ax.set_xlabel("weight w"); ax.set_ylabel("cost J(w)")
-fig.tight_layout(); save(fig, "logreg-convex")
-
 # 5. log loss curves
 f = np.linspace(0.005, 0.995, 300)
 fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), sharey=True)
@@ -95,3 +79,30 @@ ax.annotate("confident and right\n(f → 0) → cost ≈ 0", xy=(0.03, 0.03), xy
 for ax in axes: ax.set_xlabel("predicted probability f = P(y = 1)"); ax.set_ylim(0, 5.3)
 axes[0].set_ylabel("loss for one example")
 fig.tight_layout(); save(fig, "logreg-logloss")
+
+# 6. running example: 8 tumours, theta0 = -5, theta1 = 1; and the effect of C
+from sklearn.linear_model import LogisticRegression
+x = np.array([1, 2, 3, 4, 6, 7, 8, 9.0]); y = np.array([0, 0, 0, 0, 1, 1, 1, 1.0])
+xs = np.linspace(0, 10, 300)
+fig, axes = plt.subplots(1, 2, figsize=(10, 3.9), sharey=True)
+ax = axes[0]
+ax.scatter(x[y == 0], y[y == 0], color=TEAL, s=45, zorder=3, label="benign (y = 0)")
+ax.scatter(x[y == 1], y[y == 1], color=WINE, marker="x", s=55, zorder=3, label="malignant (y = 1)")
+ax.plot(xs, sig(-5 + xs), color=GOLD)
+ax.axhline(0.5, color=MUTED, ls=":", lw=1.2); ax.axvline(5, color=BLUE, ls="--", lw=1.4)
+ax.text(5.15, 0.05, "0.5 → size 5", color=BLUE, fontsize=10)
+t3 = 5 + np.log(0.3 / 0.7); ax.axhline(0.3, color=ORANGE, ls=":", lw=1.2); ax.axvline(t3, color=ORANGE, ls="--", lw=1.4)
+ax.text(t3 - 0.15, 0.62, "0.3 → size 4.2", color=ORANGE, fontsize=10, ha="right")
+ax.set_title("θ0 = −5, θ1 = 1: boundary at size 5"); ax.set_xlabel("tumour size x")
+ax.set_ylabel("hθ(x) = P(malignant)"); ax.legend(loc="upper left", fontsize=9.5)
+ax = axes[1]
+for C, col in [(0.1, BLUE), (1, GOLD), (100, WINE)]:
+    m = LogisticRegression(C=C).fit(x.reshape(-1, 1), y)
+    ax.plot(xs, m.predict_proba(xs.reshape(-1, 1))[:, 1], color=col,
+            label=f"C = {C}: θ1 = {m.coef_[0, 0]:.2f}")
+ax.scatter(x[y == 0], y[y == 0], color=TEAL, s=45, zorder=3)
+ax.scatter(x[y == 1], y[y == 1], color=WINE, marker="x", s=55, zorder=3)
+ax.set_title("sklearn on the same 8 tumours"); ax.set_xlabel("tumour size x")
+ax.legend(loc="upper left", fontsize=9.5)
+ax.text(9.8, 0.3, "small C = strong penalty\n= flatter, less sure", color=BLUE, fontsize=9.5, ha="right")
+fig.tight_layout(); save(fig, "logreg-tumours")

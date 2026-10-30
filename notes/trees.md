@@ -2,6 +2,15 @@
 
 A decision tree classifies an example by asking a short chain of yes/no questions about its features, choosing each question so the groups it creates are as pure as possible.
 
+> **What you need to know**
+> - the feature at the root (and at every node) is the one that **maximises purity**, measured by **information gain**
+> - **entropy** $H(S)$ = how impure a node is: 0 when pure, 1 at a 50/50 mix
+> - **information gain** = entropy before the split − weighted average entropy after it; highest gain wins
+> - stop splitting when a node is 100% one class, at max depth, or when the gain is too small
+> - many trees voting = an **ensemble** ([Bagging](#/t/bagging), [Random forest](#/t/randomforest), [XGBoost](#/t/xgboost))
+>
+> **Skip:** Gini's formula (another impurity measure; same idea); doing big trees by hand: `fit()` does it
+
 ## The shared example: cat or not cat?
 
 This is the example from Andrew Ng's lecture. We have 10 animals, 5 of them cats, and three features that each take only two values:
@@ -39,8 +48,11 @@ In the figure, follow one animal from the top: pointy ears, then a round face, e
 
 Learning a tree means answering two questions again and again:
 
-1. **Which feature should this node split on?** The one with the highest information gain.
-2. **When should we stop?** When the node is pure, or a limit (like maximum depth) is reached.
+1. **Which feature should this node split on?** As my notes put it: "the feature at the root node is selected to **maximise purity**". In practice: the one with the highest information gain.
+2. **When should we stop splitting?** Three rules:
+   - the node is **100% one class** (pure, nothing left to separate);
+   - splitting would **exceed the maximum depth** (this reduces overfitting);
+   - the **improvement in purity is below a threshold** (the split isn't worth it).
 
 ## Purity
 
@@ -57,89 +69,79 @@ In the figure, teal circles are cats and wine circles are not cats. The middle n
 
 ## Entropy: a number for impurity
 
+**Entropy** is "a measure of the impurity of a dataset" (a node's examples).
+
 $$
-H(p_1) = -p_1 \log_2 p_1 - (1 - p_1)\log_2(1 - p_1)
+H(S) = -p_1 \log_2(p_1) - p_0 \log_2(p_0)
 $$
 
-- $p_1$ = fraction of examples in the node that are cats.
-- $1 - p_1$ = fraction that are not cats.
+- $S$ = the set of examples in the node.
+- $p_1$ = fraction of examples in the node that are class 1 (cats).
+- $p_0 = 1 - p_1$ = fraction that are class 0 (not cats).
 - $\log_2$ = log base 2 (see [Logs & exponents](#/t/logs)).
 - By convention $0 \times \log_2 0 = 0$, so a pure node has entropy 0.
 
-In words: entropy is 0 when the node is pure and 1 when it is a 50/50 mix (you can't guess better than a coin flip).
+In words: entropy is 0 when the node is pure and 1 when it is a 50/50 mix. In my notes: "if a split results in 50% one class & 50% other, P(x) = 50/100, H(S) = 1 → high impurity". And: "the lower/higher the probability of a class in a set after a split, the lower H(S)", i.e. the further $p_1$ is from 0.5, the purer the node.
 
 ![The entropy curve. It is 0 at both ends (pure nodes) and peaks at 1 when the node is half cats.](figures/trees-entropy.svg)
 
 In the figure, the curve is symmetric. 4 cats out of 5 ($p_1 = 0.8$) and 1 cat out of 5 ($p_1 = 0.2$) both have entropy 0.72. Entropy measures how mixed a node is, not which class is winning.
 
-### Worked example: root entropy
-
-The root holds all 10 animals and 5 are cats, so $p_1 = 0.5$.
-
-| Step | Calculation | Value |
-|---|---|---|
-| 1. Fraction of cats | $p_1 = 5/10$ | 0.5 |
-| 2. Fraction not cats | $1 - p_1$ | 0.5 |
-| 3. Log of each | $\log_2 0.5$ | −1 |
-| 4. First term | $-0.5 \times (-1)$ | 0.5 |
-| 5. Second term | $-0.5 \times (-1)$ | 0.5 |
-| 6. Add | $H = 0.5 + 0.5$ | **1.0** |
+**Cat root:** 10 animals, 5 cats, so $p_1 = p_0 = 0.5$ and $H = -0.5\log_2 0.5 - 0.5\log_2 0.5 = 0.5 + 0.5 = 1$.
 
 > **Say it like this:** "The root is a 50/50 mix, so its entropy is 1, the maximum. Every split should push that number down."
 
 ## Information gain
 
-**Information gain** is how much a split lowers entropy:
+**Information gain** = entropy before the split minus the weighted average entropy after it:
 
 $$
-\text{Gain} = H(\text{root}) - \Big( w_{\text{left}} \, H(\text{left}) + w_{\text{right}} \, H(\text{right}) \Big)
+\text{Gain}(S, A) = H(S) - \sum_{v \in \text{Values}(A)} \frac{|S_v|}{|S|} \, H(S_v)
 $$
 
-- $w_{\text{left}}$ = fraction of the parent's examples that go left; $w_{\text{right}}$ the same for the right.
-- The bracket is the **weighted average entropy** of the two children.
+- $A$ = the feature we split on; $v$ = each of its values (each branch).
+- $|S|$ = total samples before the split; $|S_v|$ = samples in branch $v$ after the split.
+- $H(S_v)$ = entropy of branch $v$ after the split.
+- With two branches this is just $H(S) - (w_{\text{left}} H_{\text{left}} + w_{\text{right}} H_{\text{right}})$, where $w = |S_v|/|S|$.
+
+"The higher the info gain, the more favoured that split of the decision tree."
 
 **Why weight by size?** A tiny pure branch shouldn't count as much as a big mixed one. Sending 1 animal left (pure) and 9 right (still mixed) has barely helped.
 
-### Worked example: all three features at the root
+### Worked example 1: my 9 Yes / 5 No split
+
+From my notebook: node $f_1$ has 14 samples, 9 Yes and 5 No. It splits into $f_2$ (6 Yes, 2 No) and $f_3$ (3 Yes, 3 No).
+
+![My split drawn as a tree. The parent is 9 Yes / 5 No; the left child (6/2) is purer, the right child (3/3) is a 50/50 mix.](figures/trees-hissplit.svg)
+
+In the figure, the left child is mostly Yes, so its entropy falls; the right child is 50/50, so its entropy is the maximum, 1.
+
+| Step | Calculation | Value |
+|---|---|---|
+| Parent $H(f_1)$ | $-\tfrac{9}{14}\log_2\tfrac{9}{14} - \tfrac{5}{14}\log_2\tfrac{5}{14}$ | 0.94 |
+| Left $H(f_2)$ | $-\tfrac{6}{8}\log_2\tfrac{6}{8} - \tfrac{2}{8}\log_2\tfrac{2}{8}$ | 0.81 |
+| Right $H(f_3)$ | 3 Yes, 3 No: a 50/50 mix | 1 |
+| Weighted after | $\tfrac{8}{14} \times 0.81 + \tfrac{6}{14} \times 1$ | 0.89 |
+| **Gain** | $0.94 - 0.89$ | **0.049** |
+
+- $f_2$: "higher prob. = lower entropy = higher purity".
+- A small gain: the split helps only a little, because $f_3$ is still completely mixed.
+
+> **Check:** with unrounded entropies (0.9403, 0.8113, 1) the gain is **0.048**. My 0.049 comes from rounding the H values to 0.94 and 0.81 first. Both are fine; just round at the end when you can.
+
+### Worked example 2: cat example, all three features at the root
 
 $H(\text{root}) = 1.0$ for every candidate.
 
 ![The three candidate root splits, with the cats and non-cats in each branch and the entropy of each branch.](figures/trees-rootsplits.svg)
 
-**Feature 1: Ear shape**
+| Feature | Left branch (cats / animals, H) | Right branch (cats / animals, H) | Weighted H after | Gain = 1 − weighted |
+|---|---|---|---|---|
+| Ear shape | pointy: 4/5, 0.722 | floppy: 1/5, 0.722 | 0.5 × 0.722 + 0.5 × 0.722 = 0.722 | **0.278** |
+| Face shape | round: 4/7, 0.985 | not round: 1/3, 0.918 | 0.7 × 0.985 + 0.3 × 0.918 = 0.965 | 0.035 |
+| Whiskers | present: 3/4, 0.811 | absent: 2/6, 0.918 | 0.4 × 0.811 + 0.6 × 0.918 = 0.875 | 0.125 |
 
-| | Animals | Cats | $p_1$ | Weight $w$ | $H$ | $w \times H$ |
-|---|---|---|---|---|---|---|
-| Pointy (left) | 5 | 4 | 0.80 | 0.5 | 0.7219 | 0.3610 |
-| Floppy (right) | 5 | 1 | 0.20 | 0.5 | 0.7219 | 0.3610 |
-| Weighted entropy | | | | | | 0.7219 |
-| **Gain** | | | | | 1 − 0.7219 | **0.2781** |
-
-**Feature 2: Face shape**
-
-| | Animals | Cats | $p_1$ | Weight $w$ | $H$ | $w \times H$ |
-|---|---|---|---|---|---|---|
-| Round (left) | 7 | 4 | 0.571 | 0.7 | 0.9852 | 0.6897 |
-| Not round (right) | 3 | 1 | 0.333 | 0.3 | 0.9183 | 0.2755 |
-| Weighted entropy | | | | | | 0.9651 |
-| **Gain** | | | | | 1 − 0.9651 | **0.0349** |
-
-**Feature 3: Whiskers**
-
-| | Animals | Cats | $p_1$ | Weight $w$ | $H$ | $w \times H$ |
-|---|---|---|---|---|---|---|
-| Present (left) | 4 | 3 | 0.75 | 0.4 | 0.8113 | 0.3245 |
-| Absent (right) | 6 | 2 | 0.333 | 0.6 | 0.9183 | 0.5510 |
-| Weighted entropy | | | | | | 0.8755 |
-| **Gain** | | | | | 1 − 0.8755 | **0.1245** |
-
-### Which feature wins?
-
-| Rank | Feature | Gain | Why |
-|---|---|---|---|
-| 1 | Ear shape | 0.28 | Both branches are 80/20, the most lopsided split |
-| 2 | Whiskers | 0.12 | "Present" is 75% cats, but "absent" is still mixed |
-| 3 | Face shape | 0.03 | Round is 57% cats, almost a coin flip |
+Ear shape wins: both its branches are 80/20, the most lopsided split. Face shape is almost useless at the root (round is 57% cats, nearly a coin flip).
 
 The tree is **greedy**: at each node it takes the biggest gain right now. So **ear shape becomes the root**.
 
@@ -147,25 +149,7 @@ The tree is **greedy**: at each node it takes the biggest gain right now. So **e
 
 ## One level down
 
-Repeat the same process on each branch, using only that branch's animals.
-
-### Left branch: pointy ears (5 animals, 4 cats, H = 0.7219)
-
-| Split | Left: animals (cats), H | Right: animals (cats), H | Weighted H | Gain |
-|---|---|---|---|---|
-| Face shape | round: 4 (4), 0 | not round: 1 (0), 0 | 0.0000 | **0.7219** |
-| Whiskers | present: 3 (2), 0.9183 | absent: 2 (2), 0 | 0.5510 | 0.1710 |
-
-Face shape splits this branch perfectly: every pointy-eared, round-faced animal is a cat. Useless at the root, perfect here.
-
-### Right branch: floppy ears (5 animals, 1 cat, H = 0.7219)
-
-| Split | Left: animals (cats), H | Right: animals (cats), H | Weighted H | Gain |
-|---|---|---|---|---|
-| Face shape | round: 3 (0), 0 | not round: 2 (1), 1.0 | 0.4000 | 0.3219 |
-| Whiskers | present: 1 (1), 0 | absent: 4 (0), 0 | 0.0000 | **0.7219** |
-
-Whiskers splits this branch perfectly. Every leaf is now pure, so the tree stops.
+Repeat the same steps on each branch, using only the animals that reached it. Under pointy ears, face shape splits perfectly (gain 0.72); under floppy ears, whiskers splits perfectly (gain 0.72). Every leaf is now pure, so the tree stops (stopping rule 1).
 
 ![The finished tree: ear shape at the root, face shape under pointy, whiskers under floppy. All four leaves are pure.](figures/trees-final.svg)
 
@@ -181,11 +165,14 @@ In the figure, each node shows how many animals reach it and its entropy. Entrop
 
 In the figure, look at the widening gap between the gold and teal lines after depth 2–4. That gap is overfitting.
 
-The fix is to stop early, tuning these on a validation set:
+The fix is my three stopping rules, as sklearn settings tuned on a validation set:
 
-- `max_depth`: maximum number of questions per path.
-- `min_samples_leaf`: every leaf must hold at least this many examples.
-- `min_samples_split`: don't split a node smaller than this.
+| My stopping rule | sklearn setting |
+|---|---|
+| Node is 100% one class | always on (a pure node is never split) |
+| Would exceed max depth | `max_depth` |
+| Purity improvement < a threshold | `min_impurity_decrease` |
+| (also common) too few samples | `min_samples_leaf`, `min_samples_split` |
 
 ## Code: the cat table in sklearn
 
@@ -208,22 +195,11 @@ tree.fit(X, y)
 print(export_text(tree, feature_names=list(X.columns)))   # same tree as by hand
 ```
 
-The printout splits on `pointy` first, then `round` under pointy and `whiskers` under floppy: the tree we built by hand. (Gini is just another impurity measure; the splitting logic is the same.)
-
-**Feature importance** (`feature_importances_`) adds up how much each feature lowered impurity across the whole tree; check it with permutation importance on validation data, because it can favour features with many distinct values.
+The printout splits on `pointy` first, then `round` under pointy and `whiskers` under floppy: the tree we built by hand.
 
 ## In my accidents project
 
-In [US Accidents](#/p/acc) I wrapped sklearn's tree in a small class with train, validation and test scoring ([src/decision_tree.py](https://github.com/jag5m33/py_acc/blob/main/src/decision_tree.py)):
-
-```python
-self.model = DecisionTreeClassifier(max_depth = max_depth, # how many splits from root to leaf before making a decision; number of leaves double per level
-                               min_samples_leaf= min_samples_leaf, # minimum samples per leaf; with a dataset of 2 million, 500 is adequate to make aconviced decision of equal disitribution
-                               min_samples_split  = min_samples_split,
-                               random_state= 42,
-                               max_features= max_features,
-                               class_weight= class_weight)
-```
+In [US Accidents](#/p/acc) I used sklearn's tree with my stopping rules set by hand ([src/decision_tree.py](https://github.com/jag5m33/py_acc/blob/main/src/decision_tree.py)):
 
 - **`max_depth=10`**: at most 10 questions per path, so at most 1,024 leaves, far fewer than 1.98 million training rows. The tree can't memorise them.
 - **`min_samples_leaf=500`**: every leaf holds at least 500 accidents, so its "severe" probability is an average over many rows.
@@ -232,8 +208,7 @@ self.model = DecisionTreeClassifier(max_depth = max_depth, # how many splits fro
 
 ## Assumptions & caveats
 
-- **No scaling needed.** Splits only compare "≤ threshold", so the size of the numbers doesn't matter.
-- **No linearity or normality assumptions.**
+- **No scaling needed**, and no linearity or normality assumptions.
 - **Unstable.** A few changed rows can change the root split, and with it the whole tree.
 - **Greedy.** Each split is the best one right now; the tree never looks ahead.
 - **Class imbalance.** Leaves predict the majority class, so a rare class can be swamped. Use `class_weight="balanced"` and judge with precision/recall ([Classification metrics](#/t/clsmetrics)).
@@ -256,15 +231,24 @@ self.model = DecisionTreeClassifier(max_depth = max_depth, # how many splits fro
 
 ## Limitations
 
-- Predictions are step-shaped (constant inside each leaf).
-- Can't predict outside the range of values seen in training.
+- Predictions are step-shaped and can't go outside the training range.
 - A depth-10 tree with up to 1,024 leaves, like mine, is no longer readable by eye.
 
-## Where trees go next
+## Ensemble trees: many trees vote
 
-1. [Bagging](#/t/bagging): many deep trees, each on a random resample of the rows, then vote.
-2. [Random forest](#/t/randomforest): bagging plus random features at every split, so the trees differ more.
+From my notes: build **multiple decision trees with different start (root) node features**. Each tree then takes different paths, with its nodes in a different order. **Run one sample through all the trees and let them vote**: the majority is the classification.
+
+1. [Bagging](#/t/bagging): each tree trains on a random resample of the rows (sampling with replacement), then they vote.
+2. [Random forest](#/t/randomforest): bagging plus random features at every split, so the roots (and every later node) really do differ.
 3. [XGBoost](#/t/xgboost): small trees built one after another, each fixing the previous trees' errors.
+
+## Interview one-liners
+
+- **How does a tree pick a split?** It tries each feature and keeps the one with the highest information gain (biggest drop in entropy).
+- **What is entropy?** A measure of impurity: 0 for a pure node, 1 for a 50/50 node.
+- **When does it stop?** Pure node, max depth reached, or the gain is below a threshold.
+- **Why do trees overfit?** Grown fully, they memorise every training row; limit depth or leaf size.
+- **Why ensembles?** One tree is unstable; many different trees voting are more accurate.
 
 ## Quick reference
 
@@ -272,9 +256,11 @@ self.model = DecisionTreeClassifier(max_depth = max_depth, # how many splits fro
 |---|---|
 | Root / decision / leaf node | First question / later question / final prediction |
 | Pure node | All one class (entropy 0) |
-| Entropy | $-p_1\log_2 p_1 - (1-p_1)\log_2(1-p_1)$ |
+| Entropy | $H(S) = -p_1\log_2 p_1 - p_0\log_2 p_0$ |
 | Entropy range | 0 (pure) to 1 (50/50) |
-| Information gain | $H(\text{root}) - (w_L H_L + w_R H_R)$ |
+| Information gain | $H(S) - \sum (\lvert S_v \rvert / \lvert S \rvert) H(S_v)$ |
+| My 9Y/5N example | 0.94 − (8/14 × 0.81 + 6/14 × 1) = 0.048 (0.049 rounded early) |
 | Cat example gains at root | ear 0.278, whiskers 0.125, face 0.035 |
+| Stop splitting | pure node, max depth, gain below threshold |
+| Ensemble | many trees, different roots, vote |
 | Greedy | take the biggest gain at each node |
-| Stop early | `max_depth`, `min_samples_leaf`, `min_samples_split` |

@@ -1,230 +1,82 @@
 # XGBoost
 
-XGBoost builds many small decision trees one after another, each one trained to fix the errors the previous trees left behind, and adds their outputs together to make a prediction.
+XGBoost builds many small decision trees one after another, each one focusing on the examples the previous trees got wrong, and adds their answers together to make a prediction.
 
-## Terms used below
+> **What you need to know**
+> - starts from the bagged-tree idea: train each tree on a new subset of the training set
+> - the change: instead of every example having an equal $1/m$ chance of being picked, examples that **earlier trees misclassified** are made more likely to be picked
+> - so the trees are built **one after another**, each fixing the last ones' mistakes (bagging and random forest build them independently)
+> - it mainly reduces **bias**; bagging and random forest mainly reduce **variance**
+>
+> **Skip:** the maths XGBoost uses to score splits and leaves; `fit()` does it
 
-This chapter builds on [Decision trees](#/t/trees). XGBoost uses the same idea, "pick the split that makes the children purer", but it measures purity with residuals instead of entropy.
+## The idea
 
-- **Residual**: actual minus predicted, $r = y - p$. If a cat ($y = 1$) is predicted $p = 0.5$, its residual is $+0.5$.
-- **Log-odds**: the "score" scale XGBoost adds trees on, the same $z$ as in [logistic regression](#/t/logreg). A score of 0 means $p = 0.5$.
-- **Sigmoid**: turns that score back into a probability, $p = 1/(1 + e^{-\text{score}})$.
+This is Andrew Ng's way of explaining boosting, from my notes:
 
-## Bagging vs boosting
+1. Given a training set of $m$ examples, train a decision tree on a new subset, **as in bagging**.
+2. "XGBoost changes something!" Instead of picking from all examples with an equal $1/m$ chance, **make it more likely to pick previously misclassified samples** (from the previous trees).
+3. Repeat: each new tree has a higher chance of training on the examples the forest so far still gets wrong.
 
-![Left: bagging builds independent trees on bootstrap samples and averages them. Right: boosting builds trees in sequence, and each one fits the residuals of the trees before it.](figures/xgboost-bagboost.svg)
+My red note: "XGBoost – based off bagged decision tree." Ng calls this **deliberate practice**: practise the bars of a piano piece you keep getting wrong.
 
-- **Bagging / random forest** ([Bagging](#/t/bagging), [Random forest](#/t/randomforest)): many deep trees built **in parallel**, each on a random resample, then they vote. Fixes **variance** (instability).
-- **Boosting (XGBoost)**: many small trees built **in sequence**. Tree 1 makes a rough guess. Tree 2 is trained on the errors tree 1 left, tree 3 on what's still left, and so on. Fixes **bias** (too simple).
+> **Check:** this is the right intuition, and here is how XGBoost actually gets the same effect. It doesn't literally resample with higher probabilities. Instead, each new tree is trained on the **errors (residuals)** the previous trees left behind, where residual = actual − predicted. The examples the model gets most wrong have the biggest residuals, so they have the biggest pull on the next tree. And unlike bagging, the trees are built **one after another**, never independently: tree 2 needs tree 1's mistakes.
 
-In the figure, the arrows on the right carry residuals forward. That is the whole difference: forests average independent trees; boosting chains dependent ones.
+## Bagging vs boosting in one picture
 
-![Residuals for the 10 animals as trees are added (real xgboost, depth-2 trees). They start at ±0.5 and shrink towards 0.](figures/xgboost-residuals.svg)
+![Left: bagging builds independent trees on bootstrap samples and lets them vote. Right: boosting builds trees in sequence, and each one fits the mistakes left by the trees before it.](figures/xgboost-bagboost.svg)
 
-In the figure, each bar is one animal's residual. Teal bars are cats that still need a higher probability; wine bars are non-cats that still need a lower one. As trees are added, the bars shrink: each tree fixes part of what is left.
+In the figure, the arrows on the right carry the mistakes forward from tree to tree. That is the whole difference: bagging averages independent trees; boosting chains dependent ones.
 
-> **Key idea:** bagging = parallel trees, voted, less variance. Boosting = trees in a chain, each fixing the last one's errors, less bias.
+![The cat example from the trees chapter: each bar is one animal's error. As trees are added, the bars shrink towards 0.](figures/xgboost-residuals.svg)
 
-**XGBoost** ("eXtreme Gradient Boosting") is gradient boosting with built-in regularisation, handling of missing values and a very fast implementation.
+In the figure, each bar is how wrong the model still is about one of the 10 animals from [Decision trees](#/t/trees). Teal bars are cats that still need a higher probability; wine bars are non-cats that still need a lower one. Each new tree fixes part of what is left, so the bars shrink.
 
-## The data: same 10 animals
+XGBoost ("eXtreme Gradient Boosting") picks its splits the same way a decision tree does, "which split makes the groups purer?", but it scores purity with its own measure instead of entropy.
 
-The same table as in the [trees chapter](#/t/trees), with features as 1/0:
+## Tree vs bagging vs random forest vs XGBoost
 
-| # | Pointy ears | Round face | Whiskers | Cat $y$ |
+| | Decision tree | Bagging | Random forest | XGBoost |
 |---|---|---|---|---|
-| 1 | 1 | 1 | 1 | 1 |
-| 2 | 0 | 0 | 1 | 1 |
-| 3 | 0 | 1 | 0 | 0 |
-| 4 | 1 | 0 | 1 | 0 |
-| 5 | 1 | 1 | 1 | 1 |
-| 6 | 1 | 1 | 0 | 1 |
-| 7 | 0 | 0 | 0 | 0 |
-| 8 | 1 | 1 | 0 | 1 |
-| 9 | 0 | 1 | 0 | 0 |
-| 10 | 0 | 1 | 0 | 0 |
+| Rows each tree sees | all | bootstrap sample | bootstrap sample | all, but focused on the mistakes so far |
+| Features per split | all | all | random subset | all (by default) |
+| Trees built | one | independently | independently | one after another |
+| Combine | – | vote | vote | add up the trees' answers |
+| Mainly reduces | – | variance | variance | bias |
+| Typical trees | one, tuned depth | deep | deep | small (depth 3–6) |
 
-## Worked example, step by step
+## Key settings in plain words
 
-This follows the standard hand-worked method taught in StatQuest's and Krish Naik's walkthroughs. Settings: $\lambda = 1$, learning rate $\eta = 0.3$, $\gamma = 0$, and each tree has just one split. Every number was computed in Python.
-
-### Step 1: start at 0.5
-
-Every animal starts at $p = 0.5$ (score 0). A "know nothing" guess.
-
-### Step 2: residuals
-
-$r = y - p$. Cats get $1 - 0.5 = +0.5$; non-cats get $0 - 0.5 = -0.5$.
-
-| Animals | $y$ | $p$ | Residual |
-|---|---|---|---|
-| Cats: 1, 2, 5, 6, 8 | 1 | 0.5 | +0.5 |
-| Not cats: 3, 4, 7, 9, 10 | 0 | 0.5 | −0.5 |
-
-### Step 3: similarity score
-
-For any group of animals (a node):
-
-$$
-\text{Similarity} = \frac{(\text{sum of residuals})^2}{\sum p(1-p) + \lambda}
-$$
-
-- **Top:** add up the residuals, then square.
-- **Bottom:** for each animal add $p(1-p)$; at $p = 0.5$ that's $0.25$ each, so it is basically "how many animals, weighted by how unsure we still are". Then add $\lambda$.
-- $\lambda$ (lambda) is a regularisation number. It stops tiny groups from scoring high by luck.
-
-**This is purity again:**
-
-- Residuals that **agree** (all + or all −) add up to something big: **high** similarity. A **pure** node.
-- Residuals that **cancel** (some +, some −) add up to about 0: similarity **near 0**. A **mixed** node.
-
-![Four residuals that agree give similarity 2.0; four that cancel give similarity 0.](figures/xgboost-similarity.svg)
-
-In the figure, both nodes have four animals, so the bottom is the same ($4 \times 0.25 + 1 = 2$). Only the sum differs: $2^2/2 = 2$ against $0^2/2 = 0$.
-
-**Root:** all 10 animals, sum of residuals $= 5(0.5) + 5(-0.5) = 0$, so similarity $= 0^2 / 3.5 = 0$.
-
-### Step 4: try every split, compute the gain
-
-$$
-\text{Gain} = \text{Sim}_{\text{left}} + \text{Sim}_{\text{right}} - \text{Sim}_{\text{root}}
-$$
-
-Same idea as information gain: how much purer the children are than the parent.
-
-**Ear shape**
-
-| Branch | Animals | Sum of residuals | $\sum p(1-p)$ | Similarity |
-|---|---|---|---|---|
-| Pointy | 1, 4, 5, 6, 8 (4 cats) | $4(0.5) + 1(-0.5) = 1.5$ | 1.25 | $1.5^2 / 2.25 = 1.000$ |
-| Floppy | 2, 3, 7, 9, 10 (1 cat) | $1(0.5) + 4(-0.5) = -1.5$ | 1.25 | $(-1.5)^2 / 2.25 = 1.000$ |
-| **Gain** | | | | $1 + 1 - 0 = $ **2.000** |
-
-**Face shape**
-
-| Branch | Animals | Sum of residuals | $\sum p(1-p)$ | Similarity |
-|---|---|---|---|---|
-| Round | 7 animals (4 cats) | $0.5$ | 1.75 | $0.25 / 2.75 = 0.091$ |
-| Not round | 3 animals (1 cat) | $-0.5$ | 0.75 | $0.25 / 1.75 = 0.143$ |
-| **Gain** | | | | **0.234** |
-
-**Whiskers**
-
-| Branch | Animals | Sum of residuals | $\sum p(1-p)$ | Similarity |
-|---|---|---|---|---|
-| Present | 4 animals (3 cats) | $1.0$ | 1.00 | $1 / 2 = 0.500$ |
-| Absent | 6 animals (2 cats) | $-1.0$ | 1.50 | $1 / 2.5 = 0.400$ |
-| **Gain** | | | | **0.900** |
-
-![Gain for each candidate root split in tree 1. Ear shape has the largest gain.](figures/xgboost-gains.svg)
-
-In the figure, the order is the same as with entropy in the trees chapter: **ear shape > whiskers > face shape**. Different maths, same conclusion.
-
-### Step 5: gamma pruning
-
-$\gamma$ (gamma) is the minimum gain a split must reach to be kept: keep it only if $\text{Gain} - \gamma > 0$.
-
-With $\gamma = 0$, the ear split (gain 2.0) is kept. With $\gamma = 2.1$, $2.0 - 2.1 < 0$, so the split would be cut and tree 1 would be a single leaf. Bigger $\gamma$ = fewer, more careful splits.
-
-### Step 6: leaf outputs
-
-$$
-\text{Output} = \frac{\text{sum of residuals}}{\sum p(1-p) + \lambda}
-$$
-
-The same as similarity, but **not squared**, so it keeps its sign and says which way to push.
-
-| Leaf | Sum of residuals | Bottom | Output |
-|---|---|---|---|
-| Pointy | 1.5 | 1.25 + 1 = 2.25 | **+0.6667** |
-| Floppy | −1.5 | 1.25 + 1 = 2.25 | **−0.6667** |
-
-Without $\lambda$ the outputs would be $\pm 1.2$, so $\lambda$ makes each tree less extreme.
-
-### Step 7: update with the learning rate
-
-$$
-\text{new score} = \text{old score} + \eta \times \text{output}
-$$
-
-- Pointy: $0 + 0.3 \times 0.6667 = +0.2$
-- Floppy: $0 + 0.3 \times (-0.6667) = -0.2$
-
-$\eta$ (eta, the learning rate) means each tree only takes a small step. Many small steps generalise better than a few big ones.
-
-### Step 8: back to a probability
-
-Use the sigmoid:
-
-- Pointy: $p = 1/(1 + e^{-0.2}) = 0.5498$
-- Floppy: $p = 1/(1 + e^{0.2}) = 0.4502$
-
-### Step 9: new residuals, then repeat
-
-| Animal | Ear | $y$ | New $p$ | New residual | Was |
-|---|---|---|---|---|---|
-| 1, 5, 6, 8 (cats, pointy) | Pointy | 1 | 0.5498 | +0.4502 | +0.5 |
-| 4 (not cat, pointy) | Pointy | 0 | 0.5498 | −0.5498 | −0.5 |
-| 2 (cat, floppy) | Floppy | 1 | 0.4502 | +0.5498 | +0.5 |
-| 3, 7, 9, 10 (not cats, floppy) | Floppy | 0 | 0.4502 | −0.4502 | −0.5 |
-
-Eight animals moved closer to their true label. The two odd ones out (cat 2 with floppy ears, non-cat 4 with pointy ears) moved slightly further away. Log loss over all 10 fell from 0.6931 to 0.6381.
-
-Tree 2 repeats steps 3–8 on these new residuals. Ear shape wins again, but with a smaller gain (1.3985), because the easy part of the error is already gone. After tree 2, $p$ = 0.5909 (pointy) and 0.4091 (floppy). With deeper trees, later trees also use face shape and whiskers to fix cat 2 and non-cat 4.
-
-Running the real `xgboost` library with the same settings gives the same split, the same gain (2) and the same probabilities (0.5498 / 0.4502); its printed leaf values are $\pm 0.2$ because it stores them already multiplied by $\eta$.
-
-## Key hyperparameters
-
-| Parameter | What it does | If overfitting |
+| Setting | Plain meaning | If overfitting |
 |---|---|---|
-| `n_estimators` | Number of trees | Fewer, or use early stopping |
-| `learning_rate` ($\eta$) | Size of each tree's step. Default 0.3 | Lower (and add trees) |
-| `max_depth` | Depth of each tree. Default 6 | Lower (3–6 is typical) |
-| `gamma` ($\gamma$) | Minimum gain to keep a split. Default 0 | Raise |
-| `reg_lambda` ($\lambda$) | Shrinks leaf outputs. Default 1 | Raise |
+| `n_estimators` | how many trees in the chain | fewer, or use early stopping |
+| `learning_rate` | how big a step each tree takes (default 0.3) | lower it and add trees |
+| `max_depth` | how deep each small tree is (default 6) | lower (3–6 is typical) |
+| `early_stopping_rounds` | stop adding trees once validation stops improving | use it |
 
-`learning_rate` and `n_estimators` work together: halve the learning rate and you usually need about twice as many trees.
-
-## Code: training with early stopping
+## Code
 
 ```python
 import xgboost as xgb
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 
-X, y = make_classification(n_samples=1500, n_features=20, n_informative=6,
-                           flip_y=0.12, random_state=0)       # noisy toy data
+X, y = make_classification(n_samples=1500, random_state=0)   # toy data
 X_tr, X_va, y_tr, y_va = train_test_split(X, y, test_size=0.3, random_state=0)
 
 model = xgb.XGBClassifier(
-    n_estimators=600,            # upper limit; early stopping picks the real number
-    learning_rate=0.1,           # smaller steps than the default 0.3
-    eval_metric="logloss",       # score watched on the validation set
-    early_stopping_rounds=50,    # stop after 50 rounds with no improvement
+    n_estimators=600,            # upper limit on trees
+    learning_rate=0.1,           # small steps
+    max_depth=4,                 # small trees
+    early_stopping_rounds=50,    # stop when validation stops improving
 )
 model.fit(X_tr, y_tr, eval_set=[(X_va, y_va)], verbose=False)
 print("best round:", model.best_iteration)
 ```
 
-![Training log-loss keeps falling, while validation log-loss bottoms out at round 64. Early stopping keeps the best round and stops 50 rounds later.](figures/xgboost-earlystop.svg)
-
-In the figure, the dashed line marks the best validation round. After it, new trees only fit training noise: the same overfitting story as with tree depth.
-
 ## In my accidents project
 
-In [US Accidents](#/p/acc) the XGBoost model uses the same interface as my decision tree class ([src/xgboost.py](https://github.com/jag5m33/py_acc/blob/main/src/xgboost.py)):
-
-```python
-self.model = xgb.XGBClassifier(objective = 'binary:logistic',
-                          random_state = 42)
-def train(self):
-    print("training model for binary classification")
-    self.model.fit(self.x_train,self.y_train)
-    print(f" number of trees across full model: {len(self.model.get_booster().get_dump())}")
-```
-
-Validation results (from the README), same split and the same 0.5 threshold:
+In [US Accidents](#/p/acc) I trained XGBoost with default settings, using the same interface as my decision tree class ([src/xgboost.py](https://github.com/jag5m33/py_acc/blob/main/src/xgboost.py)). Validation results, same split and the same 0.5 threshold:
 
 | Model | Precision | Recall | F1 | PR-AUC | Accuracy |
 |---|---|---|---|---|---|
@@ -232,64 +84,44 @@ Validation results (from the README), same split and the same 0.5 threshold:
 | Decision tree (depth 10, min leaf 500) | 0.783 | 0.689 | 0.733 | 0.822 | 0.830 |
 | XGBoost (default settings) | 0.821 | 0.763 | 0.791 | 0.871 | 0.863 |
 
-- XGBoost, with **no tuning at all**, beat the tree on every metric. The biggest gain was recall (+7.4 points): more severe accidents caught.
+- With **no tuning at all**, XGBoost beat the tree on every metric. The biggest gain was recall (+7.4 points): more severe accidents caught.
 - Train and validation scores were within 0.3 points, so no sign of overfitting.
-- Next steps (in the README): tuning, early stopping, choosing a threshold from the PR curve, and scoring the test set.
-- About 34% of rows are severe. `scale_pos_weight` (about 66/34 ≈ 1.9) is one option if recall matters more than precision.
-
-## Comparison: tree vs bagging vs random forest vs XGBoost
-
-| | Decision tree | Bagged trees | Random forest | XGBoost |
-|---|---|---|---|---|
-| How trees are built | One tree on all rows | Many deep trees, each on a bootstrap sample | Bootstrap sample **and** random features at every split | Many small trees, each fit to the residuals so far |
-| Parallel or in sequence | – | Parallel | Parallel | In sequence |
-| Mainly reduces | – | Variance | Variance (more than bagging) | Bias |
-| Split chosen by | Entropy / Gini | Entropy / Gini | Entropy / Gini | Similarity score and gain |
-| Combines by | – | Vote | Vote | Adding $\eta \times$ each tree's output |
-| Typical depth | Tuned | Deep | Deep | Shallow (default 6) |
-| Tuning effort | Low | Low | Low | Medium–high |
-| Readable? | Yes, one flowchart | No | No | No |
 
 ## Assumptions & caveats
 
 - **No scaling needed.** Splits only use the order of values.
-- **Overfits with too many trees or too-deep trees.** Use a validation set with early stopping.
-- **Needs tuning** for the best results (learning rate, depth, regularisation).
-- **Hard to read.** Hundreds of trees; use feature importance (say which type) to explain.
-- **Class imbalance.** Use `scale_pos_weight`, judge with precision/recall/PR-AUC, and choose the threshold on purpose ([Classification metrics](#/t/clsmetrics)).
-- **Leakage.** A powerful model finds leaked features fast. Be suspicious of amazing scores.
+- **Overfits** with too many or too-deep trees, and with noisy labels it can end up chasing noise. Use early stopping.
+- **Class imbalance:** use `scale_pos_weight` (extra weight on the rare class) and judge with precision/recall ([Classification metrics](#/t/clsmetrics)).
+- **Leakage:** be suspicious of amazing scores.
 
 ## Use cases
 
-- **Tabular data** (rows and columns). This is where boosted trees are usually the strongest choice.
-- Risk scoring, churn, fraud, demand forecasting with engineered features.
+- **Tabular data** (rows and columns): risk scoring, churn, fraud, demand forecasting.
 - A strong benchmark to beat before trying anything more complex.
 
 ## Advantages / Disadvantages
 
 | Advantages | Disadvantages |
 |---|---|
-| Often the most accurate model on tabular data | Many settings to tune |
-| Regularisation built in ($\lambda$, $\gamma$) | Overfits if trees/depth aren't controlled |
-| Handles missing values itself | Hard to interpret |
-| No scaling; captures interactions | Trees must be built one after another |
-| Early stopping built in | Can't predict beyond the training range |
+| Often the most accurate model on tabular data | More settings to tune than a forest |
+| Handles missing values itself | Overfits if trees or depth aren't controlled |
+| No scaling; captures interactions | Hard to interpret (hundreds of trees) |
+| Early stopping built in | Trees must be built one after another (slower to train) |
 
-## Limitations
+## Interview one-liners
 
-- Noisy labels need stronger regularisation and early stopping, or boosting fits the noise.
-- On images, audio and raw text, deep learning usually wins.
+- **Boosting in one line?** Small trees built one after another, each focusing on the mistakes of the trees before it.
+- **Bagging vs boosting?** Bagging: independent trees, vote, lowers variance. Boosting: trees in a chain, lowers bias.
+- **How does it "focus" on mistakes?** Each new tree is trained on the previous trees' errors (residuals), so the worst-predicted examples pull hardest.
+- **How do you stop it overfitting?** Lower learning rate, shallower trees, early stopping on a validation set.
 
 ## Quick reference
 
-| Term | Meaning / formula |
+| Term | Meaning |
 |---|---|
-| Boosting | trees in sequence, each fixing the residuals; lowers bias |
-| Start | $p = 0.5$ (score 0) |
-| Residual | $r = y - p$ |
-| Similarity | (sum of r)² / (sum of p(1 − p) + λ): high when pure, near 0 when mixed |
-| Gain | Sim left + Sim right − Sim root |
-| Gamma | keep a split only if Gain − γ > 0 |
-| Leaf output | sum of r / (sum of p(1 − p) + λ) |
-| Update | score ← score + η × output |
-| Cat example, tree 1 | ear gain 2.000 > whiskers 0.900 > face 0.234; outputs ±0.667; p = 0.550 / 0.450 |
+| Idea (Ng) | like bagging, but previously misclassified samples are more likely to be picked |
+| In practice | each new tree fits the previous trees' errors (residuals) |
+| Trees built | one after another, not independently |
+| Reduces | bias (bagging / random forest: variance) |
+| Key settings | `n_estimators`, `learning_rate`, `max_depth`, `early_stopping_rounds` |
+| My accidents result | F1 0.791 vs tree 0.733, PR-AUC 0.871 vs 0.822 |

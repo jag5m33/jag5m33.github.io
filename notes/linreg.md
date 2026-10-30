@@ -30,6 +30,15 @@ $$
 - $b$: the **bias** or **intercept**. Where the line crosses the y-axis (the prediction when $x = 0$).
 - Training = finding the best $w$ and $b$.
 
+**Same line, Jag's notation** (Krish Naik's, the equation of a line):
+
+$$
+h_\theta(x^{(i)}) = \theta_0 + \theta_1 x
+$$
+
+- $h_\theta$: the **hypothesis** (the prediction). $x$: a data point; $x^{(i)}$ is the $i$-th one.
+- $\theta_0$ = $b$ (**y-intercept**), $\theta_1$ = $w$ (**slope**). Same model, different letters.
+
 ![The six houses (red dots) and the best straight line through them (teal). The gold dashed triangle shows the slope: go 1 unit right and the line rises by w = 1.74. The gold dot on the y-axis is the intercept b = 0.49.](figures/linreg-model.svg)
 
 **Example:** the best line is $w = 1.74$, $b = 0.49$. In the figure, the slope triangle says each extra 100 m² adds about £174k. A 220 m² house ($x = 2.2$) gets $1.74 \times 2.2 + 0.49 \approx 4.32$, about £432k.
@@ -38,7 +47,7 @@ $$
 
 ## 2. Residuals: how wrong is one prediction?
 
-A **residual** (or **error**) is the vertical gap between the prediction and the truth: $\hat{y} - y$.
+A **residual** (or **error**) is the vertical gap between the prediction and the truth: "predicted − original" $= \hat{y} - y$, where $\hat{y} = h_\theta(x^{(i)})$.
 
 Take a deliberately poor guess, $w = 1.0$, $b = 1.0$:
 
@@ -58,15 +67,17 @@ In the figure, the red lines get longer to the right. That tells you the slope i
 
 ## 3. The cost: squared error
 
-We need one number that scores the whole line. Adding the plain residuals doesn't work: +2 and −2 cancel to 0. So we **square** them (always positive, and big misses count more), then average.
+We need one number that scores the whole line. Adding the plain residuals doesn't work: +2 and −2 cancel to 0. So we **square** them ("prevents negative values cancelling", and big misses count more), then average.
 
 $$
-J(w,b) = \frac{1}{2m}\sum_{i=1}^{m}\left(f_{w,b}(x^{(i)}) - y^{(i)}\right)^2
+J(\theta_0, \theta_1) = \frac{1}{2m}\sum_{i=1}^{m}\left(h_\theta(x^{(i)}) - y^{(i)}\right)^2
 $$
 
-- $J$: the **cost**, one number for how bad the line is. Lower is better.
-- $\sum (\ldots)^2$: add up the squared residuals.
-- $\frac{1}{m}$: take the average. The extra $\frac{1}{2}$ is just a convenience that makes the maths tidier later; it doesn't change which line is best.
+- $J$: the **cost**, one number for how bad the line is. Lower is better. (Ng writes it $J(w,b)$ with $f_{w,b}$; identical.)
+- $\sum (\ldots)^2$: "adds up the residuals of all data points", squared.
+- $\frac{1}{m}$: take the average. The extra $\frac{1}{2}$ "helps with derivation": it cancels the 2 that appears when you differentiate the square (section 4). It doesn't change which line is best.
+
+**Best-fit line = minimise the residuals = minimise the cost function.** Differentiation tells you which way is downhill.
 
 **Example:** for the poor guess, $J = 6.14 / (2 \times 6) = 0.512$. For the best line ($w = 1.74$, $b = 0.49$), $J = 0.014$. Much smaller: that's what "best" means.
 
@@ -82,25 +93,47 @@ In the figure, each ring is a set of lines that are **equally bad**. The star at
 
 ## 4. Gradient descent
 
-**Gradient descent** finds the bottom of the bowl step by step:
+Plot $J$ against $\theta_1$ (the slope) alone and you get a bowl-shaped curve. **Gradient descent** finds the $\theta_1$ with the lowest cost, step by step:
 
 1. Start with any $w$ and $b$ (for example 0 and 0).
 2. Work out the **gradient**: the slope of the bowl where you are standing. It points uphill.
 3. Take a small step the **opposite** way (downhill).
 4. Repeat until the steps barely change anything. That's called **converging**.
 
-The update rule, one line:
+**The convergence algorithm** (repeat until convergence):
 
 $$
-w := w - \alpha\frac{\partial J}{\partial w}
+\theta_j := \theta_j - \alpha \frac{\partial J(\theta_0, \theta_1)}{\partial \theta_j}
 $$
 
-- $:=$ means "replace with".
-- $\alpha$ (alpha): the **learning rate**, the step size, e.g. 0.1.
-- $\frac{\partial J}{\partial w}$: the slope of the bowl in the $w$ direction. The minus sign turns uphill into downhill.
-- $b$ is updated the same way, **at the same time** (work out both slopes first, then update both).
+- $:=$ means "replace with". $j$ is 0 or 1 (intercept or slope).
+- $\alpha$ (alpha): the **learning rate**, the size of the step, e.g. 0.1.
+- The derivative: the slope of the bowl where you stand, i.e. the **direction** of the step. The minus sign turns uphill into downhill.
+- Differentiate again at each run, because the slope changes as you move.
 
-**Example:** from the poor guess ($w = 1$, $b = 1$), the slopes say "increase both". One step with $\alpha = 0.1$ moves $w$ to 1.19 and $b$ to 1.08, and the cost falls from 0.512 to 0.177.
+**The derivative, worked out once.** Differentiating the square brings down a 2, which cancels the $\frac{1}{2}$:
+
+$$
+\frac{\partial J}{\partial \theta_1} = \frac{1}{m}\sum_{i=1}^{m}\left(h_\theta(x^{(i)}) - y^{(i)}\right) x^{(i)}
+$$
+
+So the two update rules are:
+
+$$
+\theta_1 := \theta_1 - \alpha \left[\frac{1}{m}\sum_{i=1}^{m}\left(h_\theta(x^{(i)}) - y^{(i)}\right) x^{(i)}\right]
+$$
+
+$$
+\theta_0 := \theta_0 - \alpha \left[\frac{1}{m}\sum_{i=1}^{m}\left(h_\theta(x^{(i)}) - y^{(i)}\right)\right]
+$$
+
+- In words: average the residuals (times $x$ for the slope), multiply by $\alpha$, subtract.
+- $\theta_0$'s rule has no $x^{(i)}$, because $\theta_0$ isn't multiplied by $x$ in the model.
+- Update both **at the same time**: work out both brackets first, then change both.
+
+> **Check:** in Jag's notes the $\theta_1$ update has $\frac{1}{2m}$ inside the bracket. After differentiating it's $\frac{1}{m}$ (the 2 cancels the ½), exactly as his own derivative line and his $\theta_0$ line show. Easy slip to make when copying the cost down.
+
+**Example:** from the poor guess ($\theta_1 = w = 1$, $\theta_0 = b = 1$), the residuals in the table give brackets of −1.92 (slope) and −0.83 (intercept). Both negative, so "increase both". One step with $\alpha = 0.1$: $\theta_1 = 1 - 0.1 \times (-1.92) = 1.19$ and $\theta_0 = 1 - 0.1 \times (-0.83) = 1.08$. The cost falls from 0.512 to 0.177.
 
 ![Left: gradient descent starting at (w=0, b=−2), each dot one step, on the contour plot. Right: the cost after each iteration on a log scale. It falls fast, then flattens once the minimum is reached.](figures/linreg-descent.svg)
 
@@ -162,17 +195,6 @@ To check, plot residuals against predictions. In the figure, the left panel is g
 - **VIF** (variance inflation factor) is a number per feature that flags it: above about 5–10 is a warning.
 - **Fixes:** drop one of the pair, combine them, or use [Regularisation](#/t/regularisation) (Ridge).
 
-```python
-import pandas as pd
-import statsmodels.api as sm
-from statsmodels.stats.outliers_influence import variance_inflation_factor
-
-X = sm.add_constant(df[["size_m2", "rooms", "age"]])   # VIF needs an intercept column
-vif = pd.Series([variance_inflation_factor(X.values, i) for i in range(X.shape[1])],
-                index=X.columns)
-print(vif.drop("const").round(1))   # e.g. size_m2 14.7, rooms 14.7, age 1.0
-```
-
 ## 7. Use cases
 
 - **A first baseline** for any number you want to predict.
@@ -200,13 +222,14 @@ print(vif.drop("const").round(1))   # e.g. size_m2 14.7, rooms 14.7, age 1.0
 
 | Term | Meaning |
 |---|---|
-| Model | $f = wx + b$ |
+| Model | $f = wx + b$, or $h_\theta(x) = \theta_0 + \theta_1 x$ ($\theta_0 = b$, $\theta_1 = w$) |
 | w (weight, slope) | Change in prediction per 1-unit rise in x |
 | b (bias, intercept) | Where the line crosses the y-axis |
 | Residual | $\hat{y} - y$, the vertical miss |
-| Cost J | Average squared residual, halved; a bowl |
-| Gradient descent | Step downhill on the bowl until it flattens |
-| Update | $w := w - \alpha\,\partial J/\partial w$ (same for b, at the same time) |
+| Cost J | $\frac{1}{2m}\sum (h_\theta(x^{(i)}) - y^{(i)})^2$; a bowl |
+| Gradient descent | Step downhill on the bowl until it flattens (converges) |
+| Update | $\theta_j := \theta_j - \alpha\,\partial J/\partial \theta_j$ (both at the same time) |
+| Slope update | $\theta_1 := \theta_1 - \alpha \frac{1}{m}\sum (h_\theta(x^{(i)}) - y^{(i)})\,x^{(i)}$; $\theta_0$ the same without $x^{(i)}$ |
 | Learning rate α | Step size: too small = slow, too big = diverges |
 | VIF | Flags multicollinearity; above ~5–10 is a warning |
 | Good residual plot | Shapeless band around 0 |

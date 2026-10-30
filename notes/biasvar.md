@@ -7,19 +7,34 @@ Bias and variance are the two ways a model can be wrong: bias is being consisten
 - **Training error:** the model's error on the data it learned from.
 - **Validation error:** its error on held-out data it never saw while learning.
 - **Baseline error:** the best error you could realistically hope for, e.g. human-level performance. Some error can't be avoided; nobody predicts house prices to the penny.
-- **Bias:** the model is **too simple** to capture the real pattern, so it misses even on the training data. Also called **underfitting**.
-- **Variance:** the model is **too sensitive** to its training data. It learns the noise as if it were a pattern, so a different training sample would give a very different model. Also called **overfitting**.
+
+### Bias and underfitting (Jag's notes)
+
+- **Bias** "refers to the training dataset error" → **high bias = high training error** when the model is fit.
+- **Underfitting = high bias:** the model "misses true relationships despite the data"; the model is **too simple**.
+- Picture: a flat straight line through scattered points that clearly curve.
+
+> **Check:** next to underfitting Jag's notes say "(high var.)". Underfitting is usually high bias with **low** variance: a straight line barely changes if you retrain it on a new sample. Overfitting is the high-variance one, as his next section says.
+
+### Variance and overfitting (Jag's notes)
+
+- **Variance** "refers to the validation dataset error" → **high variance = high validation error** when the model predicts.
+- **Overfitting = high variance (low bias):**
+  - a wiggly curve through every training point; the model is **too complex**
+  - **low training error**
+  - it has "memorised noise, no patterns learned"
+  - it "cannot generalise to new points"
 
 > **Trap:** "bias" here is not the $b$ in $wx + b$. Same word, different meaning.
 
 ## 2. How to read them
 
-Jag's anchor: **"bias refers to the training set always, variance refers to the validation set always."** A good memory hook, with one small fix:
+Jag's anchor: **bias = training error, variance = validation error.** A good memory hook, with one small precision:
 
 - **Bias:** look at the **training error** compared with the baseline. Training error far above baseline = high bias.
 - **Variance:** look at the **gap** between training and validation error. Validation much worse than training = high variance.
 
-Why the fix? A high validation error on its own could be either problem. If training error is **also** high, it's bias. Variance is the **extra** error that appears only on new data.
+Why? A high validation error on its own could be either problem. If training error is **also** high, it's bias. Variance is the **extra** error that appears only on new data.
 
 **Example** (baseline error 2%):
 
@@ -66,33 +81,23 @@ Let's say we have 15 training points from a curved pattern plus noise, and we fi
 - **Middle (degree 4):** train 0.07, val 0.06. Both low → **good**.
 - **Right (degree 12):** train 0.01, val enormous. Huge gap → **high variance**. It threads through every noisy point.
 
-## 6. Error vs model complexity
+## 6. Error vs model complexity: the trade-off graph
 
-Do this for every degree from 0 to 12 and plot the errors:
+Jag's sketch: error against model complexity, **bias falling**, **variance rising**, total error **U-shaped**, with the **"sweet spot"** at the bottom. Here it is with real numbers, fitting every degree from 0 to 12:
 
-![Error against polynomial degree. Training error (teal) falls steadily. Validation error (red) is U-shaped: high on the left, lowest around degree 3, rising on the right. The dashed blue bias² curve falls quickly to near zero; the dashed orange variance curve starts near zero and climbs. The left shaded region is the underfitting zone, the right is the overfitting zone, and an arrow marks the sweet spot at the bottom of the validation U.](figures/biasvar-complexity.svg)
+![Error against polynomial degree. Training error (teal) falls steadily. Validation error (red) is U-shaped: high on the left, lowest around degree 3, rising on the right. The dashed blue bias curve falls quickly to near zero; the dashed orange variance curve starts near zero and climbs. The left shaded region is the underfitting zone, the right is the overfitting zone, and an arrow marks the sweet spot at the bottom of the validation U.](figures/biasvar-complexity.svg)
 
 Read the figure left to right:
 
 - **Underfitting zone (left):** bias (blue dashed) is high. Training and validation errors are both high.
-- **Sweet spot (arrow):** the bottom of the red U. **This is the model you pick**, using the validation set.
+- **Sweet spot (arrow):** the bottom of the red U, where bias and variance balance. **This is the model you pick**, using the validation set.
 - **Overfitting zone (right):** training error keeps falling, but variance (orange dashed) rises and drags validation error up. The double-headed arrow is **the gap**.
 
 > **Key idea:** training error **always** falls as the model gets more complex. So never choose complexity using training error; use validation error.
 
 This is the **bias–variance trade-off**: making the model more flexible lowers bias but raises variance, and the other way round. With lots of data you can often lower both (Jag's NLP notes: "today it's less strict").
 
-## 7. Learning curves: will more data help?
-
-A **learning curve** plots training and validation error against the **number of training rows**.
-
-- **Training error goes up** as you add rows: fitting 8 points is easy, fitting 500 is not.
-- **High bias:** the two curves meet quickly and **flatten at a high level**. More data won't help. Change the model.
-- **High variance:** there is a **big gap** that **shrinks** as you add rows. More data helps.
-
-> **Key idea:** before spending weeks collecting data, plot a learning curve. If the curves have already met at a high level, more data is wasted effort.
-
-## 8. Fixes (Andrew Ng's list)
+## 7. Fixes (Andrew Ng's list)
 
 | If you have... | Try |
 |---|---|
@@ -107,7 +112,7 @@ A **learning curve** plots training and validation error against the **number of
 
 Regularisation, the main dial for this, has its own chapter: [Regularisation](#/t/regularisation).
 
-## 9. Jag's projects as real examples
+## 8. Jag's projects as real examples
 
 **High variance: LEDGAR clause classification** ([py_legal_data](https://github.com/jag5m33/py_legal_data/blob/main/README.md)), TF-IDF + logistic regression, 100 clause types:
 
@@ -134,6 +139,5 @@ Regularisation, the main dial for this, has its own chapter: [Regularisation](#/
 | Underfitting | High bias | Both errors high and close |
 | Overfitting | High variance | Train low, validation much higher |
 | Sweet spot | Bottom of the validation U | Validation error |
-| Learning curve | Error vs number of training rows | Flat and high = bias; closing gap = variance |
 | High bias fix | Bigger model, more features, less regularisation | More data won't help |
 | High variance fix | More data, more regularisation, simpler model | |

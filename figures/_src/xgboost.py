@@ -66,9 +66,9 @@ for ax, n in zip(axes, rounds):
     ax.axhline(0, color=MUTED, lw=1)
     ax.set_title("start (p = 0.5)" if n == 0 else f"after {n} tree{'s' if n > 1 else ''}", fontsize=11)
     ax.set_xticks([1, 5, 10]); ax.set_xlabel("animal #", fontsize=10)
-    ax.text(5.5, -0.62, f"mean |r| = {np.abs(r).mean():.2f}", ha="center", fontsize=9.5, color=INK)
-axes[0].set_ylabel("residual y − p"); axes[0].set_ylim(-0.7, 0.6)
-fig.suptitle("Each new tree fits what is left over, so the residuals shrink (cat data, depth-2 trees, η = 0.3)",
+    ax.text(5.5, -0.62, f"average error = {np.abs(r).mean():.2f}", ha="center", fontsize=9.5, color=INK)
+axes[0].set_ylabel("error"); axes[0].set_ylim(-0.7, 0.6)
+fig.suptitle("Each new tree fixes part of what is left over, so the errors shrink (cat data)",
              y=1.04, fontsize=12.5, fontweight="bold")
 save(fig, "xgboost-residuals")
 

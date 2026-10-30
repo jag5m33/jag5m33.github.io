@@ -2,30 +2,34 @@
 
 A random forest is a crowd of decision trees, each grown on a bootstrap sample of the rows and allowed to look at only a random handful of features at each split, so the trees disagree in useful ways and their vote is more accurate than any one of them.
 
-## The idea in one breath
+> **What you need to know**
+> - with bagging alone, "sometimes the same split of tree happens with the same root node", so the trees end up alike
+> - random forest **randomises the feature choice**: with N features, pick a random subset of **k < N** and compute information gain only on those
+> - **and** each tree trains on its own bootstrap sample of rows (sampling with replacement, as in [Bagging](#/t/bagging))
+> - the trees then **vote**; common rule of thumb $k \approx \sqrt{N}$ (sklearn's default)
+>
+> **Skip:** tuning theory; `max_features` and `n_estimators` are the settings that matter
+
+## The idea, from my notes
 
 This chapter builds on [Decision trees](#/t/trees) and [Bagging](#/t/bagging). Same 10 animals again.
 
-> **Key idea (his framing):** a random forest uses **the same tree structure as a decision tree**: root node, decision nodes, leaves, splits chosen by information gain. It adds two kinds of randomness:
->
-> 1. **Row bootstrap**: each tree trains on its own bootstrap sample of the rows (the bagging part).
-> 2. **Random features at EVERY split**: whenever a node looks for its best split, it may only choose among a **random subset of the features**. A fresh subset is drawn at every node of every tree, not just once at the root.
->
-> Then the trees vote.
+1. **The problem:** in bagged trees, "sometimes the same split of tree happens with the same root node". One strong feature wins the root again and again.
+2. **The fix: randomise the feature choice.** If $N$ features are available, pick a **random subset of $k$ features**, $k < N$, and iteratively compute information gain on that feature choice only. The best of those $k$ wins the split.
+3. **AND row subsamples:** each tree is trained on a random bootstrap sample (sampling with replacement).
+4. Run a new example through every tree; the trees **vote**.
+
+> **Building on my note:** the random subset of $k$ features is **redrawn at EVERY split**, not only at the root. Each decision node gets its own fresh draw. So even deep in the tree, nodes can't all lean on the same strong feature. The common rule of thumb is $k \approx \sqrt{N}$: with 16 features, try 4 at each split.
+
+Everything else is the same tree as before: root node, decision nodes, leaves, splits chosen by information gain.
 
 ![One tree in a random forest, as an illustration. The root drew only "whiskers", so it had to split on whiskers. Each child then drew its own feature (ear shape on one side, face shape on the other).](figures/randomforest-everysplit.svg)
 
 In the figure, each gold box shows which feature that node was allowed to consider. They differ from node to node, because the draw is repeated at every split.
 
-## Why randomise the features?
+## Seen on the cat table: same root again and again
 
-### The problem with bagging alone
-
-In bagging, every split may look at every feature. If one feature is clearly the strongest, it wins the root in most trees, so most trees start with the same question and end up looking alike. Alike trees make the same mistakes, and averaging the same mistake doesn't remove it.
-
-### Seen on the cat table
-
-On the full table, ear shape wins the root (gain 0.278, against 0.125 and 0.035 from the trees chapter). He grew 100 trees each way in Python:
+On the full table, ear shape wins the root (gain 0.278, against 0.125 and 0.035 from the trees chapter). I grew 100 trees each way in Python:
 
 - **Bagged trees**: bootstrap sample, all 3 features allowed at every split.
 - **Random forest**: bootstrap sample, and only **one** random feature allowed at each split (`max_features=1`).
@@ -44,14 +48,13 @@ Each single tree gets a little worse (sometimes it has to use a weaker feature),
 
 > **Say it like this:** "Bagging makes trees different by giving them different rows. Random forest also gives each split a random set of features to choose from, so even a dominant feature can't make every tree look the same. More different trees means their mistakes cancel out better when they vote."
 
-## `max_features`: how many features per split?
+## `max_features` = my $k$
 
-| Setting | Features tried at each split |
+| Setting | Features tried at each split ($k$) |
 |---|---|
-| `"sqrt"` | square root of the number of features (default for classification) |
-| `"log2"` | even fewer |
+| `"sqrt"` | $\sqrt{N}$ (default for classification) |
 | a number, e.g. `3` | exactly that many |
-| `None` or `1.0` | all of them: no feature randomness, so this is just bagging |
+| `None` or `1.0` | all $N$: no feature randomness, so this is just bagging |
 
 - With 3 cat features, $\sqrt{3} = 1.73$, rounded down to **1**, so the default on the cat table is exactly the forest above.
 - **Smaller** → more different trees, but each one is weaker. **Larger** → stronger trees, more alike. It's the main setting to tune.
@@ -59,13 +62,7 @@ Each single tree gets a little worse (sometimes it has to use a weaker feature),
 
 ## Making a prediction
 
-1. Send the new example down **every** tree; each one walks one path to a leaf.
-2. **Classification**: majority vote. sklearn actually averages the trees' probabilities and picks the highest, which usually gives the same answer.
-3. **Regression**: average the trees' numbers.
-
-On the cat table, the 100-tree forest gives the new animal from the bagging chapter (floppy ears, round face, whiskers) an average P(cat) of **0.62**, so it predicts **cat**.
-
-Like bagging, a forest gets a free **OOB score** (each row judged only by trees that didn't see it): set `oob_score=True`.
+Send the new example down **every** tree and let them vote (regression: average). On the cat table, the 100-tree forest gives the new animal from the bagging chapter (floppy ears, round face, whiskers) an average P(cat) of **0.62**, so it predicts **cat**. Like bagging, it also gets a free **OOB score** (`oob_score=True`).
 
 ## Code: the cat table
 
@@ -110,6 +107,13 @@ In the figure, the single tree (left) draws small boxes around individual noisy 
 
 For how random forest compares with a single tree, bagging and boosting, see the comparison table in [XGBoost](#/t/xgboost).
 
+## Interview one-liners
+
+- **Random forest in one line?** Bagged decision trees where each split may only use a random subset of the features; the trees vote.
+- **Why random features?** Otherwise one strong feature wins the root in most trees, the trees look alike and make the same mistakes.
+- **How many features per split?** $k < N$, usually about $\sqrt{N}$ for classification (`max_features="sqrt"`).
+- **Does adding trees overfit?** No; more trees just levels off. Deep trees are fine because the vote smooths them.
+
 ## Assumptions & caveats
 
 - **No scaling needed.** Splits only use the order of values.
@@ -143,7 +147,8 @@ For how random forest compares with a single tree, bagging and boosting, see the
 
 | Term | Meaning |
 |---|---|
-| Random forest | same trees + row bootstrap + random features at every split |
+| Random forest | same trees + row bootstrap + random k of N features at every split |
+| Rule of thumb | $k \approx \sqrt{N}$ |
 | Randomness 1 | bootstrap sample of rows per tree |
 | Randomness 2 | `max_features` drawn afresh at **every** split |
 | Why it works | trees are more different, so their mistakes cancel when they vote |

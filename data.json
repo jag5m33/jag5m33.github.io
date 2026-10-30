@@ -117,6 +117,87 @@
       ]
     },
     {
+      "id": "linalg",
+      "label": "Linear algebra",
+      "children": [
+        {
+          "id": "vectors",
+          "label": "Vectors, scalars & basis vectors",
+          "soon": true
+        },
+        {
+          "id": "span",
+          "label": "Linear combinations & span",
+          "soon": true
+        },
+        {
+          "id": "lintransform",
+          "label": "Linear transformations & matrices (2D & 3D)",
+          "soon": true
+        },
+        {
+          "id": "matmul",
+          "label": "Matrix multiplication",
+          "soon": true
+        },
+        {
+          "id": "determinant",
+          "label": "The determinant",
+          "soon": true
+        },
+        {
+          "id": "inverse",
+          "label": "Inverse matrices, column space & null space",
+          "soon": true
+        },
+        {
+          "id": "nonsquare",
+          "label": "Non-square matrices",
+          "soon": true
+        },
+        {
+          "id": "dotproduct",
+          "label": "Dot products, duality & cosine similarity",
+          "soon": true
+        },
+        {
+          "id": "crossproduct",
+          "label": "Cross products",
+          "soon": true
+        },
+        {
+          "id": "changebasis",
+          "label": "Change of basis",
+          "soon": true
+        },
+        {
+          "id": "eigen",
+          "label": "Eigenvalues & eigenvectors",
+          "soon": true
+        },
+        {
+          "id": "vectorspaces",
+          "label": "Abstract vector spaces",
+          "soon": true
+        },
+        {
+          "id": "multicollinearity",
+          "label": "Multicollinearity",
+          "soon": true
+        },
+        {
+          "id": "svd",
+          "label": "SVD",
+          "soon": true
+        },
+        {
+          "id": "pca",
+          "label": "PCA",
+          "soon": true
+        }
+      ]
+    },
+    {
       "id": "ml",
       "label": "Machine learning",
       "children": [
@@ -189,6 +270,10 @@
               "label": "What unsupervised means"
             },
             {
+              "id": "isoforest",
+              "label": "Isolation forest"
+            },
+            {
               "id": "anomaly",
               "label": "Anomaly detection",
               "soon": true
@@ -206,11 +291,6 @@
             {
               "id": "dbscan",
               "label": "DBSCAN",
-              "soon": true
-            },
-            {
-              "id": "pca",
-              "label": "PCA",
               "soon": true
             }
           ]

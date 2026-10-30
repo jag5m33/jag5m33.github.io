@@ -25,14 +25,14 @@ def edge(ax, x0, y0, x1, y1, label=None, side=-1):
         ax.text((x0+x1)/2 + side*0.25, (y0+y1)/2, label, ha="right" if side < 0 else "left", va="center",
                 fontsize=10, color=MUTED, style="italic")
 
-def tokens(ax, x, y, n_cat, n_dog, r=0.13, gap=0.3):
+def tokens(ax, x, y, n_cat, n_dog, r=0.13, gap=0.3, labels=("C", "D")):
     """draw small circles: teal C = cat, wine D = not cat"""
     items = ["C"]*n_cat + ["D"]*n_dog
     x0 = x - gap*(len(items)-1)/2
     for i, t in enumerate(items):
         col = TEAL if t == "C" else WINE
         ax.add_patch(Circle((x0 + i*gap, y), r, fc=col, ec="none"))
-        ax.text(x0 + i*gap, y, t, ha="center", va="center", fontsize=7.5, color="white", fontweight="bold")
+        ax.text(x0 + i*gap, y, labels[0] if t == "C" else labels[1], ha="center", va="center", fontsize=7.5, color="white", fontweight="bold")
 
 # ---------- 1. anatomy ----------
 fig, ax = plt.subplots(figsize=(9, 4.6))
@@ -176,3 +176,24 @@ ax.set_xlabel("max_depth"); ax.set_ylabel("accuracy"); ax.legend(loc="lower righ
 ax.set_title("Deeper trees always fit training data better, not new data")
 save(fig, "trees-overfit")
 print("depth acc", list(zip(ds, np.round(tr, 3), np.round(va, 3))))
+
+# ---------- 8. Jag's own example: 9Y/5N split into 6Y/2N and 3Y/3N ----------
+Hp = H(9/14); Hl = H(6/8); Hr = H(3/6)
+G = Hp - (8/14*Hl + 6/14*Hr)
+fig, ax = plt.subplots(figsize=(9, 4.4))
+box(ax, 0, 2.6, f"f1:  9 Yes / 5 No\n14 samples, H = {Hp:.2f}", LIGHT_GOLD, w=3.6, h=1.0, fs=10.5)
+tokens(ax, 0, 1.85, 9, 5, r=0.11, gap=0.25, labels=("Y", "N"))
+box(ax, -2.6, 0.5, f"f2:  6 Yes / 2 No\n8 samples, H = {Hl:.2f}", LIGHT_TEAL, w=3.3, h=1.0, fs=10.5)
+box(ax, 2.6, 0.5, f"f3:  3 Yes / 3 No\n6 samples, H = {Hr:.2f}", LIGHT_WINE, w=3.3, h=1.0, fs=10.5)
+tokens(ax, -2.6, -0.25, 6, 2, r=0.11, gap=0.25, labels=("Y", "N"))
+tokens(ax, 2.6, -0.25, 3, 3, r=0.11, gap=0.25, labels=("Y", "N"))
+edge(ax, -0.8, 1.6, -2.2, 1.05); edge(ax, 0.8, 1.6, 2.2, 1.05)
+ax.text(-2.6, -0.8, "purer: higher prob. of Yes,\nlower entropy", ha="center", va="top", color=TEAL, fontsize=10)
+ax.text(2.6, -0.8, "50/50: entropy at its\nmaximum of 1", ha="center", va="top", color=WINE, fontsize=10)
+ax.text(0, -1.75, f"Gain = {Hp:.3f} − (8/14 × {Hl:.3f} + 6/14 × {Hr:.0f}) = {G:.3f}",
+        ha="center", color=INK, fontsize=11, fontweight="bold")
+ax.text(3.9, 2.6, "Y = Yes\nN = No", color=MUTED, fontsize=9.5, va="center")
+ax.set_xlim(-5, 5); ax.set_ylim(-2.1, 3.3); ax.axis("off")
+ax.set_title("My worked example: one split, by hand")
+save(fig, "trees-hissplit")
+print("his example", Hp, Hl, Hr, G)
