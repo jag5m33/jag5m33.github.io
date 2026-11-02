@@ -292,5 +292,10 @@ body.map-open.list-mode #index {
   display: block; padding: 12px 14px; margin: 8px 0; border-radius: 10px;
   border: 1px solid rgba(95, 201, 184, .35); color: var(--ink); text-decoration: none;
 }
+#index .proj a { text-decoration: none; }
 #index .proj strong { color: var(--teal); display: block; font-size: 17px; }
 #index .proj span { color: var(--muted); font-size: 14px; }
+#index .proj span a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(255,255,255,.25); }
+.status { font-size: 13px; vertical-align: middle; padding: 2px 8px; border-radius: 99px; background: rgba(200,150,40,.15); color: #9a6b10; font-family: sans-serif; }
+.paper.model ul { margin-top: 8px; }
+#crumbs a { color: inherit; text-decoration: underline; text-decoration-color: rgba(255,255,255,.3); }

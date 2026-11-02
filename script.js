@@ -108,8 +108,8 @@ function buildIndex() {
     <header><button type="button" id="index-back">← Sphere</button><h1>Jag Sandhu</h1></header>
     <section><h2>Notes</h2>${data.tree.map(t => `<h3 class="top">${t.label}</h3><ol>${list(t.children)}</ol>`).join("")}</section>
     <section><h2>Projects</h2>${data.projects.map(p => `
-      <a class="proj" href="#/p/${p.id}"><strong>${p.label}</strong>
-        <span>${(p.models || []).map(m => m.label + (m.status ? ` (${m.status})` : "")).join(" · ")}</span></a>`).join("")}</section>`;
+      <div class="proj"><a href="#/p/${p.id}"><strong>${p.label}</strong></a>
+        <span>${(p.models || []).map(m => `<a href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""}</a>`).join(" · ")}</span></div>`).join("")}</section>`;
   box.dataset.built = "1";
   document.getElementById("index-back").onclick = closeMap;
 }
@@ -503,7 +503,7 @@ function onNodeClick(id) {
   const n = byId[id];
   if (n.type === "centre") return closeMap();
   if (n.type === "project") return go(`#/p/${id}`);
-  if (n.type === "model") return go(`#/p/${n.project.id}`);
+  if (n.type === "model") return go(`#/m/${id}`);
   if (n.type === "leaf") return go(`#/t/${id}`);
   zoomToBranch(id);
 }
@@ -526,14 +526,14 @@ function zoomToBranch(id) {
 
 
 // ---------------------------------------------------------------------
-// ROUTER: #/t/<topic>  #/p/<project>  (empty = map)
+// ROUTER: #/t/<topic>  #/p/<project>  #/m/<model>  (empty = map)
 // so the browser back button works and every page has its own link
 // ---------------------------------------------------------------------
 function go(hash) { if (location.hash === hash) route(); else location.hash = hash; }
 
 async function route() {
   await ready;
-  const [, kind, id] = location.hash.match(/^#\/(t|p)\/(.+)$/) || [];
+  const [, kind, id] = location.hash.match(/^#\/(t|p|m)\/(.+)$/) || [];
 
   if (!kind || !byId[id]) {
     reader.classList.remove("open");
@@ -551,6 +551,7 @@ async function route() {
   document.getElementById("reader-scroll").scrollTop = 0;
 
   if (kind === "t") await showTopic(id);
+  else if (kind === "m") showModel(id);
   else showProject(id);
 }
 
@@ -672,9 +673,33 @@ function showProject(id) {
   renderTab(p, "overview", body);
 }
 
+// MODEL PAGES: short on purpose, the detail lives on GitHub
+function showModel(id) {
+  const m = byId[id], p = m.project;
+  const gh = f => `https://github.com/${p.repo}/blob/${p.branch || "main"}/${f}`;
+  crumbs.innerHTML = `<span>Projects</span><i>›</i><a href="#/p/${p.id}">${p.label}</a><i>›</i><span>${m.label}</span>`;
+  paper.className = "paper project model";
+  const t = m.metrics;
+  paper.innerHTML = `
+    <p class="kicker">Model · ${p.label}</p>
+    <h1>${m.label}${m.status ? ` <span class="status">${m.status}</span>` : ""}</h1>
+    <p class="lead">${m.summary || ""}</p>
+    ${(m.points || []).length ? `<ul>${m.points.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
+    ${t ? `<table class="metrics"><tr>${t.columns.map(c => `<th>${c}</th>`).join("")}</tr>
+      ${t.rows.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}</table>` : ""}
+    <h3>Code</h3>
+    ${(m.code || []).map(f => `<a class="chip" href="${gh(f)}" target="_blank" rel="noopener">${f.split("/").pop()} ↗</a>`).join("")}
+    <p class="repo-link"><a href="https://github.com/${p.repo}" target="_blank" rel="noopener">Full project on GitHub ↗</a></p>
+    <footer class="chapter-foot">
+      ${m.topic && byId[m.topic] ? `<a class="chip" href="#/t/${m.topic}">My notes: ${byId[m.topic].label} →</a>` : ""}
+      <a class="chip" href="#/p/${p.id}">Project page →</a>
+    </footer>`;
+}
+
 function renderTab(p, tab, body) {
   if (tab === "overview") {
     body.innerHTML = `<p class="lead">${p.summary || ""}</p>
+      ${(p.models || []).length ? `<h3>Models</h3>${p.models.map(m => `<a class="chip" href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""} →</a>`).join("")}` : ""}
       <h3>Methods used</h3>
       ${(p.uses || []).filter(u => byId[u]).map(u => `<a class="chip" href="#/t/${u}">${byId[u].label}</a>`).join("")}
       <p class="repo-link"><a href="https://github.com/${p.repo}" target="_blank" rel="noopener">Open the repository on GitHub ↗</a></p>`;

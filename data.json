@@ -131,26 +131,22 @@
       "children": [
         {
           "id": "vectors",
-          "label": "Vectors, scalars & basis vectors",
-          "soon": true,
-          "short": "Vectors & scalars"
+          "label": "Vectors & scalars"
         },
         {
           "id": "span",
-          "label": "Linear combinations & span",
-          "soon": true,
-          "short": "Combinations & span"
+          "label": "Linear combinations, span & basis vectors",
+          "short": "Span & basis vectors"
         },
         {
           "id": "lintransform",
-          "label": "Linear transformations & matrices (2D & 3D)",
-          "soon": true,
+          "label": "Linear transformations & matrix-vector multiplication",
           "short": "Linear transformations"
         },
         {
           "id": "matmul",
-          "label": "Matrix multiplication",
-          "soon": true
+          "label": "Matrix multiplication (2D & 3D)",
+          "short": "Matrix multiplication"
         },
         {
           "id": "determinant",
@@ -443,12 +439,64 @@
         {
           "id": "acc-tree",
           "label": "Decision tree",
-          "topic": "trees"
+          "topic": "trees",
+          "summary": "Predicts whether an accident is severe (severity 3 or 4). The simple, explainable model, built first as the benchmark.",
+          "points": [
+            "Settings: max depth 10, at least 500 rows per leaf",
+            "Road type carries 64% of the importance, then location (17%)",
+            "Threshold 0.5, not tuned yet"
+          ],
+          "metrics": {
+            "columns": [
+              "Precision",
+              "Recall",
+              "F1",
+              "PR-AUC"
+            ],
+            "rows": [
+              [
+                "0.783",
+                "0.689",
+                "0.733",
+                "0.822"
+              ]
+            ]
+          },
+          "code": [
+            "src/decision_tree.py",
+            "notebooks/model.ipynb"
+          ]
         },
         {
           "id": "acc-xgb",
           "label": "XGBoost",
-          "topic": "xgboost"
+          "topic": "xgboost",
+          "summary": "Same task and features as the decision tree, but many small trees built one after another, each fixing the last one's mistakes.",
+          "points": [
+            "Default settings, threshold 0.5",
+            "Beats the tree on every metric (PR-AUC 0.871 vs 0.822)",
+            "Next: tune on validation, pick the threshold from the precision-recall curve"
+          ],
+          "metrics": {
+            "columns": [
+              "Precision",
+              "Recall",
+              "F1",
+              "PR-AUC"
+            ],
+            "rows": [
+              [
+                "0.821",
+                "0.763",
+                "0.791",
+                "0.871"
+              ]
+            ]
+          },
+          "code": [
+            "src/xgboost.py",
+            "notebooks/model.ipynb"
+          ]
         }
       ]
     },
@@ -457,7 +505,7 @@
       "label": "Legal Clause NLP",
       "repo": "jag5m33/py_legal_data",
       "branch": "main",
-      "summary": "Classify contract clauses into 100 types (LEDGAR / LexGLUE). Regex cleaning, spaCy lemmatisation, stop words, TF-IDF with n-grams, then two models on the same features: multiclass softmax logistic regression, and a Complement Naive Bayes model (in progress) built for the imbalanced classes. Error analysis shows most mistakes are near-synonym labels.",
+      "summary": "Classify contract clauses into 100 types (LEDGAR / LexGLUE). Regex cleaning, spaCy lemmatisation, stop words, TF-IDF with n-grams, then two models on the same features: multiclass softmax logistic regression, and a Complement Naive Bayes model built for the imbalanced classes. Error analysis shows most mistakes are near-synonym labels.",
       "uses": [
         "descriptive",
         "profiling",
@@ -487,25 +535,22 @@
         "notebooks/model_nb.ipynb"
       ],
       "metrics": {
-        "title": "Softmax logistic regression results (Naive Bayes results coming)",
+        "title": "Validation results, both models",
         "columns": [
-          "Split",
+          "Model",
           "Accuracy",
-          "Macro F1",
-          "Micro F1"
+          "Macro F1"
         ],
         "rows": [
           [
-            "Train",
-            "0.899",
-            "0.887",
-            "0.899"
+            "Softmax logistic regression",
+            "0.839",
+            "0.780"
           ],
           [
-            "Validation",
-            "0.839",
-            "0.780",
-            "0.839"
+            "Complement Naive Bayes (alpha 0.1)",
+            "0.821",
+            "0.716"
           ]
         ]
       },
@@ -514,15 +559,72 @@
         {
           "id": "legal-lr",
           "label": "Softmax logistic regression",
+          "short": "Logistic regression",
           "topic": "softmax",
-          "short": "Logistic regression"
+          "summary": "Classifies each contract clause into one of 100 types from its TF-IDF features.",
+          "points": [
+            "Multinomial logistic regression, C = 1.0",
+            "class_weight='balanced' for the imbalanced classes",
+            "Most errors are near-synonym labels (Governing Laws vs Applicable Laws)"
+          ],
+          "metrics": {
+            "columns": [
+              "Split",
+              "Accuracy",
+              "Macro F1"
+            ],
+            "rows": [
+              [
+                "Train",
+                "0.899",
+                "0.887"
+              ],
+              [
+                "Validation",
+                "0.839",
+                "0.780"
+              ]
+            ]
+          },
+          "code": [
+            "src/multi_class_lr_softmax.py",
+            "notebooks/model_mcc.ipynb"
+          ]
         },
         {
           "id": "legal-nb",
           "label": "Complement Naive Bayes",
+          "short": "Complement NB",
           "topic": "naivebayes",
-          "status": "in progress",
-          "short": "Complement NB"
+          "summary": "Same saved TF-IDF features as the logistic regression, so the two compare fairly. Complement NB is the Naive Bayes version built for imbalanced classes.",
+          "points": [
+            "Started out underfitting, so I tested alpha from 1.0 down to 0.01",
+            "Chose alpha = 0.1: validation macro F1 0.701 → 0.716",
+            "Fast to train, but below logistic regression (0.780); error analysis next"
+          ],
+          "metrics": {
+            "columns": [
+              "Split",
+              "Accuracy",
+              "Macro F1"
+            ],
+            "rows": [
+              [
+                "Train",
+                "0.890",
+                "0.833"
+              ],
+              [
+                "Validation",
+                "0.821",
+                "0.716"
+              ]
+            ]
+          },
+          "code": [
+            "src/complement_nb.py",
+            "notebooks/model_nb.ipynb"
+          ]
         }
       ]
     },
@@ -531,17 +633,21 @@
       "label": "GB Grid Anomalies",
       "repo": "jag5m33/py_elec_grid_anomaly",
       "branch": "main",
-      "summary": "In progress. Finding half-hours when GB national electricity demand (NESO, 2018–2023) is unusually high or low for its time of day, weekday and season. EDA is done; next, an MSTL decomposition strips out the normal daily, weekly and yearly pattern so the anomaly detection can work on what's left.",
+      "summary": "Finding half-hours when GB national electricity demand (NESO, 2018–2023) is unusually high or low for its time of day and week. MSTL strips out the normal daily and weekly pattern, then an isolation forest flags the half-hours left over that don't fit.",
       "uses": [
         "descriptive",
         "distributions",
         "profiling",
         "vartypes",
         "cleaning",
-        "features"
+        "features",
+        "autocorr",
+        "isoforest"
       ],
       "code": [
-        "notebooks/eda.ipynb"
+        "notebooks/eda.ipynb",
+        "src/mstl.py",
+        "notebooks/model.ipynb"
       ],
       "results": [],
       "models": [
@@ -549,13 +655,28 @@
           "id": "elec-mstl",
           "label": "MSTL baseline",
           "topic": "autocorr",
-          "status": "in progress"
+          "summary": "Splits half-hourly demand into trend + daily pattern + weekly pattern + residual. What's left (the residual) is demand the normal patterns can't explain.",
+          "points": [
+            "Periods 48 (one day of half-hours) and 336 (one week)",
+            "robust=True so big events (Covid, Christmas) don't bend the 'normal' pattern",
+            "The residuals feed the anomaly detector"
+          ],
+          "code": [
+            "src/mstl.py",
+            "notebooks/model.ipynb"
+          ]
         },
         {
-          "id": "elec-anom",
-          "label": "Anomaly detection",
-          "topic": "anomaly",
-          "status": "planned"
+          "id": "elec-iso",
+          "label": "Isolation forest",
+          "topic": "isoforest",
+          "summary": "Runs on the MSTL residuals and flags half-hours that are easy to isolate, i.e. unusual for their time of day and week.",
+          "points": [
+            "Results going up once the notebook is pushed"
+          ],
+          "code": [
+            "notebooks/model.ipynb"
+          ]
         }
       ]
     }

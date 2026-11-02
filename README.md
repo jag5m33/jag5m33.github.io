@@ -44,6 +44,7 @@ Add an entry to `projects` in `data.json`:
 - `models`: the models inside the project, drawn as branches on the right half, e.g.
   `{ "id": "legal-nb", "label": "Complement Naive Bayes", "topic": "naivebayes", "status": "in progress" }`.
   `topic` draws a thread to that chapter; `status` is optional and shows the model as dashed until it's done.
+  Clicking a model opens its own short page (`#/m/<id>`) built from optional fields: `summary` (one or two sentences), `points` (a few bullets), `metrics` (`columns` + `rows`) and `code` (file paths, linked to GitHub).
 - `uses`: other topic ids the project relies on (EDA, cleaning…), drawn as threads from the project
 - `metrics` and `results` (image URLs) for the Results tab
 

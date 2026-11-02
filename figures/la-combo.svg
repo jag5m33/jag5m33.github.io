@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="300.70375pt" height="243.36pt" viewBox="0 0 300.70375 243.36" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-02T14:40:27.749522</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 243.36 
+L 300.70375 243.36 
+L 300.70375 0 
+L 0 0 
+L 0 243.36 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 10.8 232.56 
+L 251.04 232.56 
+L 251.04 10.8 
+L 10.8 10.8 
+L 10.8 232.56 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="line2d_1">
+    <path d="M 10.8 158.64 
+L 251.04 158.64 
+" clip-path="url(#p36e9cbb682)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 84.72 232.56 
+L 84.72 10.8 
+" clip-path="url(#p36e9cbb682)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 95.333333 244.36 
+L 230.712 41.292 
+" clip-path="url(#p36e9cbb682)" style="fill: none; stroke-dasharray: 5.92,2.56; stroke-dashoffset: 0; stroke: #c9a227; stroke-width: 1.6"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 85.829037 156.976445 
+Q 126.299883 96.270175 165.282313 37.796531 
+" style="fill: none; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 159.06967 41.346612 
+L 165.282313 37.796531 
+L 164.394792 44.896694 
+z
+" style="fill: #23877a; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="103.2" y="93.96" transform="rotate(-0 103.2 93.96)">3v</text>
+   </g>
+   <g id="patch_4">
+    <path d="M 169.518318 35.046823 
+Q 190.97913 50.069391 210.241713 63.553199 
+" style="fill: none; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 206.833708 57.261498 
+L 210.241713 63.553199 
+L 203.163549 62.504582 
+z
+" style="fill: #8b1e3f; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #8b1e3f" x="195.6" y="45.45" transform="rotate(-0 195.6 45.45)">2w</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #c9a227" transform="translate(186.36 113.391797)">2w held constant,</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #c9a227" transform="translate(186.36 125.394531)">scalar on v changes:</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #c9a227" transform="translate(186.36 137.397266)">tip slides along</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #c9a227" transform="translate(186.36 149.4)">this dashed line</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p36e9cbb682">
+   <rect x="10.8" y="10.8" width="240.24" height="221.76"/>
+  </clipPath>
+ </defs>
+</svg>
