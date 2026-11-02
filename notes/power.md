@@ -1,124 +1,116 @@
 # Power & sample size
 
-Power is the chance your test catches a real effect, and power analysis is how you choose the sample size before you collect any data.
+Power answers one question before you collect any data: **if the effect is real, how likely is my test to catch it?**
+
+**On this page**
+
+- The two-world picture: α, β and power
+- Watch power fill in as the curves pull apart
+- Why a bigger sample is the only escape
+- Effect size is the gap between the curves
+- Power analysis: four dials, solve for n
+- P-hacking: why you fix it all in advance
 
 ## The two-world picture
 
-Every test is a contest between two bell curves on the same axis.
+> **Definition:** **power** is the chance your test catches an effect that is really there. Power = 1 − β, and the usual target is **80%**.
 
-- **Left curve: H₀ is true.** The world where there's no effect.
+Every test is a contest between two bell curves on the same axis:
+
+- **Left curve: H₀ is true.** The world with no effect.
 - **Right curve: H₁ is true.** The world where the effect is real.
 
-They **overlap**, because a middling result is plausible in either world. Where they overlap, you genuinely can't tell which world produced your result.
+They overlap, because a middling result is plausible in either world: there, you can't tell which world produced it. You draw one line, the **cutoff**, fixed by α. Anything right of it, you call significant.
 
-You place one vertical line, the **cutoff**, fixed by α. Anything to its right, you call significant.
+![Look at the dashed cutoff first: every area is measured from it. Red: α. Gold: β. Teal: power.](figures/power-two-worlds.svg)
 
-![Two bell curves, H0 in dark ink and H1 in teal, with a dashed cutoff. Red: alpha, the H0 curve right of the cutoff. Gold: beta, the H1 curve left of the cutoff. Teal fill: power.](figures/power-two-worlds.svg)
-
-In the figure, look at the dashed line first: every area is measured from it.
-
-| Term | What it is | On the picture |
+| Term | The mistake | On the picture |
 |---|---|---|
-| **Alpha (α)** | A **false positive**: "saw something that wasn't there". You set it, usually 0.05 | Red: the **H₀ curve** right of the cutoff |
-| **Beta (β)** | A **false negative**: "missed something that was there" | Gold: the **H₁ curve** left of the cutoff |
-| **Power** | $1 - \beta$: correctly catching a real effect. Usual target 0.80 | Teal: the rest of the **H₁ curve**, right of the cutoff |
+| **α** | False alarm: "saw something that wasn't there" | H₀ curve, right of the cutoff |
+| **β** | Miss: "missed something that was there" | H₁ curve, left of the cutoff |
+| **Power** | Not a mistake: a real effect, caught | H₁ curve, right of the cutoff |
 
-These are the same α and β as the error table in [Hypothesis testing](#/t/hypothesis).
+Alpha guards against false alarms; power guards against misses. Same α and β as in [Hypothesis testing](#/t/hypothesis).
 
-> **Trap:** β is measured against the **cutoff line**, not the overlap region. It's the part of the H₁ curve sitting left of the line.
+> **Where it goes wrong:** β is measured against the **cutoff line**, not against where the two curves overlap. It's the H₁ curve's area left of the line.
 
 ## Watch power fill in
 
-![Three panels with the same cutoff. As the gap between the curves grows from 1.5 to 2.5 to 3.5 standard errors, power rises from 0.44 to 0.80 to 0.97.](figures/power-panels.svg)
+> **Definition:** the further the H₁ curve sits from the cutoff, the **higher the power**.
 
-Same cutoff in all three panels. As the H₁ curve pulls away from the line, the gold miss area shrinks and the teal power area fills in: from **0.44** to **0.80** to **0.97**.
+![Same cutoff in all three panels. As the H₁ curve pulls away, the gold miss shrinks and teal power fills in: 0.44, 0.80, 0.97.](figures/power-panels.svg)
+
+Two things pull it away: a **bigger effect**, or a **bigger sample**.
 
 ## Why sample size is the only escape
 
-Sliding the cutoff just **trades** α against β: shrink one, grow the other.
+> **Definition:** α and β **trade off**: slide the cutoff and you shrink one only by growing the other.
 
-**A bigger sample makes both curves skinnier** (the standard error shrinks). Skinnier curves overlap less, so α and β can **both** fall. That's the one lever that beats the trade-off.
+A bigger sample makes **both curves skinnier** (the standard error shrinks). Skinnier curves overlap less, so α and β can **both** fall. That's the one lever that beats the trade-off.
 
-![Left: wide curves with the cutoff halfway, alpha = beta = 0.159. Right: with four times the sample both curves are half as wide, and alpha = beta = 0.023.](figures/power-sample-size.svg)
+![Same gap, same cutoff. Four times the sample halves the width, and α and β both drop from 0.159 to 0.023.](figures/power-sample-size.svg)
 
-In the figure, the gap between centres and the cutoff are the same in both panels. Four times the sample halves the width, and both error areas drop from 0.159 to 0.023 at once.
+## Effect size is the gap
 
-## Effect size is the gap between the curves
+> **Definition:** in this picture, **effect size** is the distance between the two curve centres (Cohen's d from [Effect size](#/t/effectsize)).
 
-> **Key idea:** Effect size = the distance between the two curve centres. A big effect pulls them far apart (high power); a small effect leaves them nearly on top of each other (low power).
+- Big effect: curves far apart, little overlap, high power.
+- Small effect: curves nearly on top of each other, low power.
 
-So you **cannot** ask "how many samples do I need?" without first saying "to detect an effect of what size?" See [Effect size](#/t/effectsize) for Cohen's d.
+So you **cannot** ask "how many samples do I need?" without first saying "to detect an effect of what size?"
 
 ## Power analysis
 
-**Power analysis**: planning your sample size up front so that, if a real effect of a size you care about exists, you have a good chance (usually 80%) of catching it.
+> **Definition:** **power analysis** is planning your sample size up front so that, if a real effect of a size you care about exists, you have a high enough chance (usually 80%) of catching it.
 
 Four dials, locked together. Fix any three and the fourth is set:
 
 1. **α** (usually 0.05)
-2. **power** (usually 0.80)
-3. **effect size** (the smallest difference worth catching)
-4. **sample size** (usually the one you solve for)
+2. **Power** (usually 0.80)
+3. **Effect size**: the smallest difference worth catching
+4. **Sample size**: usually the one you solve for
 
-**Worked example.** An A/B test on a score with SD 10. You want to catch a 5-point difference, so Cohen's d = 5 / 10 = 0.5. With α = 0.05 and 80% power, you need about **64 users per group**.
+**Worked example.** An A/B test on a score with SD 10. You want to catch a 5-point difference, so d = 5 / 10 = 0.5. At α = 0.05 and 80% power you need **64 users per group**.
 
-Now halve the difference you want to catch (d = 0.25): you need about **253 per group**. Roughly four times as many.
+Halve the difference (d = 0.25) and you need **253 per group**: about four times as many.
 
-> **Key idea:** halving the effect you want to catch roughly **quadruples** the sample. Tiny effects are very expensive to detect.
+Why four times? Half the gap means each curve must be half as wide to separate again, and width only shrinks with the square root of the sample. **Halve the effect → 4× the sample.** Tiny effects are very expensive.
 
-![Required n per group against Cohen's d on a log scale, at alpha 0.05 and power 0.80: d = 0.2 needs 394, d = 0.5 needs 64, d = 0.8 needs 26.](figures/power-n-vs-d.svg)
+![Sample per group needed at α = 0.05 and 80% power. The curve shoots up on the left: d = 0.8 needs 26, d = 0.5 needs 64, d = 0.2 needs 394.](figures/power-n-vs-d.svg)
 
-In the figure, the curve shoots up on the left: going from a medium effect (d = 0.5) to a small one (d = 0.2) takes you from 64 to 394 per group.
-
-You never do this by hand: statsmodels or G*Power does it.
+In practice a tool does it (statsmodels, G*Power). Your job is knowing why.
 
 ```python
-import math
 from statsmodels.stats.power import TTestIndPower
 
-d = 5 / 10                      # Cohen's d: difference / SD = 0.5
-
-# Leave out sample size -> it solves for sample size
-n = TTestIndPower().solve_power(effect_size=d, alpha=0.05, power=0.8)
-print(math.ceil(n))             # 64 per group
-
-# Leave out power -> what power do 30 per group give?
-pw = TTestIndPower().solve_power(effect_size=d, nobs1=30, alpha=0.05)
-print(round(pw, 2))             # 0.48: worse than a coin flip
+# leave out the dial to solve for
+tool = TTestIndPower()
+n = tool.solve_power(effect_size=0.5, alpha=0.05, power=0.8)   # 63.8 -> 64 per group
+pw = tool.solve_power(effect_size=0.5, nobs1=30, alpha=0.05)   # 0.48 with 30 per group
 ```
+
+> **Where it goes wrong:** "not significant, so no effect" ignores power. With 30 per group you'd catch a medium effect only 48% of the time, worse than a coin flip.
+
+> **Say it like this:** "To detect a 5-point difference with 80% power at α = 0.05, given a standard deviation of 10, we need 64 users per group. Halving the difference would need about four times that."
 
 ## P-hacking
 
-α = 0.05 is a **1-in-20 false-positive rate per test**. Run 20 tests on pure noise and the chance at least one crosses the line is about **64%**. Cherry-pick that one and you've manufactured a fake result. That's **p-hacking**: testing many things, or peeking repeatedly, then reporting only what crossed.
+> **Definition:** **p-hacking** is manufacturing a "significant" result by testing many things, or peeking repeatedly, and reporting only what crossed the line.
 
-> **Key idea:** this is why power analysis is done **before** you see the data: fix your test, your α and your sample size in advance, so significance can't be shopped for afterwards.
+α = 0.05 is a 1-in-20 false-alarm rate **per test**. Run 20 tests on pure noise and there's a **64%** chance at least one crosses by luck.
 
-## Saying it in words
-
-> **Say it like this:** "To detect a 5-point difference with 80% power at α = 0.05, given a standard deviation of 10, we need 64 users per group."
-
-> **Say it like this:** "The test was underpowered: with 30 per group we only had about a 48% chance of detecting a medium effect, so a non-significant result tells us little."
-
-## Traps
-
-| Wrong | Right |
-|---|---|
-| β is the overlap between the curves | β is the H₁ area left of the **cutoff** |
-| Move the cutoff to cut both errors | That trades α for β; only a larger sample cuts both |
-| "How many samples do I need?" | "...to detect an effect of what size?" |
-| Non-significant, so no effect | Maybe just low power: check it |
-| Peeking and stopping when p < 0.05 | Fix the sample size in advance |
+The defence is why power analysis comes **before** the data: fix your test, α and sample size in advance, so significance can't be shopped for afterwards.
 
 ## Quick reference
 
-| Term | One line |
+| Term | In one line |
 |---|---|
-| α | False positive. H₀ curve, right of cutoff |
-| β | False negative. H₁ curve, left of cutoff |
-| Power | 1 − β. H₁ curve, right of cutoff |
+| α | False alarm. H₀ curve, right of the cutoff |
+| β | Miss. H₁ curve, left of the cutoff |
+| Power | 1 − β. Chance of catching a real effect. Aim for 80% |
 | Effect size | Gap between the curve centres |
 | Four dials | α, power, effect size, sample size: fix three, solve the fourth |
-| Halve the effect | about 4× the sample |
-| P-hacking | Manufacturing significance by testing many or peeking |
+| Halve the effect | 4× the sample |
+| P-hacking | Testing many or peeking, then reporting the winner |
 
-**Order of calculation:** choose α → choose power → decide the smallest effect worth catching → solve for n → round up.
+**Order:** choose α → choose power → decide the smallest effect worth catching → solve for n → round up.

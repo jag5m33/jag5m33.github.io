@@ -28,13 +28,13 @@
           "label": "Hypothesis testing"
         },
         {
+          "id": "effectsize",
+          "label": "Effect size"
+        },
+        {
           "id": "power",
           "label": "Power & sample size",
           "short": "Power"
-        },
-        {
-          "id": "effectsize",
-          "label": "Effect size"
         },
         {
           "id": "correlation",

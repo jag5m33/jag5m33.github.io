@@ -1,138 +1,110 @@
 # Hypothesis testing
 
-A hypothesis test asks one question of your data: does a result like this turn up easily by chance, or not?
+A hypothesis test asks one question of your data: **does a result like this turn up easily by chance, or not?**
+
+**On this page**
+
+- The two hypotheses: what you assume, and what you're looking for
+- α: the line you draw before you start
+- The p-value: how surprising your result is
+- The two mistakes you can make
+- The shortcut through confidence intervals
+- Which test to use, and how to say the result
 
 ## The two hypotheses
 
-| | Meaning | Example |
-|---|---|---|
-| **Null (H₀)** | No effect, no difference. The default you assume true | p = 0.5 |
-| **Alternative (H₁)** | What you're testing for | p ≠ 0.5 |
+> **Definition:** the **null hypothesis (H₀)** says "nothing is going on": no effect, no difference. The **alternative (H₁)** is the thing you're testing for.
 
-- **Two-sided**: you care about a difference in either direction. The default.
-- **One-sided**: you only care about one direction, decided **before** you look at the data.
+You start by assuming H₀ is true, then ask whether your data makes that hard to believe.
 
-> **Key idea:** You never prove H₀. You either reject it or fail to reject it.
+Example: is this coin fair?
 
-## Test statistic
+- H₀: it's a fair coin, heads = 50%.
+- H₁: heads ≠ 50%.
 
-**Test statistic**: one number that says how far your sample result sits from what H₀ predicts, measured in standard errors.
+> **Where it goes wrong:** you never *prove* H₀. You either **reject** it or **fail to reject** it. "Not enough evidence of an effect" is not the same as "no effect".
 
-$$
-\text{test statistic} = \frac{\text{estimate} - \text{null value}}{SE}
-$$
+## α (the significance level)
 
-- estimate: what your sample gave. null value: what H₀ says. SE: the [standard error](#/t/distributions), how much the estimate wobbles between samples.
+> **Definition:** **α** is the line you draw **before** testing: how big a risk of a false alarm you'll accept. Usually 0.05 (5%).
 
-It's the same "distance in standard errors" idea as a z-score.
-
-**Worked example.** 120 of 200 people recycle ($\hat{p}$ = 0.60). H₀: p = 0.5.
-
-| Step | Working | Result |
-|---|---|---|
-| 1. SE under H₀ | √(0.5 × 0.5 / 200), using the **null** value because you're assuming H₀ | 0.0354 |
-| 2. Test statistic | (0.60 − 0.50) / 0.0354 | z = 2.83 |
-| 3. p-value (two-sided) | area beyond ±2.83 | p = 0.0047 |
-| 4. Decide at α = 0.05 | 0.0047 ≤ 0.05 | Reject H₀ |
-
-## Significance level (α)
-
-**α**: the threshold you set **before** testing, usually 0.05. It's the risk of a false positive you're willing to accept. It is the same α as in [Confidence intervals](#/t/ci): 95% confidence and α = 0.05 are the same choice.
+It's the same α as in [Confidence intervals](#/t/ci): 95% confidence and α = 0.05 are the same choice, seen from two sides.
 
 ## The p-value
 
-**p-value**: the probability of seeing a result at least as extreme as yours **if H₀ were true**.
+> **Definition:** the **p-value** is how easily a result at least this extreme would turn up by chance alone, **if H₀ were true**.
 
-- **Small p**: a result this size almost never turns up by chance, so chance is a poor explanation. Reject the null, call it significant.
-- **Large p**: a result this size turns up easily by chance, so you can't rule chance out. Keep the null: not proof there's no effect, just too little evidence against it.
+- **Small p:** a result this size almost never turns up by chance, so chance is a poor explanation. Reject H₀, call it **significant**.
+- **Large p:** a result this size turns up easily by chance, so you can't rule chance out. Keep H₀.
 
-The rule: $p \le \alpha$ → reject H₀. $p > \alpha$ → fail to reject H₀.
+The rule: **p ≤ α → reject H₀. p > α → fail to reject H₀.**
 
-![Standard normal curve under H0 with the observed z = 2.83 marked; the two red tails beyond plus and minus 2.83 add up to p = 0.0047.](figures/hypothesis-pvalue.svg)
+![The "no effect" world as a bell curve. Your result sits far out at z = 2.83; the two red tails (everything at least that extreme) add up to p = 0.0047.](figures/hypothesis-pvalue.svg)
 
-In the figure, the curve is the "no effect" world. Your result sits at z = 2.83. The red tails are every result **at least that extreme** in either direction; their total area is the p-value. They are tiny, so chance is a poor explanation.
+**Worked example.** 120 out of 200 people recycle (60%). H₀ says 50%. Is 60% just luck?
 
-| Wrong reading | Correct |
-|---|---|
-| The probability H₀ is true | It assumes H₀ is true, so it can't measure that |
-| A measure of how big the effect is | A tiny p can come from a trivial effect with big n; see [Effect size](#/t/effectsize) |
+1. Work out how far 60% sits from 50%, in standard errors: **z = 2.83** (the tool does this for you).
+2. The chance of landing that far out by luck: **p = 0.0047**.
+3. 0.0047 is below 0.05 → **reject H₀**. 60% is very unlikely to be luck.
 
-## The two errors
+> **Where it goes wrong:** the p-value is **not** "the chance H₀ is true". It *assumes* H₀ is true, so it can't measure that. And it's **not** how big the effect is: a huge sample can make a tiny, useless difference significant. For size, see [Effect size](#/t/effectsize).
 
-| | H₀ actually true | H₀ actually false |
+## The two mistakes
+
+> **Definition:** a **Type I error** is a false positive: you claim an effect that isn't there. A **Type II error** is a false negative: you miss an effect that is there.
+
+| | Really no effect | Really an effect |
 |---|---|---|
-| **Reject H₀** | **Type I: false positive.** Chance = α | Correct (power) |
-| **Fail to reject H₀** | Correct | **Type II: false negative.** Chance = β |
+| **You reject H₀** | **Type I** (false alarm), chance = α | Correct: this is **power** |
+| **You keep H₀** | Correct | **Type II** (miss), chance = β |
 
-- **Type I**: you claim an effect that isn't there. A healthy patient told they're ill.
-- **Type II**: you miss an effect that is there. A sick patient told they're fine.
-- **Power = 1 − β**: the chance of catching a real effect. 80% is the usual target. More in [Power & sample size](#/t/power).
+- Type I: a healthy patient told they're ill.
+- Type II: a sick patient told they're fine.
+- **Power = 1 − β**: the chance of catching a real effect. Aim for 80%. More in [Power & sample size](#/t/power).
 
-Which error is worse depends on context. A missed cancer is usually worse than a false alarm, so screening tests accept more false alarms.
+![Two worlds side by side: "no effect" (left) and "real effect" (right). Right of the dashed cutoff, the red sliver of the left curve is α and the teal part of the right curve is power; the gold part of the right curve, left of the cutoff, is β.](figures/hypothesis-errors.svg)
 
-![Two bell curves: H0 (no effect) and H1 (real effect). Right of the dashed cutoff, the red sliver of H0 is alpha and the teal part of H1 is power; left of the cutoff, the gold part of H1 is beta.](figures/hypothesis-errors.svg)
+Move the cutoff right and α shrinks but β grows. **They trade off. Only a bigger sample shrinks both.**
 
-In the figure, the left curve is the "no effect" world, the right curve the "real effect" world. The dashed line is your cutoff. Move it right and α (red) shrinks while β (gold) grows: **the two trade off, and only a larger sample shrinks both.**
+## The shortcut through confidence intervals
 
-## The link to confidence intervals
+> **Definition:** if the H₀ value sits **outside** the confidence interval, reject H₀.
 
-> **Key idea:** If the null value falls **outside** the confidence interval, reject H₀.
-
-Recycling example: the 99% CI is (0.511, 0.689). It doesn't contain 0.5, so H₀ is rejected at α = 0.01, matching p = 0.0047.
+Recycling: the 99% confidence interval is 51% to 69%. 50% isn't in it → reject H₀ at α = 0.01. Same answer as the p-value.
 
 ## Which test?
 
-| Test | Use it for | scipy |
+| You want to compare | Test | scipy |
 |---|---|---|
-| One-sample t | One mean vs a fixed value | `stats.ttest_1samp(a, popmean=5)` |
-| Two-sample t | Two separate groups' means | `stats.ttest_ind(a, b, equal_var=False)` |
-| Paired t | Same subjects measured twice | `stats.ttest_rel(before, after)` |
-| z-test (proportion) | A proportion vs a value | `proportions_ztest(...)` (statsmodels) |
-| Chi-square | Are two categorical columns related? | `stats.chi2_contingency(table)` |
-| ANOVA | Three or more group means | `stats.f_oneway(a, b, c)` |
-
-`equal_var=False` gives **Welch's t-test**, which doesn't assume the two groups have the same spread. It's the safer default.
+| One mean vs a fixed number | One-sample t | `stats.ttest_1samp` |
+| Two separate groups | Two-sample t (Welch) | `stats.ttest_ind(a, b, equal_var=False)` |
+| Same people, before vs after | Paired t | `stats.ttest_rel` |
+| Two categorical columns | Chi-square | `stats.chi2_contingency` |
+| Three or more groups | ANOVA | `stats.f_oneway` |
 
 ```python
-import numpy as np
 from scipy import stats
 
-rng = np.random.default_rng(0)            # seeded so results repeat
-a = rng.normal(5.0, 1, 20)                # group A: mean 5
-b = rng.normal(5.5, 1, 20)                # group B: mean 5.5
-
-alpha = 0.05                              # chosen BEFORE looking
-t, p = stats.ttest_ind(a, b, equal_var=False)   # Welch's t-test
+alpha = 0.05                                        # decided BEFORE looking
+t, p = stats.ttest_ind(group_a, group_b, equal_var=False)
 print("reject H0" if p <= alpha else "fail to reject H0")
 ```
 
 ## Saying it in words
 
-> **Say it like this:** "With p = 0.0047, below α = 0.05, we reject the null. There is significant evidence that the proportion of residents who recycle differs from 50%."
+> **Say it like this:** "p = 0.0047 is below 0.05, so we reject the null. There's significant evidence that the share of people who recycle isn't 50%."
 
-> **Trap:** Never write "we accept the null" or "we proved there is no effect." Absence of evidence is not evidence of absence: the test may simply have had too little power.
-
-## Traps
-
-| Wrong | Right |
-|---|---|
-| "We accept H₀" | "We fail to reject H₀" |
-| "p = 0.03 means a 3% chance H₀ is true" | p assumes H₀ is true |
-| "Significant, so the effect is big" | Significance is about evidence, not size. Report the effect size |
-| Choosing α or one-sided after seeing the data | Fix them before testing |
-| Running many tests and reporting the one that crossed | That's p-hacking; see [Power & sample size](#/t/power) |
+> **Where it goes wrong:** never say "we accept the null" or "we proved there's no effect". Absence of evidence isn't evidence of absence. The test may just have been too small to see it.
 
 ## Quick reference
 
-| Term | One line |
+| Term | In one line |
 |---|---|
-| H₀ | No effect. Assumed true |
-| Test statistic | (estimate − null value) / SE |
-| α | False positive rate you accept. Set before testing |
-| p-value | Chance of data this extreme if H₀ is true |
+| H₀ | "Nothing is going on." Assumed true |
+| α | False-alarm risk you accept. Set before testing |
+| p-value | How easily a result this extreme turns up by chance, if H₀ is true |
 | Significant | p ≤ α |
-| Type I / Type II | False positive (α) / false negative (β) |
-| Power | 1 − β. Chance of catching a real effect |
-| CI link | Null value outside the CI → reject |
+| Type I / Type II | False alarm (α) / miss (β) |
+| Power | 1 − β: chance of catching a real effect |
 
-**Order of calculation:** H₀ and H₁ → choose α → pick the test → test statistic → p-value → compare with α → sentence in context.
+**Order:** H₀ and H₁ → pick α → pick the test → p-value → compare with α → say it in words.

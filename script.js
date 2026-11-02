@@ -643,6 +643,12 @@ function renderMarkdown(src) {
   html = html.replace(/<p>\s*<img src="([^"]+)" alt="([^"]*)"[^>]*>\s*<\/p>/g,
     (_, s, a) => `<figure><img src="${s}" alt="${a}" loading="lazy">${a ? `<figcaption>${a}</figcaption>` : ""}</figure>`);
 
+  // colour-code callouts by their opening word
+  html = html.replace(/<blockquote>\s*<p><strong>([^<:]+):?<\/strong>/g, (m, w) => {
+    const k = { "definition": "def", "where it goes wrong": "warn", "check": "warn", "say it like this": "say" }[w.trim().replace(/:$/, "").toLowerCase()];
+    return k ? m.replace("<blockquote>", `<blockquote class="${k}">`) : m;
+  });
+
   // links out of the site open in a new tab
   html = html.replace(/<a href="(https?:[^"]+)"/g, '<a href="$1" target="_blank" rel="noopener"');
   return html;
