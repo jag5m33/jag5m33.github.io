@@ -5,6 +5,12 @@
       "label": "Statistics",
       "children": [
         {
+          "id": "statsvocab",
+          "label": "Stats vocabulary & phrasing",
+          "short": "Vocabulary & phrasing",
+          "zero": true
+        },
+        {
           "id": "descriptive",
           "label": "Descriptive statistics",
           "short": "Descriptive stats"

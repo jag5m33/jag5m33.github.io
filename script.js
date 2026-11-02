@@ -55,7 +55,7 @@ const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then
       n.siblings = list;
       byId[n.id] = n;
       if (n.children) index(n.children, n.id, depth + 1);
-      else { order.push(n); n.num = order.length; }
+      else { order.push(n); n.num = order.length - (order[0].zero ? 1 : 0); }   // a "zero" first page is page 0
     });
   })(data.tree, "centre", 1);
 
@@ -642,6 +642,9 @@ function renderMarkdown(src) {
   // an image on its own line becomes a figure with its alt text as the caption
   html = html.replace(/<p>\s*<img src="([^"]+)" alt="([^"]*)"[^>]*>\s*<\/p>/g,
     (_, s, a) => `<figure><img src="${s}" alt="${a}" loading="lazy">${a ? `<figcaption>${a}</figcaption>` : ""}</figure>`);
+
+  // ✓ / ✗ example sentences (vocabulary page)
+  html = html.replace(/<p>✓/g, '<p class="ok">✓').replace(/<p>✗/g, '<p class="no">✗');
 
   // colour-code callouts by their opening word
   html = html.replace(/<blockquote>\s*<p><strong>([^<:]+):?<\/strong>/g, (m, w) => {

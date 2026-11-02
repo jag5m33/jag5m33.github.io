@@ -303,3 +303,5 @@ body.map-open.list-mode #index {
 .paper blockquote.def  { border-left-color: var(--paper-teal, #23877a); background: rgba(35,135,122,.08); }
 .paper blockquote.warn { border-left-color: #8b1e3f; background: rgba(139,30,63,.06); }
 .paper blockquote.say  { border-left-color: #3a6ea5; background: rgba(58,110,165,.07); }
+.paper p.ok { border-left: 3px solid #23877a; padding-left: 12px; margin: 6px 0; }
+.paper p.no { border-left: 3px solid #8b1e3f; padding-left: 12px; margin: 6px 0; color: #5a5668; }
