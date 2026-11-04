@@ -170,7 +170,7 @@ for model in [LinearRegression(), Ridge(alpha=1.0), Lasso(alpha=1.0, max_iter=10
 
 With no penalty the model nearly memorises the training rows and fails on validation. Both penalties raise training error but lower validation error. Lasso wins **here** because only 5 features really matter.
 
-Jag's LEDGAR classifier ([multi_class_lr_softmax.py](https://github.com/jag5m33/py_legal_data/blob/main/src/multi_class_lr_softmax.py)) uses L2 with `C=1.0`; lowering C is the first lever to try against its 11-point train/validation gap.
+Jag's LEDGAR classifier ([src/models.py](https://github.com/jag5m33/py_legal_data/blob/main/src/models.py)) uses L2. The first run used `C=1.0` and had an 11-point train/validation gap in macro F1; he has since tuned it to `C=30`.
 
 ## 7. Caveats
 

@@ -67,7 +67,7 @@ On LEDGAR he did this on the **training** clauses only.
 
 ## Step 3: his custom legal list
 
-From his notebook ([py_legal_data/notebooks/model.ipynb](https://github.com/jag5m33/py_legal_data/blob/main/notebooks/model.ipynb)):
+From his notebook ([py_legal_data/notebooks/preprocess.ipynb](https://github.com/jag5m33/py_legal_data/blob/main/notebooks/preprocess.ipynb)):
 
 ```python
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS

@@ -71,21 +71,24 @@ Two small facts worth knowing (no maths needed):
 
 ## His project: LEDGAR, 100 clause types
 
-In [py_legal_data](https://github.com/jag5m33/py_legal_data) he classifies contract clauses from SEC filings into 100 clause types (Governing Laws, Indemnifications, Confidentiality and so on). The pipeline is regex cleaning, spaCy lemmatisation, custom stop words, TF-IDF (unigrams to trigrams, 95,559 features, fitted on train only), then multinomial logistic regression with `C=1.0` and `class_weight="balanced"`.
+In [py_legal_data](https://github.com/jag5m33/py_legal_data) he classifies contract clauses from SEC filings into 100 clause types (Governing Laws, Indemnifications, Confidentiality and so on). The pipeline is regex cleaning, spaCy lemmatisation, custom stop words, TF-IDF (unigrams to trigrams, 95,559 features, fitted on train only), then multinomial logistic regression with `class_weight="balanced"` (first run `C=1.0`, now tuned to `C=30`).
 
-His model class wraps sklearn so training and scoring live in one place ([multi_class_lr_softmax.py](https://github.com/jag5m33/py_legal_data/blob/main/src/multi_class_lr_softmax.py)):
+The model class only trains ([src/models.py](https://github.com/jag5m33/py_legal_data/blob/main/src/models.py)); scoring lives in one shared evaluator, so every model is scored the same way ([src/sup_eval_metrics.py](https://github.com/jag5m33/py_legal_data/blob/main/src/sup_eval_metrics.py)):
 
 ```python
+# src/models.py: train only
 class MultiClassLogisticRegression:
-
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test,
-                 C=1.0, class_weight=None):
-        ...
+    def __init__(self, C=1.0, class_weight=None):
         self.model = LogisticRegression(C=C, solver="lbfgs", max_iter=1000,
                                         random_state=42, class_weight=class_weight)
+    def train(self, x_train, y_train):
+        self.model.fit(x_train, y_train)
+        return self
 
-    def _score(self, x, y, name):
-        preds = self.model.predict(x)
+# src/sup_eval_metrics.py: score ANY trained classifier
+class SupervisedEvaluator:
+    def _score(self, model, x, y, name):
+        preds = model.predict(x)
         scores = {
             "accuracy": accuracy_score(y, preds),
             "macro_f1": f1_score(y, preds, average="macro"),   # main score: every class counts equally
@@ -94,7 +97,7 @@ class MultiClassLogisticRegression:
         ...
 ```
 
-### Results
+### Results (C = 1.0 run)
 
 | Split | Accuracy | Macro F1 | Micro F1 |
 |---|---|---|---|

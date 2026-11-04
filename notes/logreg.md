@@ -172,7 +172,7 @@ In the left panel of the figure above, a 0.3 threshold moves the cut-off from si
 
 ## 8. More than two classes: my LEDGAR project
 
-For many classes use **softmax**: one score per class, turned into probabilities that add to 1 ([Softmax](#/t/softmax)). In [Legal Clause NLP](#/p/legal) I use it on TF-IDF features to sort contract clauses into 100 types: validation macro F1 0.780, accuracy 0.839 ([src/multi_class_lr_softmax.py](https://github.com/jag5m33/py_legal_data/blob/main/src/multi_class_lr_softmax.py)).
+For many classes use **softmax**: one score per class, turned into probabilities that add to 1 ([Softmax](#/t/softmax)). In [Legal Clause NLP](#/p/legal) I use it on TF-IDF features to sort contract clauses into 100 types: validation macro F1 0.780, accuracy 0.839 ([src/models.py](https://github.com/jag5m33/py_legal_data/blob/main/src/models.py)).
 
 ## Code: sklearn
 

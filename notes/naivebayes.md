@@ -334,27 +334,31 @@ person 2     158      55      29
 
 ## In my LEDGAR project
 
-In [Legal Clause NLP](#/p/legal) I've added a ComplementNB model next to the softmax logistic regression, on the same saved TF-IDF features so the comparison is fair ([src/complement_nb.py](https://github.com/jag5m33/py_legal_data/blob/main/src/complement_nb.py)):
+In [Legal Clause NLP](#/p/legal) I've added a ComplementNB model next to the softmax logistic regression, on the same saved TF-IDF features so the comparison is fair ([src/models.py](https://github.com/jag5m33/py_legal_data/blob/main/src/models.py)):
 
 ```python
 class ComplementNaiveBayes:
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, alpha=1.0, norm=False):
-        ...
+    def __init__(self, alpha=1.0, norm=False):
         self.model = ComplementNB(alpha=alpha, norm=norm)
 
-    def train(self):
-        self.model.fit(self.x_train, self.y_train)
+    def train(self, x_train, y_train):
+        self.model.fit(x_train, y_train)
+        return self
 ```
 
-**Plan for `model_nb.ipynb`:**
+**What I did** ([notebooks/models.ipynb](https://github.com/jag5m33/py_legal_data/blob/main/notebooks/models.ipynb)):
 
-1. **MultinomialNB**: baseline, on the saved TF-IDF
-2. **ComplementNB**: expected winner (imbalance)
-3. tune `alpha` (0.01, 0.1, 1) on **validation macro F1** ([Classification metrics](#/t/clsmetrics))
-4. compare the best with logistic regression; reuse `ErrorAnalysis` unchanged
-5. write-up: Gaussian and Bernoulli "considered and ruled out because…" (reasons above)
+1. Trained ComplementNB on the saved TF-IDF, scored by the same evaluator as logistic regression
+2. It underfit (training error ~20%), so I tested `alpha` 1.0 → 0.01, with and without `norm`, on **validation macro F1** ([Classification metrics](#/t/clsmetrics))
+3. Chose `alpha = 0.1`, `norm = False`: the simplest setting where the score levels off
+4. Compared it with logistic regression and reused `ErrorAnalysis` unchanged
 
-**Results: coming soon.**
+| Split | Accuracy | Macro F1 |
+|---|---|---|
+| Train | 0.890 | 0.833 |
+| Validation | 0.821 | 0.716 |
+
+Lowering alpha lifted validation macro F1 from 0.701 to 0.716, and `norm` made no real difference. Training error stayed around 16%, so the gap to logistic regression (0.780) is the model's bias, not a tuning problem.
 
 ## Advantages / Disadvantages
 
