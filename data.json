@@ -188,7 +188,6 @@
         {
           "id": "eigen",
           "label": "Eigenvalues & eigenvectors",
-          "soon": true,
           "short": "Eigenvectors"
         },
         {
@@ -209,8 +208,8 @@
         },
         {
           "id": "pca",
-          "label": "PCA",
-          "soon": true
+          "label": "PCA (principal component analysis)",
+          "short": "PCA"
         }
       ],
       "short": "Linear algebra"

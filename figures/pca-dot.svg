@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="292.464pt" height="232.272pt" viewBox="0 0 292.464 232.272" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-09T16:16:07.334245</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 232.272 
+L 292.464 232.272 
+L 292.464 0 
+L 0 0 
+L 0 232.272 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 10.8 221.472 
+L 281.664 221.472 
+L 281.664 10.8 
+L 10.8 10.8 
+L 10.8 221.472 
+z
+" style="fill: none"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="line2d_1">
+    <path d="M 10.8 201.408 
+L 281.664 201.408 
+" clip-path="url(#pb29d6af884)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 30.864 221.472 
+L 30.864 10.8 
+" clip-path="url(#pb29d6af884)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 30.864 201.408 
+L 243.38593 111.555169 
+" clip-path="url(#pb29d6af884)" style="fill: none; stroke: #f3e3b0; stroke-width: 6; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 141.216 50.928 
+L 178.455362 139.007373 
+" clip-path="url(#pb29d6af884)" style="fill: none; stroke-dasharray: 4.44,1.92; stroke-dashoffset: 0; stroke: #6f6c80; stroke-width: 1.2"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 32.047738 199.793812 
+Q 86.039686 126.168428 138.841537 54.165904 
+" style="fill: none; stroke: #22223a; stroke-width: 1.8; stroke-linecap: round"/>
+    <path d="M 134.06762 56.617375 
+L 138.841537 54.165904 
+L 137.938364 59.455921 
+z
+" style="fill: #22223a; stroke: #22223a; stroke-width: 1.8; stroke-linecap: round"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 32.705362 200.629485 
+Q 53.963 191.641899 72.543216 183.78631 
+" style="fill: none; stroke: #8b1e3f; stroke-width: 2.6; stroke-linecap: round"/>
+    <path d="M 65.402287 183.331192 
+L 72.543216 183.78631 
+L 67.894565 189.225983 
+z
+" style="fill: #8b1e3f; stroke: #8b1e3f; stroke-width: 2.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #22223a" x="146.232" y="45.912" transform="rotate(-0 146.232 45.912)">P₁ (x₁, y₁): data point</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #8b1e3f" x="84.588419" y="199.430776" transform="rotate(-0 84.588419 199.430776)">u: unit vector</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #23877a" transform="translate(185.979362 144.560639)">P₁′ = P₁ · u = 3.19</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #23877a" transform="translate(185.979362 156.563373)">(distance along u)</text>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="m29ec3914a4" d="M 0 2.738613 
+C 0.726289 2.738613 1.422928 2.450055 1.936492 1.936492 
+C 2.450055 1.422928 2.738613 0.726289 2.738613 0 
+C 2.738613 -0.726289 2.450055 -1.422928 1.936492 -1.936492 
+C 1.422928 -2.450055 0.726289 -2.738613 0 -2.738613 
+C -0.726289 -2.738613 -1.422928 -2.450055 -1.936492 -1.936492 
+C -2.450055 -1.422928 -2.738613 -0.726289 -2.738613 0 
+C -2.738613 0.726289 -2.450055 1.422928 -1.936492 1.936492 
+C -1.422928 2.450055 -0.726289 2.738613 0 2.738613 
+z
+" style="stroke: #22223a"/>
+    </defs>
+    <g clip-path="url(#pb29d6af884)">
+     <use xlink:href="#m29ec3914a4" x="141.216" y="50.928" style="fill: #22223a; stroke: #22223a"/>
+    </g>
+   </g>
+   <g id="PathCollection_2">
+    <defs>
+     <path id="mb5bf6506c6" d="M 0 3.162278 
+C 0.838646 3.162278 1.643056 2.82908 2.236068 2.236068 
+C 2.82908 1.643056 3.162278 0.838646 3.162278 0 
+C 3.162278 -0.838646 2.82908 -1.643056 2.236068 -2.236068 
+C 1.643056 -2.82908 0.838646 -3.162278 0 -3.162278 
+C -0.838646 -3.162278 -1.643056 -2.82908 -2.236068 -2.236068 
+C -2.82908 -1.643056 -3.162278 -0.838646 -3.162278 0 
+C -3.162278 0.838646 -2.82908 1.643056 -2.236068 2.236068 
+C -1.643056 2.82908 -0.838646 3.162278 0 3.162278 
+z
+" style="stroke: #23877a"/>
+    </defs>
+    <g clip-path="url(#pb29d6af884)">
+     <use xlink:href="#mb5bf6506c6" x="178.455362" y="139.007373" style="fill: #23877a; stroke: #23877a"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pb29d6af884">
+   <rect x="10.8" y="10.8" width="270.864" height="210.672"/>
+  </clipPath>
+ </defs>
+</svg>
