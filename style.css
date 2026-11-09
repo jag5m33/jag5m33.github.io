@@ -305,3 +305,19 @@ body.map-open.list-mode #index {
 .paper blockquote.say  { border-left-color: #3a6ea5; background: rgba(58,110,165,.07); }
 .paper p.ok { border-left: 3px solid #23877a; padding-left: 12px; margin: 6px 0; }
 .paper p.no { border-left: 3px solid #8b1e3f; padding-left: 12px; margin: 6px 0; color: #5a5668; }
+
+/* MLOps: its own colour, off past the projects */
+:root { --lilac: #b9a3e8; }
+.node.opsside circle     { fill: var(--bg); stroke: var(--lilac); }
+.node.ops circle         { fill: var(--lilac); }
+.node.ops text           { font-size: 18px; font-weight: bold; fill: var(--lilac); letter-spacing: .06em; paint-order: stroke; stroke: #1c1c33; stroke-width: 5px; stroke-linejoin: round; }
+.node.tool text          { font-size: 15px; }
+.node.opsside:hover text { fill: var(--lilac); }
+.edge.ops                { stroke: rgba(185, 163, 232, .45); }
+.edge.cross.tool         { stroke: rgba(185, 163, 232, .3); stroke-dasharray: 3 4; }
+.edge.cross.tool.hot     { stroke: var(--lilac); }
+.tool-row                { margin: 18px 0; }
+.tool-row p              { margin: 6px 0 0; }
+.tool-row.pending .chip  { border-style: dashed; }
+#index .proj.ops strong  { color: var(--lilac); }
+.edge.ops.hot            { stroke: var(--lilac); }

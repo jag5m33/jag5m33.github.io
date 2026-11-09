@@ -71,7 +71,7 @@ Two small facts worth knowing (no maths needed):
 
 ## His project: LEDGAR, 100 clause types
 
-In [py_legal_data](https://github.com/jag5m33/py_legal_data) he classifies contract clauses from SEC filings into 100 clause types (Governing Laws, Indemnifications, Confidentiality and so on). The pipeline is regex cleaning, spaCy lemmatisation, custom stop words, TF-IDF (unigrams to trigrams, 95,559 features, fitted on train only), then multinomial logistic regression with `class_weight="balanced"` (first run `C=1.0`, now tuned to `C=30`).
+In [py_legal_data](https://github.com/jag5m33/py_legal_data) he classifies contract clauses from SEC filings into 100 clause types (Governing Laws, Indemnifications, Confidentiality and so on). The pipeline is regex cleaning, spaCy lemmatisation, custom stop words, TF-IDF (unigrams to trigrams, 95,559 features, fitted on train only), then multinomial logistic regression with `class_weight="balanced"` (first run `C=1.0`; tuned with MLflow, final `C=10`).
 
 The model class only trains ([src/models.py](https://github.com/jag5m33/py_legal_data/blob/main/src/models.py)); scoring lives in one shared evaluator, so every model is scored the same way ([src/sup_eval_metrics.py](https://github.com/jag5m33/py_legal_data/blob/main/src/sup_eval_metrics.py)):
 
@@ -103,6 +103,8 @@ class SupervisedEvaluator:
 |---|---|---|---|
 | Train | 0.899 | 0.887 | 0.899 |
 | Validation | 0.839 | 0.780 | 0.839 |
+
+After tuning (final `C=10`): train macro F1 0.986, validation macro F1 **0.811**, accuracy 0.869.
 
 ![LEDGAR train vs validation scores: accuracy and micro F1 drop 6 points, macro F1 drops nearly 11.](figures/softmax-ledgar.svg)
 

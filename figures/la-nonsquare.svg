@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="265.536pt" height="279.894281pt" viewBox="0 0 265.536 279.894281" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-09T15:59:08.804693</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M -0 279.894281 
+L 265.536 279.894281 
+L 265.536 0 
+L -0 0 
+L -0 279.894281 
+z
+" style="fill: none"/>
+  </g>
+  <g id="patch_2">
+   <path d="M 10.8 269.094281 
+L 254.736 269.094281 
+L 254.736 25.158281 
+L 10.8 25.158281 
+L 10.8 269.094281 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 95.16624 132.195158 
+L 182.183459 172.67723 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #6f6c80; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 51.844466 162.298757 
+L 215.077059 140.829692 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #6f6c80; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 136.064432 182.829121 
+L 136.064432 119.231513 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #6f6c80; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="Line3DCollection_1">
+    <path d="M 156.149823 106.714381 
+L 136.064432 151.221778 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #8b1e3f; stroke-width: 3"/>
+    <path d="M 156.149823 106.714381 
+L 157.776818 112.42465 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #8b1e3f; stroke-width: 3"/>
+    <path d="M 156.149823 106.714381 
+L 149.818952 111.443281 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #8b1e3f; stroke-width: 3"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="197.723046" y="142.427737" transform="rotate(-0 197.723046 142.427737)">î → [3, 4, 5]</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #8b1e3f" x="157.179106" y="101.668727" transform="rotate(-0 157.179106 101.668727)">ĵ → [1, 1, 9]</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="132.768" y="19.158281" transform="rotate(-0 132.768 19.158281)">2D in, 3D out: outputs fill a plane</text>
+   </g>
+   <g id="Line3DCollection_2">
+    <path d="M 218.74469 125.59822 
+L 136.064432 151.221778 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #23877a; stroke-width: 3"/>
+    <path d="M 218.74469 125.59822 
+L 211.607596 129.597118 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #23877a; stroke-width: 3"/>
+    <path d="M 218.74469 125.59822 
+L 206.462394 127.618061 
+" clip-path="url(#peb96c86011)" style="fill: none; stroke: #23877a; stroke-width: 3"/>
+   </g>
+   <g id="Poly3DCollection_1">
+    <defs>
+     <path id="mc973c4a9cd" d="M 47.132061 -67.936715 
+L 208.152935 -116.857179 
+L 250.991799 -207.161404 
+L 84.496497 -154.298131 
+z
+" style="stroke: #23877a; stroke-opacity: 0.35; stroke-width: 0.6"/>
+    </defs>
+    <g clip-path="url(#peb96c86011)">
+     <use xlink:href="#mc973c4a9cd" x="0" y="279.894281" style="fill: #718683; fill-opacity: 0.35; stroke: #23877a; stroke-opacity: 0.35; stroke-width: 0.6"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="peb96c86011">
+   <rect x="10.8" y="25.158281" width="243.936" height="243.936"/>
+  </clipPath>
+ </defs>
+</svg>

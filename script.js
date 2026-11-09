@@ -11,6 +11,8 @@
      - projects and the models inside them fan out across the RIGHT half
      - dashed threads join a model or project to the notes it uses
        (they light up when you hover)
+     - MLOps sits off to the lower right: one hub, its tools around it,
+       and threads from each tool to the projects that use it
    Scroll to zoom, drag to move, click a gold branch to zoom into it.
    ===================================================================== */
 
@@ -27,6 +29,8 @@ const RIGHT_SPAN = 34;                    // projects fan ±34° around due righ
 const RING       = [0, 300, 415, 520];    // radius of branch levels 1, 2, 3
 const LEAF_R     = 640;                   // every note sits on this outer ring
 const PROJ_R     = 300, MODEL_R = 580;    // right half: projects, then their models
+const OPS_AT     = { x: 600, y: 400 };    // MLOps hub, off past the projects
+const TOOL_R     = 125;                   // tools sit this far from the hub
 const SQUASH     = 0.8;                   // < 1 flattens the web to suit wide screens
 const GAP_TOP    = 2.4, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
 // --------------------------------------------------------------
@@ -64,6 +68,12 @@ const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then
     byId[p.id] = p;
     (p.models || []).forEach(m => { m.type = "model"; m.parent = p.id; m.depth = 2; m.project = p; byId[m.id] = m; });
   });
+
+  if (data.mlops) {                 // MLOps: a hub of its own, not tied to the centre
+    const o = data.mlops;
+    o.type = "ops"; o.depth = 2; byId[o.id] = o;
+    (o.tools || []).forEach(t => { t.type = "tool"; t.parent = o.id; t.depth = 3; byId[t.id] = t; });
+  }
   return d;
 });
 
@@ -109,7 +119,9 @@ function buildIndex() {
     <section><h2>Notes</h2>${data.tree.map(t => `<h3 class="top">${t.label}</h3><ol>${list(t.children)}</ol>`).join("")}</section>
     <section><h2>Projects</h2>${data.projects.map(p => `
       <div class="proj"><a href="#/p/${p.id}"><strong>${p.label}</strong></a>
-        <span>${(p.models || []).map(m => `<a href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""}</a>`).join(" · ")}</span></div>`).join("")}</section>`;
+        <span>${(p.models || []).map(m => `<a href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""}</a>`).join(" · ")}</span></div>`).join("")}</section>
+    ${data.mlops ? `<section><h2>${data.mlops.label}</h2><div class="proj ops"><a href="#/o/${data.mlops.id}"><strong>Tools</strong></a>
+        <span>${data.mlops.tools.map(t => `<a href="#/o/${t.id}">${t.label}${t.status ? ` (${t.status})` : ""}</a>`).join(" · ")}</span></div></section>` : ""}`;
   box.dataset.built = "1";
   document.getElementById("index-back").onclick = closeMap;
 }
@@ -189,13 +201,26 @@ function layout() {
     pos[p.id] = P(a, PROJ_R);
   });
 
+  // ---- MLOps: hub past the projects, tools fanned out to its right ----
+  if (data.mlops) {
+    const h = OPS_AT, tools = data.mlops.tools || [];
+    pos[data.mlops.id] = { ...h, a: 0, r: Math.hypot(h.x, h.y) };
+    tools.forEach((t, i) => {
+      const a = rad(-50 + i * (95 / Math.max(tools.length - 1, 1)));
+      const x = h.x + TOOL_R * Math.cos(a), y = h.y + TOOL_R * Math.sin(a);
+      pos[t.id] = { x, y, a: 0, r: Math.hypot(x, y) };
+    });
+  }
+
   return pos;
 }
 
 // tree edges, plus dashed threads from projects/models to the notes they use
 function edgeList() {
   const out = [];
-  Object.values(byId).forEach(n => { if (n.id !== "centre") out.push({ from: n.parent, to: n.id, kind: "tree" }); });
+  Object.values(byId).forEach(n => { if (n.id !== "centre" && n.parent) out.push({ from: n.parent, to: n.id, kind: n.type === "tool" ? "tree ops" : "tree" }); });
+  ((data.mlops || {}).tools || []).forEach(t =>
+    (t.used || []).forEach(u => byId[u.project] && out.push({ from: t.id, to: u.project, kind: "cross tool" })));
   data.projects.forEach(p => {
     (p.uses || []).forEach(u => byId[u] && out.push({ from: u, to: p.id, kind: "cross" }));
     (p.models || []).forEach(m => m.topic && byId[m.topic] && out.push({ from: m.topic, to: m.id, kind: "cross model" }));
@@ -246,13 +271,14 @@ function arc(a0, a1, r) {
 
 function makeNode(id, p) {
   const n = byId[id];
-  const side = n.type === "project" || n.type === "model" ? "right" : n.type === "centre" ? "" : "left";
+  const side = n.type === "project" || n.type === "model" ? "right"
+             : n.type === "ops" || n.type === "tool" ? "opsside" : n.type === "centre" ? "" : "left";
   const cls = ["node", n.type, side, "d" + n.depth];
   if (n.soon) cls.push("soon");
   if (n.status) cls.push("pending");
   const g = el("g", { class: cls.join(" ") });
 
-  const r = { centre: 42, branch: n.depth === 1 ? 12 : 9, leaf: 6.5, project: 12, model: 7.5 }[n.type];
+  const r = { centre: 42, branch: n.depth === 1 ? 12 : 9, leaf: 6.5, project: 12, model: 7.5, ops: 12, tool: 7 }[n.type];
   if (n.type === "centre") {
     g.append(el("circle", { r, class: "hit" }));       // dark disc behind, and the click target
     const dots = el("g");
@@ -268,6 +294,12 @@ function makeNode(id, p) {
   if (n.type === "centre") {
     const tip = el("title"); tip.textContent = "Jag Sandhu · click to go back";
     g.append(tip);                                         // name shows on hover; the web needs the space
+  } else if (n.type === "tool") {
+    t.setAttribute("x", r + 8); t.setAttribute("y", 5);       // tools: level text to the right
+    t.textContent = (n.short || n.label) + (n.status ? ` · ${n.status}` : "");
+  } else if (n.type === "ops") {
+    t.setAttribute("x", 0); t.setAttribute("y", r + 22); t.setAttribute("text-anchor", "middle");
+    t.textContent = n.label;
   } else if (n.type === "leaf" || n.type === "model") {
     const ang = Math.atan2(p.y, p.x) * 180 / Math.PI;     // the label follows the spoke on screen
     const flip = Math.cos(rad(ang)) < 0;                  // left half: turn text the right way up
@@ -314,6 +346,12 @@ function makeNode(id, p) {
 
 // curved edge that follows the web: d3-style radial link through the mid-ring
 function curve(a, b, kind) {
+  if (kind === "ops") return `M${a.x},${a.y} L${b.x},${b.y}`;      // hub to tool: short and straight
+  if (kind === "tool") {
+    // tool to project: a gentle bow, so it doesn't run along the project spokes
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y;
+    return `M${a.x},${a.y} Q${mx - dy * 0.25},${my + dx * 0.25} ${b.x},${b.y}`;
+  }
   if (kind.startsWith("cross")) {
     // threads between the halves bow through the space above/below the centre
     const my = (a.y + b.y) / 2;
@@ -365,6 +403,7 @@ function build(animated) {
       const d = Math.hypot(p.x, p.y) || 1;
       xs.push(p.x + p.x / d * len); ys.push(p.y + p.y / d * len);
     }
+    if (n.type === "tool") xs.push(p.x + 20 + ((n.short || n.label).length + (n.status ? n.status.length + 3 : 0)) * 8);
   });
   const pad = 30;
   home = {
@@ -400,7 +439,8 @@ function drawEdges() {
   for (const key in edgeEls) {
     const p = edgeEls[key], a = view[p.dataset.from], b = view[p.dataset.to];
     if (!a || !b) continue;
-    p.setAttribute("d", curve(a, b, p.getAttribute("class").includes("cross") ? "cross" : "tree"));
+    const c = p.getAttribute("class");
+    p.setAttribute("d", curve(a, b, c.includes("tool") ? "tool" : c.includes("ops") ? "ops" : c.includes("cross") ? "cross" : "tree"));
     p.style.opacity = Math.min(a.o, b.o);
   }
 }
@@ -415,7 +455,7 @@ function focus(id, on) {
 
   // the hovered node and everything below it...
   const below = new Set([id]);
-  (function down(x) { (x.children || x.models || []).forEach(c => { below.add(c.id); down(c); }); })(byId[id]);
+  (function down(x) { (x.children || x.models || x.tools || []).forEach(c => { below.add(c.id); down(c); }); })(byId[id]);
   // ...plus its path back to the centre
   const lit = new Set(below);
   let n = byId[id];
@@ -505,6 +545,7 @@ function onNodeClick(id) {
   if (n.type === "project") return go(`#/p/${id}`);
   if (n.type === "model") return go(`#/m/${id}`);
   if (n.type === "leaf") return go(`#/t/${id}`);
+  if (n.type === "ops" || n.type === "tool") return go(`#/o/${id}`);
   zoomToBranch(id);
 }
 
@@ -526,14 +567,14 @@ function zoomToBranch(id) {
 
 
 // ---------------------------------------------------------------------
-// ROUTER: #/t/<topic>  #/p/<project>  #/m/<model>  (empty = map)
+// ROUTER: #/t/<topic>  #/p/<project>  #/m/<model>  #/o/<mlops tool>  (empty = map)
 // so the browser back button works and every page has its own link
 // ---------------------------------------------------------------------
 function go(hash) { if (location.hash === hash) route(); else location.hash = hash; }
 
 async function route() {
   await ready;
-  const [, kind, id] = location.hash.match(/^#\/(t|p|m)\/(.+)$/) || [];
+  const [, kind, id] = location.hash.match(/^#\/(t|p|m|o)\/(.+)$/) || [];
 
   if (!kind || !byId[id]) {
     reader.classList.remove("open");
@@ -552,6 +593,7 @@ async function route() {
 
   if (kind === "t") await showTopic(id);
   else if (kind === "m") showModel(id);
+  else if (kind === "o") showOps(id);
   else showProject(id);
 }
 
@@ -705,10 +747,43 @@ function showModel(id) {
     </footer>`;
 }
 
+// MLOPS PAGES: no notes, just what each tool is for and where I've used it
+function showOps(id) {
+  const o = data.mlops, n = byId[id];
+  const gh = (p, f) => `https://github.com/${p.repo}/blob/${p.branch || "main"}/${f}`;
+  paper.className = "paper project model ops";
+  if (n.type === "ops") {
+    crumbs.innerHTML = `<span>${o.label}</span>`;
+    paper.innerHTML = `
+      <p class="kicker">MLOps</p>
+      <h1>${o.label}</h1>
+      <p class="lead">${o.summary || ""}</p>
+      ${o.tools.map(t => `<div class="tool-row${t.status ? " pending" : ""}">
+        <a class="chip" href="#/o/${t.id}">${t.label}${t.status ? ` (${t.status})` : ""} →</a>
+        <p>${t.what}</p>
+        ${(t.used || []).length ? `<p class="muted">Used in ${t.used.map(u => `<a href="#/p/${u.project}">${byId[u.project].label}</a>`).join(", ")}</p>` : ""}
+      </div>`).join("")}`;
+    return;
+  }
+  crumbs.innerHTML = `<a href="#/o/${o.id}">${o.label}</a><i>›</i><span>${n.label}</span>`;
+  const used = n.used || [];
+  paper.innerHTML = `
+    <p class="kicker">MLOps tool</p>
+    <h1>${n.label}${n.status ? ` <span class="status">${n.status}</span>` : ""}</h1>
+    <p class="lead">${n.what}</p>
+    <h3>Used in</h3>
+    ${used.length ? used.map(u => { const p = byId[u.project]; return `
+      <p><a href="#/p/${p.id}"><strong>${p.label}</strong></a>: ${u.note || ""}</p>
+      ${(u.code || []).map(f => `<a class="chip" href="${gh(p, f)}" target="_blank" rel="noopener">${f.split("/").pop()} ↗</a>`).join("")}`; }).join("")
+      : `<p class="muted">Not in a project yet: this is what I'm learning next.</p>`}
+    <footer class="chapter-foot"><a class="chip" href="#/o/${o.id}">All MLOps tools →</a></footer>`;
+}
+
 function renderTab(p, tab, body) {
   if (tab === "overview") {
     body.innerHTML = `<p class="lead">${p.summary || ""}</p>
       ${(p.models || []).length ? `<h3>Models</h3>${p.models.map(m => `<a class="chip" href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""} →</a>`).join("")}` : ""}
+      ${opsFor(p.id).length ? `<h3>MLOps</h3>${opsFor(p.id).map(t => `<a class="chip" href="#/o/${t.id}">${t.label} →</a>`).join("")}` : ""}
       <h3>Methods used</h3>
       ${(p.uses || []).filter(u => byId[u]).map(u => `<a class="chip" href="#/t/${u}">${byId[u].label}</a>`).join("")}
       <p class="repo-link"><a href="https://github.com/${p.repo}" target="_blank" rel="noopener">Open the repository on GitHub ↗</a></p>`;
@@ -739,6 +814,8 @@ function renderTab(p, tab, body) {
     body.innerHTML = html || `<p class="muted">Results coming soon.</p>`;
   }
 }
+
+const opsFor = pid => ((data.mlops || {}).tools || []).filter(t => (t.used || []).some(u => u.project === pid));
 
 async function loadCode(p, path, box) {
   const branch = p.branch || "main";

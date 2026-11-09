@@ -170,7 +170,7 @@ for model in [LinearRegression(), Ridge(alpha=1.0), Lasso(alpha=1.0, max_iter=10
 
 With no penalty the model nearly memorises the training rows and fails on validation. Both penalties raise training error but lower validation error. Lasso wins **here** because only 5 features really matter.
 
-Jag's LEDGAR classifier ([src/models.py](https://github.com/jag5m33/py_legal_data/blob/main/src/models.py)) uses L2. The first run used `C=1.0` and had an 11-point train/validation gap in macro F1; he has since tuned it to `C=30`.
+Jag's LEDGAR classifier ([src/models.py](https://github.com/jag5m33/py_legal_data/blob/main/src/models.py)) uses L2. He swept C with MLflow: lowering it to `C=0.1` shrank the train/validation gap (0.05) but dropped validation macro F1 to 0.705, while `C=10` scored 0.811 with a 0.175 gap. More regularisation traded accuracy for a smaller gap without fixing the overfitting, so he kept `C=10`.
 
 ## 7. Caveats
 

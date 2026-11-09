@@ -76,3 +76,55 @@ for k in range(3):
 ax.set_axis_off(); ax.view_init(elev=18, azim=-60)
 ax.set_title("span of v and w in 3D: a flat sheet (plane)", fontsize=11)
 save(fig, "la-plane")
+
+# 6. the determinant: unit square (area 1) -> parallelogram after [[1,2],[3,4]] (area 2, flipped)
+fig, axs = plt.subplots(1, 2, figsize=(9, 4.2))
+ax = axs[0]; axes2d(ax, ((-0.6, 3.4), (-0.6, 4.6)))
+ax.fill([0, 1, 1, 0], [0, 0, 1, 1], color=LIGHT_GOLD, alpha=0.9)
+arrow(ax, (0, 0), (1, 0), TEAL, "î", (0, -0.4)); arrow(ax, (0, 0), (0, 1), WINE, "ĵ", (-0.35, 0))
+ax.text(0.5, 0.45, "area 1", ha="center", color=INK, fontsize=11)
+ax.set_title("before: î and ĵ make a square", fontsize=11, loc="left")
+ax = axs[1]; axes2d(ax, ((-1.8, 4.8), (-0.6, 7.6)))
+i, j = np.array([1, 3]), np.array([2, 4])
+q = np.array([[0, 0], i, i + j, j]); ax.fill(q[:, 0], q[:, 1], color=LIGHT_GOLD, alpha=0.9)
+arrow(ax, (0, 0), i, TEAL); arrow(ax, (0, 0), j, WINE)
+ax.text(0.85, 3.1, "î → [1, 3]", color=TEAL, fontsize=12, fontweight="bold", ha="right")
+ax.text(2.2, 3.8, "ĵ → [2, 4]", color=WINE, fontsize=12, fontweight="bold", ha="left")
+ax.text(3.2, 6.3, "area 2\n(det = −2: flipped)", color=INK, fontsize=10, ha="left", va="center")
+ax.set_title("after the matrix: a parallelogram", fontsize=11, loc="left")
+fig.tight_layout(); save(fig, "la-det")
+
+# 7. a × d: when b and c are 0, î only stretches across and ĵ only up -> a rectangle
+fig, ax = plt.subplots(figsize=(4.8, 3.2))
+axes2d(ax, ((-0.6, 3.8), (-0.6, 2.6)))
+ax.fill([0, 3, 3, 0], [0, 0, 2, 2], color=LIGHT_GOLD, alpha=0.9)
+arrow(ax, (0, 0), (3, 0), TEAL); arrow(ax, (0, 0), (0, 2), WINE)
+ax.text(1.5, -0.38, "a", color=TEAL, fontsize=14, fontweight="bold", ha="center")
+ax.text(-0.35, 1, "d", color=WINE, fontsize=14, fontweight="bold")
+ax.text(1.5, 0.9, "area = a × d\n(when b, c = 0)", ha="center", color=INK, fontsize=11)
+save(fig, "la-det-ad")
+
+# 8. det = 0: î and ĵ land on the same line, so everything squishes onto it (no area)
+fig, ax = plt.subplots(figsize=(4.8, 3.6))
+axes2d(ax, ((-2.6, 3.0), (-2.6, 4.6)))
+t = np.array([-1.3, 2.3]); ax.plot(t, 2 * t, color=GOLD, ls="--", lw=1.6)
+arrow(ax, (0, 0), (2, 4), WINE, "ĵ → [2, 4]", (0.2, -0.2)); arrow(ax, (0, 0), (1, 2), TEAL, "î → [1, 2]", (0.2, -0.45))
+ax.text(-2.5, 3.7, "det [[1, 2], [2, 4]] = 0:\nthe whole plane\nlands on one line", color=INK, fontsize=10, va="top")
+save(fig, "la-det0")
+
+# 9. non-square 3 x 2: two inputs (î, ĵ) land in 3D; every output sits on one plane
+fig = plt.figure(figsize=(5.4, 4.4)); ax = fig.add_subplot(projection="3d")
+v, w = np.array([3, 4, 5]) / 4, np.array([1, 1, 9]) / 4.5
+s, t = np.meshgrid(np.linspace(-0.9, 1.1, 2), np.linspace(-0.9, 1.1, 2))
+P = s[..., None] * v + t[..., None] * w
+ax.plot_surface(P[..., 0], P[..., 1], P[..., 2], color=LIGHT_TEAL, alpha=0.35, edgecolor=TEAL, lw=0.6)
+for vec, c, name, at, ha in [(v, TEAL, "î → [3, 4, 5]", v * 0.75 + np.array([0, 0, -0.45]), "left"),
+                             (w, WINE, "ĵ → [1, 1, 9]", w * 1.05 + np.array([0, 0, 0.12]), "right")]:
+    ax.quiver(0, 0, 0, *vec, color=c, lw=3, arrow_length_ratio=0.12)
+    ax.text(*at, name, color=c, fontsize=11, fontweight="bold", ha=ha)
+for k in range(3):
+    e = np.zeros(3); e[k] = 1.4
+    ax.plot(*np.c_[-e, e], color=MUTED, lw=0.8)
+ax.set_axis_off(); ax.view_init(elev=14, azim=-28); ax.set_box_aspect(None, zoom=1.35)
+ax.set_title("2D in, 3D out: outputs fill a plane", fontsize=11)
+save(fig, "la-nonsquare")

@@ -60,3 +60,10 @@ python3 figures/_src/<chapter>.py
 ## Previewing locally
 
 Open the folder in VS Code and use **Live Server**. Opening `index.html` by double-clicking won't work, because browsers block the page from loading `data.json` and the notes from disk.
+
+## MLOps tools
+
+`data.json` → `mlops.tools`: one entry per tool. Fields: `id`, `label`, `what` (one line),
+`status: "learning"` until you use it, and `used: [{ project, note, code: [paths] }]` once you do.
+A tool with `used` gets a dashed thread to each project; its page is `#/o/<id>`.
+To move a tool from "learning" to used: delete `status` and add a `used` entry.

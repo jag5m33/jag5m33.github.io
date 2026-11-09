@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="265.536pt" height="199.008pt" viewBox="0 0 265.536 199.008" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-09T15:59:08.758945</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 199.008 
+L 265.536 199.008 
+L 265.536 0 
+L 0 0 
+L 0 199.008 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 10.8 188.208 
+L 254.736 188.208 
+L 254.736 10.8 
+L 10.8 10.8 
+L 10.8 188.208 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 44.064 154.944 
+L 210.384 154.944 
+L 210.384 44.064 
+L 44.064 44.064 
+z
+" clip-path="url(#p7857d2f52c)" style="fill: #f3e3b0; opacity: 0.9; stroke: #f3e3b0; stroke-linejoin: miter"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="line2d_1">
+    <path d="M 10.8 154.944 
+L 254.736 154.944 
+" clip-path="url(#p7857d2f52c)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 44.064 188.208 
+L 44.064 10.8 
+" clip-path="url(#p7857d2f52c)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 46.066357 154.944 
+Q 127.226024 154.944 205.70241 154.944 
+" style="fill: none; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 199.30241 151.744 
+L 205.70241 154.944 
+L 199.30241 158.144 
+z
+" style="fill: #23877a; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 44.064 152.944181 
+Q 44.064 99.50258 44.064 48.74426 
+" style="fill: none; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 40.864 55.14426 
+L 44.064 48.74426 
+L 47.264 55.14426 
+z
+" style="fill: #8b1e3f; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #23877a" x="127.224" y="176.0112" transform="rotate(-0 127.224 176.0112)">a</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #8b1e3f" x="24.66" y="99.504" transform="rotate(-0 24.66 99.504)">d</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(91.771344 91.844992)">area = a × d</text>
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(84.435719 105.048)">(when b, c = 0)</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p7857d2f52c">
+   <rect x="10.8" y="10.8" width="243.936" height="177.408"/>
+  </clipPath>
+ </defs>
+</svg>

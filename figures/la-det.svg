@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="552.011773pt" height="298.080781pt" viewBox="0 0 552.011773 298.080781" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-09T15:59:08.736073</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M -0 298.080781 
+L 552.011773 298.080781 
+L 552.011773 0 
+L -0 0 
+L -0 298.080781 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 10.8 287.280781 
+L 212.094231 287.280781 
+L 212.094231 25.598281 
+L 10.8 25.598281 
+L 10.8 287.280781 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 40.994135 257.086647 
+L 91.317692 257.086647 
+L 91.317692 206.763089 
+L 40.994135 206.763089 
+z
+" clip-path="url(#p4fe5ea3a41)" style="fill: #f3e3b0; opacity: 0.9; stroke: #f3e3b0; stroke-linejoin: miter"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="line2d_1">
+    <path d="M 10.8 257.086647 
+L 212.094231 257.086647 
+" clip-path="url(#p4fe5ea3a41)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 40.994135 287.280781 
+L 40.994135 25.598281 
+" clip-path="url(#p4fe5ea3a41)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 42.993685 257.086647 
+Q 66.154346 257.086647 86.631725 257.086647 
+" style="fill: none; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 80.231725 253.886647 
+L 86.631725 257.086647 
+L 80.231725 260.286647 
+z
+" style="fill: #23877a; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #23877a" x="66.155913" y="277.21607" transform="rotate(-0 66.155913 277.21607)">î</text>
+   </g>
+   <g id="patch_5">
+    <path d="M 40.994135 255.087096 
+Q 40.994135 231.926435 40.994135 211.449056 
+" style="fill: none; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 37.794135 217.849056 
+L 40.994135 211.449056 
+L 44.194135 217.849056 
+z
+" style="fill: #8b1e3f; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #8b1e3f" x="23.380889" y="231.924868" transform="rotate(-0 23.380889 231.924868)">ĵ</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: middle; fill: #22223a" x="66.155913" y="234.441046" transform="rotate(-0 66.155913 234.441046)">area 1</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #22223a" x="10.8" y="19.598281" transform="rotate(-0 10.8 19.598281)">before: î and ĵ make a square</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_6">
+    <path d="M 286.489898 287.280781 
+L 497.112398 287.280781 
+L 497.112398 25.598281 
+L 286.489898 25.598281 
+L 286.489898 287.280781 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 343.932398 268.133281 
+L 375.844898 172.395781 
+L 439.669898 44.745781 
+L 407.757398 140.483281 
+z
+" clip-path="url(#p6e16f4b64e)" style="fill: #f3e3b0; opacity: 0.9; stroke: #f3e3b0; stroke-linejoin: miter"/>
+   </g>
+   <g id="matplotlib.axis_3"/>
+   <g id="matplotlib.axis_4"/>
+   <g id="line2d_3">
+    <path d="M 286.489898 268.133281 
+L 497.112398 268.133281 
+" clip-path="url(#p6e16f4b64e)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 343.932398 287.280781 
+L 343.932398 25.598281 
+" clip-path="url(#p6e16f4b64e)" style="fill: none; stroke: #6f6c80; stroke-linecap: square"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 344.564454 266.237113 
+Q 359.888225 220.2658 374.363468 176.840072 
+" style="fill: none; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 369.303824 181.899716 
+L 374.363468 176.840072 
+L 375.375397 183.923574 
+z
+" style="fill: #23877a; stroke: #23877a; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 344.826431 266.345215 
+Q 375.845398 204.307281 405.664365 144.669347 
+" style="fill: none; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+    <path d="M 399.940031 148.962597 
+L 405.664365 144.669347 
+L 405.664365 151.824764 
+z
+" style="fill: #8b1e3f; stroke: #8b1e3f; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: end; fill: #23877a" x="371.058023" y="169.204531" transform="rotate(-0 371.058023 169.204531)">î → [1, 3]</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #8b1e3f" x="414.139898" y="146.865781" transform="rotate(-0 414.139898 146.865781)">ĵ → [2, 4]</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(446.052398 63.68082)">area 2</text>
+    <text style="font-size: 10px; font-family: 'Georgia', 'DejaVu Serif', serif; fill: #22223a" transform="translate(446.052398 75.683555)">(det = −2: flipped)</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Georgia', 'DejaVu Serif', serif; text-anchor: start; fill: #22223a" x="286.489898" y="19.598281" transform="rotate(-0 286.489898 19.598281)">after the matrix: a parallelogram</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p4fe5ea3a41">
+   <rect x="10.8" y="25.598281" width="201.294231" height="261.6825"/>
+  </clipPath>
+  <clipPath id="p6e16f4b64e">
+   <rect x="286.489898" y="25.598281" width="210.6225" height="261.6825"/>
+  </clipPath>
+ </defs>
+</svg>
