@@ -639,7 +639,7 @@
       "label": "GB Grid Anomalies",
       "repo": "jag5m33/py_elec_grid_anomaly",
       "branch": "main",
-      "summary": "Finding half-hours when GB national electricity demand (NESO, 2018–2023) is unusually high or low for its time of day and week. MSTL strips out the normal daily and weekly pattern, then an isolation forest flags the half-hours left over that don't fit.",
+      "summary": "Finding half-hours when GB national electricity demand (NESO, 2018–2023) is unusually high or low for its time of day and week. MSTL strips out the normal daily and weekly pattern; then two unsupervised detectors look for rows that don't fit: an isolation forest (how quickly a row can be cut off from the rest) and PCA (how badly a row rebuilds from a few components). Runs are tracked in MLflow.",
       "uses": [
         "descriptive",
         "distributions",
@@ -648,11 +648,14 @@
         "cleaning",
         "features",
         "autocorr",
-        "isoforest"
+        "isoforest",
+        "pca"
       ],
       "code": [
         "notebooks/eda.ipynb",
         "src/mstl.py",
+        "src/isolation_forest.py",
+        "src/pca.py",
         "notebooks/model.ipynb"
       ],
       "results": [],
@@ -676,11 +679,74 @@
           "id": "elec-iso",
           "label": "Isolation forest",
           "topic": "isoforest",
-          "summary": "Runs on the MSTL residuals and flags half-hours that are easy to isolate, i.e. unusual for their time of day and week.",
+          "summary": "Flags half-hours that are quick to isolate with random splits, i.e. unusual compared with the bulk of the data. Lower score = more anomalous.",
           "points": [
-            "Results going up once the notebook is pushed"
+            "100 trees, 256 rows per tree, contamination='auto' (cutoff at a score of −0.50)",
+            "70 / 15 / 15 split; train and validation flag almost the same share (27.1% vs 27.7%), so it's stable",
+            "The score distribution has no clear gap between normal and odd rows, so 'auto' flags far too many: next step is choosing the cutoff",
+            "Logged in MLflow: settings, train vs validation metrics, the score plot and the model"
           ],
           "code": [
+            "src/isolation_forest.py",
+            "notebooks/model.ipynb"
+          ],
+          "metrics": {
+            "columns": [
+              "Split",
+              "Rows",
+              "Flagged"
+            ],
+            "rows": [
+              [
+                "Train",
+                "73,617",
+                "27.06%"
+              ],
+              [
+                "Validation",
+                "15,775",
+                "27.70%"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "elec-pca",
+          "label": "PCA reconstruction",
+          "topic": "pca",
+          "summary": "Compresses each row to a few principal components and rebuilds it. Normal rows rebuild well; odd rows don't, and the rebuild error is the anomaly score. Higher error = more anomalous.",
+          "points": [
+            "Features standardised first (scaler fitted on train only), since PCA chases variance",
+            "8 components keep 93.3% of the variance",
+            "Cutoff = the 99th percentile of the train errors, so every split is judged by the same line",
+            "Flags about 1% on train, validation and test alike, so it's stable"
+          ],
+          "metrics": {
+            "columns": [
+              "Split",
+              "Rows",
+              "Flagged"
+            ],
+            "rows": [
+              [
+                "Train",
+                "73,617",
+                "1.00%"
+              ],
+              [
+                "Validation",
+                "15,775",
+                "1.15%"
+              ],
+              [
+                "Test",
+                "15,776",
+                "1.02%"
+              ]
+            ]
+          },
+          "code": [
+            "src/pca.py",
             "notebooks/model.ipynb"
           ]
         }
@@ -703,6 +769,14 @@
             "code": [
               "notebooks/models.ipynb",
               "mlflow.db"
+            ]
+          },
+          {
+            "project": "elec",
+            "note": "Tracks the isolation forest run in a local SQLite store: every setting, train vs validation anomaly rates and score spread, the score-distribution plot and the saved model.",
+            "code": [
+              "notebooks/model.ipynb",
+              "src/isolation_forest.py"
             ]
           }
         ]
