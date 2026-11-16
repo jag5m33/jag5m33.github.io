@@ -574,6 +574,7 @@ function go(hash) { if (location.hash === hash) route(); else location.hash = ha
 
 async function route() {
   await ready;
+  if (location.hash === "#/about") return showAbout();
   const [, kind, id] = location.hash.match(/^#\/(t|p|m|o)\/(.+)$/) || [];
 
   if (!kind || !byId[id]) {
@@ -596,6 +597,25 @@ async function route() {
   else if (kind === "o") showOps(id);
   else showProject(id);
 }
+
+// ABOUT ME page (#/about), written in about.md
+async function showAbout() {
+  if (!mapOpen) { Orb.hideNow(); openMap(false); }
+  reader.classList.add("open");
+  reader.setAttribute("aria-hidden", "false");
+  document.getElementById("reader-scroll").scrollTop = 0;
+  crumbs.innerHTML = `<span>About me</span>`;
+  paper.className = "paper";
+  paper.innerHTML = `<p class="muted">Loading…</p>`;
+  try {
+    const r = await fetch("about.md", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    paper.innerHTML = renderMarkdown(await r.text());
+  } catch (e) {
+    paper.innerHTML = `<h1>About me</h1><p>Couldn't load <code>about.md</code> (${e.message}).</p>`;
+  }
+}
+document.getElementById("about-link").addEventListener("click", e => e.stopPropagation());
 
 window.addEventListener("hashchange", route);
 document.getElementById("back").onclick = () => go("#/");

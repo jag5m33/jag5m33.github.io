@@ -321,3 +321,15 @@ body.map-open.list-mode #index {
 .tool-row.pending .chip  { border-style: dashed; }
 #index .proj.ops strong  { color: var(--lilac); }
 .edge.ops.hot            { stroke: var(--lilac); }
+
+/* =====================================================================
+   ABOUT ME link (top right, on the landing screen and the map)
+   ===================================================================== */
+#about-link {
+  position: fixed; top: 18px; right: 18px; z-index: 10;
+  padding: 7px 14px; border-radius: 18px;
+  background: rgba(26, 26, 46, .85); color: var(--gold);
+  border: 1px solid rgba(232, 200, 114, .4);
+  font-size: 14px; letter-spacing: .04em; text-decoration: none;
+}
+#about-link:hover { background: rgba(232, 200, 114, .15); }
