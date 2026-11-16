@@ -322,14 +322,8 @@ body.map-open.list-mode #index {
 #index .proj.ops strong  { color: var(--lilac); }
 .edge.ops.hot            { stroke: var(--lilac); }
 
-/* =====================================================================
-   ABOUT ME link (top right, on the landing screen and the map)
-   ===================================================================== */
-#about-link {
-  position: fixed; top: 18px; right: 18px; z-index: 10;
-  padding: 7px 14px; border-radius: 18px;
-  background: rgba(26, 26, 46, .85); color: var(--gold);
-  border: 1px solid rgba(232, 200, 114, .4);
-  font-size: 14px; letter-spacing: .04em; text-decoration: none;
-}
-#about-link:hover { background: rgba(232, 200, 114, .15); }
+/* closed subjects: a bigger dot with the chapter count inside; click to fan the chapters out */
+.node.branch.d1 circle      { transition: r .3s; }
+.node.branch.d1.closed circle { r: 15px; }
+.node.branch text.count     { font-size: 12px; font-weight: bold; fill: #1c1c33; stroke: none; pointer-events: none; letter-spacing: 0; }
+.node.branch.d1             { cursor: pointer; }

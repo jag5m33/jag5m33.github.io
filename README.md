@@ -67,3 +67,10 @@ Open the folder in VS Code and use **Live Server**. Opening `index.html` by doub
 `status: "learning"` until you use it, and `used: [{ project, note, code: [paths] }]` once you do.
 A tool with `used` gets a dashed thread to each project; its page is `#/o/<id>`.
 To move a tool from "learning" to used: delete `status` and add a `used` entry.
+
+## Map: subjects open on click
+
+Note subjects (top-level entries in `data.json` → `tree`) start **closed**: the map shows one dot per
+subject with its chapter count inside. Clicking a subject fans its chapters out (and closes the others);
+clicking it again, or the fit button, closes it. Opening a chapter page also unfolds its subject behind the reader.
+Tweak `CLOSED_W` (space a closed subject takes) and `MOVE_MS` (animation length) at the top of `script.js`.

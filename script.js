@@ -33,6 +33,8 @@ const OPS_AT     = { x: 600, y: 400 };    // MLOps hub, off past the projects
 const TOOL_R     = 125;                   // tools sit this far from the hub
 const SQUASH     = 0.8;                   // < 1 flattens the web to suit wide screens
 const GAP_TOP    = 2.4, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
+const CLOSED_W   = 3;                     // a closed subject takes this many leaf slots
+const MOVE_MS    = 650;                   // how long opening / closing a subject takes
 // --------------------------------------------------------------
 
 let data;
@@ -43,6 +45,13 @@ const edgeEls = {};            // "from>to" -> path element
 let vb = { x: -800, y: -500, w: 1600, h: 1000 };
 let home = null;               // the view box that fits the whole web
 let mapOpen = false;
+let openTop = null;            // the one subject whose chapters are showing (null = all closed)
+
+// subjects start closed: only their headers show. Clicking one fans out its chapters.
+const isNote = n => n && (n.type === "branch" || n.type === "leaf");
+function topOf(id) { let n = byId[id]; while (n && n.parent && n.parent !== "centre") n = byId[n.parent]; return n; }
+const shown = id => { const n = byId[id]; return !isNote(n) || n.depth === 1 || topOf(id).id === openTop; };
+const countLeaves = n => n.children ? n.children.reduce((k, c) => k + countLeaves(c), 0) : 1;
 
 // ---------------------------------------------------------------------
 // LOAD
@@ -160,10 +169,12 @@ function layout() {
 
   // ---- left half: one slot per note, with gaps between groups ----
   let slots = 0;
+  const closed = n => n.children && n.depth === 1 && n.id !== openTop;
   (function count(list, depth) {
     list.forEach((n, i) => {
       if (i > 0) slots += depth === 1 ? GAP_TOP : (n.children || list[i - 1].children ? GAP_SUB : 0);
-      if (n.children) count(n.children, depth + 1); else slots += 1;
+      if (closed(n)) slots += CLOSED_W;
+      else if (n.children) count(n.children, depth + 1); else slots += 1;
     });
   })(data.tree, 1);
   slots -= 1;
@@ -174,7 +185,12 @@ function layout() {
   (function place(list, depth) {
     list.forEach((n, i) => {
       if (i > 0) s += depth === 1 ? GAP_TOP : (n.children || list[i - 1].children ? GAP_SUB : 0);
-      if (n.children) {
+      if (closed(n)) {
+        const p = P(start - (s + (CLOSED_W - 1) / 2) * step, RING[1]);
+        pos[n.id] = p;
+        (function hide(x) { (x.children || []).forEach(c => { pos[c.id] = { ...p }; hide(c); }); })(n);
+        s += CLOSED_W;
+      } else if (n.children) {
         place(n.children, depth + 1);
         const kids = n.children.map(c => pos[c.id].a);
         const a = (Math.min(...kids) + Math.max(...kids)) / 2;
@@ -287,10 +303,24 @@ function makeNode(id, p) {
   } else {
     g.append(el("circle", { r }));
   }
+  g.dataset.r = r;
 
-  // labels: notes and models radiate outwards along their spoke;
-  // branches and projects sit level, just outside their dot
   const t = el("text");
+  g.append(t);
+  placeLabel(g, n, p, r);
+
+  g.addEventListener("click", e => { e.stopPropagation(); if (!dragged) onNodeClick(id); });
+  g.addEventListener("mouseenter", () => focus(id, true));
+  g.addEventListener("mouseleave", () => focus(id, false));
+  layers.nodes.append(g);
+  return g;
+}
+
+// labels: notes and models radiate outwards along their spoke;
+// branches and projects sit level, just outside their dot
+function placeLabel(g, n, p, r) {
+  const t = g.querySelector("text:not(.count)");
+  t.removeAttribute("transform"); t.textContent = "";
   if (n.type === "centre") {
     const tip = el("title"); tip.textContent = "Jag Sandhu · click to go back";
     g.append(tip);                                         // name shows on hover; the web needs the space
@@ -323,9 +353,14 @@ function makeNode(id, p) {
       const ang = Math.atan2(p.y, p.x) * 180 / Math.PI;
       const flip = Math.cos(rad(ang)) < 0;
       t.setAttribute("transform", `rotate(${flip ? ang + 180 : ang})`);
-      t.setAttribute("x", flip ? r + 8 : -(r + 8));
+      t.setAttribute("x", flip ? r + 12 : -(r + 12));   // room for the bigger closed dot
       t.setAttribute("y", 6);
       t.setAttribute("text-anchor", flip ? "start" : "end");
+      // a closed subject shows, inside its dot, how many chapters are folded into it
+      let k = g.querySelector("text.count");
+      if (!k) { k = el("text", { class: "count", "text-anchor": "middle", y: 3.5 }); g.insertBefore(k, t); }
+      k.textContent = n.id === openTop ? "" : countLeaves(n);
+      g.classList.toggle("closed", n.id !== openTop);
     } else {
       // sub-branches and projects: level text placed away from the centre
       const outward = p.x <= 0 ? -1 : 1;
@@ -335,13 +370,6 @@ function makeNode(id, p) {
     }
     t.textContent = n.short || n.label;
   }
-  g.append(t);
-
-  g.addEventListener("click", e => { e.stopPropagation(); if (!dragged) onNodeClick(id); });
-  g.addEventListener("mouseenter", () => focus(id, true));
-  g.addEventListener("mouseleave", () => focus(id, false));
-  layers.nodes.append(g);
-  return g;
 }
 
 // curved edge that follows the web: d3-style radial link through the mid-ring
@@ -381,7 +409,7 @@ function build(animated) {
     if (view[id]) return;
     const p = pos[id];
     const delay = animated ? (byId[id].depth || 0) * 160 + (p.r / LEAF_R) * 120 : 0;
-    view[id] = { el: makeNode(id, p), x: 0, y: 0, o: 0, tx: p.x, ty: p.y, delay };
+    view[id] = { el: makeNode(id, p), x: 0, y: 0, o: 0, fx: 0, fy: 0, fo: 0, tx: p.x, ty: p.y, to: shown(id) ? 1 : 0, delay };
   });
 
   edgeList().forEach(e => {
@@ -393,9 +421,16 @@ function build(animated) {
     edgeEls[key] = path;
   });
 
-  // fit the whole web, including where each angled label ends, to the screen
+  home = fitBox(pos);
+  vb = { ...home };
+  setVB();
+  animate(animated ? 1300 : 0);
+}
+
+// the box that fits everything currently showing, including where each angled label ends
+function fitBox(pos) {
   const xs = [], ys = [];
-  ids.forEach(id => {
+  Object.keys(byId).filter(shown).forEach(id => {
     const p = pos[id], n = byId[id];
     xs.push(p.x); ys.push(p.y);
     if (n.type === "leaf" || n.type === "model") {
@@ -406,13 +441,19 @@ function build(animated) {
     if (n.type === "tool") xs.push(p.x + 20 + ((n.short || n.label).length + (n.status ? n.status.length + 3 : 0)) * 8);
   });
   const pad = 30;
-  home = {
+  let box = {
     x: Math.min(...xs) - pad, y: Math.min(...ys) - pad,
     w: Math.max(...xs) - Math.min(...xs) + pad * 2, h: Math.max(...ys) - Math.min(...ys) + pad * 2 + 30
   };
-  vb = { ...home };
-  setVB();
+  // keep the screen's shape, so flying between boxes doesn't stretch
+  const aspect = innerWidth / innerHeight;
+  if (box.w / box.h < aspect) { const w = box.h * aspect; box.x -= (w - box.w) / 2; box.w = w; }
+  else { const h = box.w / aspect; box.y -= (h - box.h) / 2; box.h = h; }
+  return box;
+}
 
+// move every node from where it is (fx, fy, fo) to where it should be (tx, ty, to)
+function animate(D) {
   const t0 = performance.now();
   const ease = t => 1 - Math.pow(1 - t, 3);
   const maxDelay = Math.max(...Object.values(view).map(v => v.delay));
@@ -423,9 +464,10 @@ function build(animated) {
     for (const id in view) {
       const v = view[id];
       const k = D ? ease(Math.min(1, Math.max(0, (el_ - v.delay) / D))) : 1;
-      v.x = v.tx * k; v.y = v.ty * k; v.o = k;
+      v.x = v.fx + (v.tx - v.fx) * k; v.y = v.fy + (v.ty - v.fy) * k; v.o = v.fo + (v.to - v.fo) * k;
       v.el.setAttribute("transform", `translate(${v.x},${v.y})`);
       v.el.style.opacity = v.o;
+      v.el.style.pointerEvents = v.to ? "" : "none";
     }
     drawEdges();
     const done = !D || el_ > D + maxDelay;
@@ -435,11 +477,28 @@ function build(animated) {
   })(t0);
 }
 
+// open one subject (or none): chapters fan out, the other subjects close up
+function setOpen(id, animated = true) {
+  openTop = id;
+  if (!layers) return;
+  const pos = layout();
+  for (const k in view) {
+    const v = view[k], n = byId[k], p = pos[k];
+    Object.assign(v, { fx: v.x, fy: v.y, fo: v.o, tx: p.x, ty: p.y, to: shown(k) ? 1 : 0, delay: 0 });
+    if (isNote(n)) placeLabel(v.el, n, p, +v.el.dataset.r);
+  }
+  home = fitBox(pos);
+  animate(animated ? MOVE_MS : 0);
+  if (animated) flyTo(home, MOVE_MS); else { vb = { ...home }; setVB(); }
+}
+
 function drawEdges() {
   for (const key in edgeEls) {
-    const p = edgeEls[key], a = view[p.dataset.from], b = view[p.dataset.to];
+    const p = edgeEls[key];
+    let a = view[p.dataset.from], b = view[p.dataset.to];
     if (!a || !b) continue;
     const c = p.getAttribute("class");
+    if (c.includes("cross") && !c.includes("tool") && !shown(p.dataset.from)) a = view[topOf(p.dataset.from).id];
     p.setAttribute("d", curve(a, b, c.includes("tool") ? "tool" : c.includes("ops") ? "ops" : c.includes("cross") ? "cross" : "tree"));
     p.style.opacity = Math.min(a.o, b.o);
   }
@@ -465,7 +524,10 @@ function focus(id, on) {
     const f = p.dataset.from, t = p.dataset.to;
     if (p.getAttribute("class").includes("cross")) {
       // threads across the halves that start or end at the hovered part
-      if (below.has(f) || below.has(t)) { p.classList.add("hot"); lit.add(f); lit.add(t); }
+      if (below.has(f) || below.has(t)) {
+        p.classList.add("hot"); lit.add(f); lit.add(t);
+        if (!shown(f)) lit.add(topOf(f).id);            // a folded chapter lights its subject instead
+      }
     } else if (lit.has(f) && lit.has(t)) {
       p.classList.add("hot");
     }
@@ -534,7 +596,7 @@ window.addEventListener("pointerup", () => {
 
 document.getElementById("zoom-in").onclick  = () => zoomAt(innerWidth / 2, innerHeight / 2, 0.75);
 document.getElementById("zoom-out").onclick = () => zoomAt(innerWidth / 2, innerHeight / 2, 1.33);
-document.getElementById("zoom-fit").onclick = () => flyTo(home);
+document.getElementById("zoom-fit").onclick = () => openTop ? setOpen(null) : flyTo(home);
 
 // ---------------------------------------------------------------------
 // CLICKS
@@ -546,6 +608,7 @@ function onNodeClick(id) {
   if (n.type === "model") return go(`#/m/${id}`);
   if (n.type === "leaf") return go(`#/t/${id}`);
   if (n.type === "ops" || n.type === "tool") return go(`#/o/${id}`);
+  if (n.type === "branch" && n.depth === 1) return setOpen(openTop === id ? null : id);
   zoomToBranch(id);
 }
 
@@ -574,7 +637,6 @@ function go(hash) { if (location.hash === hash) route(); else location.hash = ha
 
 async function route() {
   await ready;
-  if (location.hash === "#/about") return showAbout();
   const [, kind, id] = location.hash.match(/^#\/(t|p|m|o)\/(.+)$/) || [];
 
   if (!kind || !byId[id]) {
@@ -598,25 +660,6 @@ async function route() {
   else showProject(id);
 }
 
-// ABOUT ME page (#/about), written in about.md
-async function showAbout() {
-  if (!mapOpen) { Orb.hideNow(); openMap(false); }
-  reader.classList.add("open");
-  reader.setAttribute("aria-hidden", "false");
-  document.getElementById("reader-scroll").scrollTop = 0;
-  crumbs.innerHTML = `<span>About me</span>`;
-  paper.className = "paper";
-  paper.innerHTML = `<p class="muted">Loading…</p>`;
-  try {
-    const r = await fetch("about.md", { cache: "no-cache" });
-    if (!r.ok) throw new Error(r.status);
-    paper.innerHTML = renderMarkdown(await r.text());
-  } catch (e) {
-    paper.innerHTML = `<h1>About me</h1><p>Couldn't load <code>about.md</code> (${e.message}).</p>`;
-  }
-}
-document.getElementById("about-link").addEventListener("click", e => e.stopPropagation());
-
 window.addEventListener("hashchange", route);
 document.getElementById("back").onclick = () => go("#/");
 document.addEventListener("keydown", e => { if (e.key === "Escape" && reader.classList.contains("open")) go("#/"); });
@@ -636,6 +679,7 @@ const noteCache = {};
 
 async function showTopic(id) {
   const n = byId[id];
+  if (topOf(id).id !== openTop) setOpen(topOf(id).id, mapOpen && !document.body.classList.contains("list-mode"));
   crumbs.innerHTML = trail(id).map(t => `<span>${t.label}</span>`).join("<i>›</i>");
   paper.className = "paper";
 

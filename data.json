@@ -359,6 +359,56 @@
         }
       ],
       "short": "Metrics"
+    },
+    {
+      "id": "sql",
+      "label": "SQL",
+      "children": [
+        {
+          "id": "sqlbasics",
+          "label": "SELECT, DISTINCT & LIMIT"
+        },
+        {
+          "id": "sqlwhere",
+          "label": "Filtering with WHERE",
+          "short": "WHERE, AND/OR & NULL"
+        },
+        {
+          "id": "sqlorder",
+          "label": "Sorting with ORDER BY",
+          "short": "ORDER BY"
+        },
+        {
+          "id": "sqlalias",
+          "label": "Aliases & calculated columns",
+          "short": "Aliases"
+        },
+        {
+          "id": "sqljoins",
+          "label": "Joins"
+        },
+        {
+          "id": "sqlgroup",
+          "label": "GROUP BY & HAVING"
+        },
+        {
+          "id": "sqlsubq",
+          "label": "Subqueries & CTEs"
+        },
+        {
+          "id": "sqlcase",
+          "label": "CASE WHEN & FILTER"
+        },
+        {
+          "id": "sqlwindow",
+          "label": "Window functions"
+        },
+        {
+          "id": "sqltables",
+          "label": "Creating & changing tables",
+          "short": "CREATE, UPDATE & DELETE"
+        }
+      ]
     }
   ],
   "projects": [
@@ -499,6 +549,19 @@
             "src/xgboost.py",
             "notebooks/model.ipynb"
           ]
+        },
+        {
+          "id": "acc-sql",
+          "label": "SQL rewrite",
+          "status": "in progress",
+          "topic": "sqlgroup",
+          "summary": "Redoing the US Accidents cleaning and analysis in SQL instead of Python, so the same pipeline shows both skills.",
+          "points": [
+            "Same dataset and the same cleaning decisions as the Python notebooks",
+            "Profiling, cleaning and summary queries: WHERE, GROUP BY / HAVING, CASE WHEN, CTEs and window functions",
+            "SQL files going up once pushed"
+          ],
+          "code": []
         }
       ]
     },
