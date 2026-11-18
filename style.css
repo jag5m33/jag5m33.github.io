@@ -339,3 +339,6 @@ body.map-open.list-mode #index {
   font-size: 14px; letter-spacing: .04em; text-decoration: none;
 }
 #about-link:hover { background: rgba(232, 200, 114, .15); }
+
+/* the purple box round the Databricks hub and its chapters */
+.hub-box { fill: rgba(185, 163, 232, .07); stroke: rgba(185, 163, 232, .55); stroke-width: 1.4; }

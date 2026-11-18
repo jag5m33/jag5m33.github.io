@@ -74,3 +74,8 @@ Note subjects (top-level entries in `data.json` → `tree`) start **closed**: th
 subject with its chapter count inside. Clicking a subject fans its chapters out (and closes the others);
 clicking it again, or the fit button, closes it. Opening a chapter page also unfolds its subject behind the reader.
 Tweak `CLOSED_W` (space a closed subject takes) and `MOVE_MS` (animation length) at the top of `script.js`.
+
+## Databricks box
+
+`data.json` → `databricks`: a purple hub in the middle of the right side (above MLOps), inside a purple box; move it with DB_AT in script.js. Its `chapters`
+are normal note pages (`notes/<id>.md`, route `#/t/<id>`) and `project` is the one project it threads to.

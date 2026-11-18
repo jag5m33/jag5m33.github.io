@@ -31,6 +31,7 @@ const LEAF_R     = 640;                   // every note sits on this outer ring
 const PROJ_R     = 300, MODEL_R = 580;    // right half: projects, then their models
 const OPS_AT     = { x: 600, y: 400 };    // MLOps hub, off past the projects
 const TOOL_R     = 125;                   // tools sit this far from the hub
+const DB_AT      = { x: 900, y: 40 };     // Databricks hub: middle of the right side, past the models, above MLOps
 const SQUASH     = 0.8;                   // < 1 flattens the web to suit wide screens
 const GAP_TOP    = 2.4, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
 const CLOSED_W   = 3;                     // a closed subject takes this many leaf slots
@@ -83,6 +84,15 @@ const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then
     o.type = "ops"; o.depth = 2; byId[o.id] = o;
     (o.tools || []).forEach(t => { t.type = "tool"; t.parent = o.id; t.depth = 3; byId[t.id] = t; });
   }
+
+  if (data.databricks) {            // Databricks: a purple hub like MLOps, but its points are note chapters
+    const b = data.databricks;
+    b.type = "ops"; b.depth = 2; b.tools = b.chapters; byId[b.id] = b;
+    b.chapters.forEach(c => {
+      c.type = "tool"; c.topic = true; c.parent = b.id; c.depth = 3; byId[c.id] = c;
+      order.push(c); c.num = order.length - (order[0].zero ? 1 : 0);
+    });
+  }
   return d;
 });
 
@@ -130,7 +140,9 @@ function buildIndex() {
       <div class="proj"><a href="#/p/${p.id}"><strong>${p.label}</strong></a>
         <span>${(p.models || []).map(m => `<a href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""}</a>`).join(" · ")}</span></div>`).join("")}</section>
     ${data.mlops ? `<section><h2>${data.mlops.label}</h2><div class="proj ops"><a href="#/o/${data.mlops.id}"><strong>Tools</strong></a>
-        <span>${data.mlops.tools.map(t => `<a href="#/o/${t.id}">${t.label}${t.status ? ` (${t.status})` : ""}</a>`).join(" · ")}</span></div></section>` : ""}`;
+        <span>${data.mlops.tools.map(t => `<a href="#/o/${t.id}">${t.label}${t.status ? ` (${t.status})` : ""}</a>`).join(" · ")}</span></div></section>` : ""}
+    ${data.databricks ? `<section><h2>${data.databricks.label}</h2><ol>${data.databricks.chapters.map(c =>
+        `<li><a href="#/t/${c.id}"><span class="num">${c.num}</span>${c.label}</a></li>`).join("")}</ol></section>` : ""}`;
   box.dataset.built = "1";
   document.getElementById("index-back").onclick = closeMap;
 }
@@ -218,15 +230,17 @@ function layout() {
   });
 
   // ---- MLOps: hub past the projects, tools fanned out to its right ----
-  if (data.mlops) {
-    const h = OPS_AT, tools = data.mlops.tools || [];
-    pos[data.mlops.id] = { ...h, a: 0, r: Math.hypot(h.x, h.y) };
+  const hub = (o, h) => {
+    const tools = o.tools || [];
+    pos[o.id] = { ...h, a: 0, r: Math.hypot(h.x, h.y) };
     tools.forEach((t, i) => {
       const a = rad(-50 + i * (95 / Math.max(tools.length - 1, 1)));
       const x = h.x + TOOL_R * Math.cos(a), y = h.y + TOOL_R * Math.sin(a);
       pos[t.id] = { x, y, a: 0, r: Math.hypot(x, y) };
     });
-  }
+  };
+  if (data.mlops) hub(data.mlops, OPS_AT);
+  if (data.databricks) hub(data.databricks, DB_AT);
 
   return pos;
 }
@@ -237,8 +251,10 @@ function edgeList() {
   Object.values(byId).forEach(n => { if (n.id !== "centre" && n.parent) out.push({ from: n.parent, to: n.id, kind: n.type === "tool" ? "tree ops" : "tree" }); });
   ((data.mlops || {}).tools || []).forEach(t =>
     (t.used || []).forEach(u => byId[u.project] && out.push({ from: t.id, to: u.project, kind: "cross tool" })));
+  if (data.databricks && byId[data.databricks.project])     // one thread: the Databricks box → its project
+    out.push({ from: data.databricks.id, to: data.databricks.project, kind: "cross tool" });
   data.projects.forEach(p => {
-    (p.uses || []).forEach(u => byId[u] && out.push({ from: u, to: p.id, kind: "cross" }));
+    (p.uses || []).forEach(u => byId[u] && byId[u].type !== "tool" && out.push({ from: u, to: p.id, kind: "cross" }));
     (p.models || []).forEach(m => m.topic && byId[m.topic] && out.push({ from: m.topic, to: m.id, kind: "cross model" }));
   });
   return out;
@@ -257,6 +273,7 @@ let layers = null;
 
 function makeLayers() {
   layers = { web: el("g", { class: "web" }), edges: el("g"), nodes: el("g") };
+  dbBox = null;
   map.append(layers.web, layers.edges, layers.nodes);
 
   // the "spider web": faint rings at each level, and a few spokes
@@ -438,7 +455,8 @@ function fitBox(pos) {
       const d = Math.hypot(p.x, p.y) || 1;
       xs.push(p.x + p.x / d * len); ys.push(p.y + p.y / d * len);
     }
-    if (n.type === "tool") xs.push(p.x + 20 + ((n.short || n.label).length + (n.status ? n.status.length + 3 : 0)) * 8);
+    if (n.type === "tool" || n.type === "ops") ys.push(p.y + 50);       // room for the hub label and the purple box
+    if (n.type === "tool") xs.push(p.x + 45 + ((n.short || n.label).length + (n.status ? n.status.length + 3 : 0)) * 8);
   });
   const pad = 30;
   let box = {
@@ -492,7 +510,21 @@ function setOpen(id, animated = true) {
   if (animated) flyTo(home, MOVE_MS); else { vb = { ...home }; setVB(); }
 }
 
+// the purple box drawn round the Databricks hub and its chapters (follows them as they move)
+let dbBox = null;
+function drawDbBox() {
+  const b = data.databricks;
+  if (!b || !view[b.id]) return;
+  if (!dbBox) { dbBox = el("rect", { class: "hub-box", rx: 18 }); layers.edges.prepend(dbBox); }
+  const pts = [b, ...b.chapters].map(n => ({ v: view[n.id], w: n.type === "tool" ? 20 + (n.short || n.label).length * 8.2 : 0 }));
+  const x0 = Math.min(...pts.map(p => p.v.x)) - 34, x1 = Math.max(...pts.map(p => p.v.x + p.w)) + 18;
+  const y0 = Math.min(...pts.map(p => p.v.y)) - 26, y1 = Math.max(...pts.map(p => p.v.y)) + 44;
+  Object.entries({ x: x0, y: y0, width: x1 - x0, height: y1 - y0 }).forEach(([k, v]) => dbBox.setAttribute(k, v));
+  dbBox.style.opacity = view[b.id].o;
+}
+
 function drawEdges() {
+  drawDbBox();
   for (const key in edgeEls) {
     const p = edgeEls[key];
     let a = view[p.dataset.from], b = view[p.dataset.to];
@@ -607,6 +639,8 @@ function onNodeClick(id) {
   if (n.type === "project") return go(`#/p/${id}`);
   if (n.type === "model") return go(`#/m/${id}`);
   if (n.type === "leaf") return go(`#/t/${id}`);
+  if (n.topic) return go(`#/t/${id}`);                                   // a Databricks chapter
+  if (n.chapters) return go(`#/t/${n.chapters[0].id}`);                   // the Databricks hub: its first chapter
   if (n.type === "ops" || n.type === "tool") return go(`#/o/${id}`);
   if (n.type === "branch" && n.depth === 1) return setOpen(openTop === id ? null : id);
   zoomToBranch(id);
@@ -699,7 +733,7 @@ const noteCache = {};
 
 async function showTopic(id) {
   const n = byId[id];
-  if (topOf(id).id !== openTop) setOpen(topOf(id).id, mapOpen && !document.body.classList.contains("list-mode"));
+  if (isNote(n) && topOf(id).id !== openTop) setOpen(topOf(id).id, mapOpen && !document.body.classList.contains("list-mode"));
   crumbs.innerHTML = trail(id).map(t => `<span>${t.label}</span>`).join("<i>›</i>");
   paper.className = "paper";
 
