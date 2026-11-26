@@ -340,5 +340,15 @@ body.map-open.list-mode #index {
 }
 #about-link:hover { background: rgba(232, 200, 114, .15); }
 
-/* the purple box round the Databricks hub and its chapters */
-.hub-box { fill: rgba(185, 163, 232, .07); stroke: rgba(185, 163, 232, .55); stroke-width: 1.4; }
+/* =====================================================================
+   MINI MIND MAPS: a hub per subject, the Models map, the AI teaser
+   ===================================================================== */
+.node.branch.d1 text, .node.hub text, .node.ops text { font-size: 32px; }
+.node.hub circle         { fill: var(--teal); }
+.node.hub text           { font-weight: bold; fill: var(--teal); paint-order: stroke; stroke: #1c1c33; stroke-width: 5px; stroke-linejoin: round; }
+.node.project text       { font-size: 16px; }
+.node.branch.d1, .node.hub, .node.ops { cursor: pointer; }
+.web .ring.mini          { fill: rgba(245, 240, 230, .018); stroke: rgba(245, 240, 230, .07); }
+.node.teaser circle      { fill: none; stroke: var(--muted); stroke-dasharray: 3 4; opacity: .8; }
+.node.teaser text        { fill: var(--muted); font-style: normal; }
+.node.teaser .soon-tag   { font-size: 13px; letter-spacing: .25em; fill: var(--gold); font-style: normal; }

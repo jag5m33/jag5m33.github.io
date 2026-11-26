@@ -409,8 +409,63 @@
           "short": "CREATE, UPDATE & DELETE"
         }
       ]
+    },
+    {
+      "id": "databricks",
+      "label": "Databricks",
+      "children": [
+        {
+          "id": "dbworkspace",
+          "label": "The Databricks workspace",
+          "short": "Workspace & compute"
+        },
+        {
+          "id": "dbnotebooks",
+          "label": "Notebooks: Python & SQL",
+          "short": "Notebooks"
+        },
+        {
+          "id": "dbpyspark",
+          "label": "PySpark basics"
+        },
+        {
+          "id": "dbfunctions",
+          "label": "pyspark.sql functions & windows",
+          "short": "Functions & windows"
+        },
+        {
+          "id": "dbjobs",
+          "label": "Jobs & pipelines"
+        }
+      ]
     }
   ],
+  "ai": {
+    "id": "ai",
+    "label": "AI engineering",
+    "children": [
+      {
+        "id": "ai-dl",
+        "label": "Deep learning"
+      },
+      {
+        "id": "ai-transformers",
+        "label": "Transformers"
+      },
+      {
+        "id": "ai-llms",
+        "label": "LLMs"
+      },
+      {
+        "id": "ai-rag",
+        "label": "RAG"
+      },
+      {
+        "id": "ai-agents",
+        "label": "Agents"
+      }
+    ]
+  },
   "projects": [
     {
       "id": "acc",
@@ -867,36 +922,6 @@
         "short": "W&B",
         "status": "learning",
         "what": "Experiment tracking like MLflow, but hosted online with shared dashboards; common in deep learning."
-      }
-    ]
-  },
-  "databricks": {
-    "id": "databricks",
-    "label": "Databricks",
-    "project": "elec",
-    "chapters": [
-      {
-        "id": "dbworkspace",
-        "label": "The Databricks workspace",
-        "short": "Workspace & compute"
-      },
-      {
-        "id": "dbnotebooks",
-        "label": "Notebooks: Python & SQL",
-        "short": "Notebooks"
-      },
-      {
-        "id": "dbpyspark",
-        "label": "PySpark basics"
-      },
-      {
-        "id": "dbfunctions",
-        "label": "pyspark.sql functions & windows",
-        "short": "Functions & windows"
-      },
-      {
-        "id": "dbjobs",
-        "label": "Jobs & pipelines"
       }
     ]
   }

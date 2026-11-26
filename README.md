@@ -79,3 +79,16 @@ Tweak `CLOSED_W` (space a closed subject takes) and `MOVE_MS` (animation length)
 
 `data.json` → `databricks`: a purple hub in the middle of the right side (above MLOps), inside a purple box; move it with DB_AT in script.js. Its `chapters`
 are normal note pages (`notes/<id>.md`, route `#/t/<id>`) and `project` is the one project it threads to.
+
+
+## Map layout (Nov 2026): mini mind maps
+
+The map is a ring of mini mind maps around the centre sphere, one per top-level entry:
+- each subject in `data.json` → `tree` (Statistics, Linear algebra, SQL, Databricks …), chapters round it
+- **Models**: built from `projects` (projects on the inner ring, their models on the outer ring)
+- **MLOps**: `mlops`
+- **AI engineering**: `ai`, every point shown as "coming soon"
+
+Click a hub to zoom into its mini map (click again to zoom back out). Spacing is set at the top of
+`script.js` (`ONE_R`, `TWO_R`, `SLOT`, `RING_GAP`, `X_STRETCH`). The older notes above about
+closed subjects and the purple Databricks box no longer apply.

@@ -6,14 +6,14 @@
      data.json        the map: notes (left half), projects + models (right half)
      notes/<id>.md    one chapter per topic, written in Markdown
 
-   The map is a radial tree. Everything is always open:
-     - notes fan out across the LEFT half, numbered in reading order
-     - projects and the models inside them fan out across the RIGHT half
-     - dashed threads join a model or project to the notes it uses
+   The map is a ring of MINI MIND MAPS around me (the sphere in the centre):
+     - one mini map per subject (Statistics, Linear algebra, SQL, Databricks ...):
+       the subject in the middle, its chapters around it, numbered in reading order
+     - a Models map: projects in the middle ring, the models I built around them
+     - an MLOps map, and an AI engineering map marked "coming soon"
+     - dashed threads join a model or project to the chapters it uses
        (they light up when you hover)
-     - MLOps sits off to the lower right: one hub, its tools around it,
-       and threads from each tool to the projects that use it
-   Scroll to zoom, drag to move, click a gold branch to zoom into it.
+   Scroll to zoom, drag to move, click a subject to zoom into its mini map.
    ===================================================================== */
 
 const SVGNS = "http://www.w3.org/2000/svg";
@@ -24,18 +24,13 @@ const paper  = document.getElementById("paper");
 const crumbs = document.getElementById("crumbs");
 
 // ---------------- layout settings (map units) ----------------
-const LEFT_SPAN  = 118;                   // notes wrap ±118° around due left (most of the circle)
-const RIGHT_SPAN = 34;                    // projects fan ±34° around due right
-const RING       = [0, 300, 415, 520];    // radius of branch levels 1, 2, 3
-const LEAF_R     = 640;                   // every note sits on this outer ring
-const PROJ_R     = 300, MODEL_R = 580;    // right half: projects, then their models
-const OPS_AT     = { x: 600, y: 400 };    // MLOps hub, off past the projects
-const TOOL_R     = 125;                   // tools sit this far from the hub
-const DB_AT      = { x: 900, y: 40 };     // Databricks hub: middle of the right side, past the models, above MLOps
-const SQUASH     = 0.8;                   // < 1 flattens the web to suit wide screens
-const GAP_TOP    = 2.4, GAP_SUB = 1.3;    // extra space between groups (in leaf slots)
-const CLOSED_W   = 3;                     // a closed subject takes this many leaf slots
-const MOVE_MS    = 650;                   // how long opening / closing a subject takes
+const ONE_R      = 120;                   // smallest radius for a one-ring mini map
+const SUB_R      = 105;                   // two-ring maps: the inner ring (groups / projects)
+const TWO_R      = 225;                   // two-ring maps: the outer ring (chapters / models)
+const SLOT       = 36;                    // space each point needs around its ring
+const CHAR_W     = 7.6;                   // rough width of one label character
+const RING_GAP   = 1.0;                   // breathing room between neighbouring mini maps
+const X_STRETCH  = 1.25;                  // wider than tall, to suit screens
 // --------------------------------------------------------------
 
 let data;
@@ -46,13 +41,11 @@ const edgeEls = {};            // "from>to" -> path element
 let vb = { x: -800, y: -500, w: 1600, h: 1000 };
 let home = null;               // the view box that fits the whole web
 let mapOpen = false;
-let openTop = null;            // the one subject whose chapters are showing (null = all closed)
+let zoomedHub = null;          // the mini map currently zoomed into (null = whole map)
+let clusters = [];             // the hub of each mini map, in order around the ring
 
-// subjects start closed: only their headers show. Clicking one fans out its chapters.
-const isNote = n => n && (n.type === "branch" || n.type === "leaf");
-function topOf(id) { let n = byId[id]; while (n && n.parent && n.parent !== "centre") n = byId[n.parent]; return n; }
-const shown = id => { const n = byId[id]; return !isNote(n) || n.depth === 1 || topOf(id).id === openTop; };
-const countLeaves = n => n.children ? n.children.reduce((k, c) => k + countLeaves(c), 0) : 1;
+const kids = n => n.children || n.models || n.tools || n.projects || [];
+function hubOf(id) { let n = byId[id]; while (n && n.parent && n.parent !== "centre") n = byId[n.parent]; return n; }
 
 // ---------------------------------------------------------------------
 // LOAD
@@ -73,26 +66,28 @@ const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then
     });
   })(data.tree, "centre", 1);
 
+  // the Models mini map: projects round a "Models" hub, each project's models round it
+  byId.models = { id: "models", label: "Models", type: "hub", parent: "centre", depth: 1, projects: data.projects };
   data.projects.forEach(p => {
-    p.type = "project"; p.parent = "centre"; p.depth = 1;
+    p.type = "project"; p.parent = "models"; p.depth = 2;
     byId[p.id] = p;
-    (p.models || []).forEach(m => { m.type = "model"; m.parent = p.id; m.depth = 2; m.project = p; byId[m.id] = m; });
+    (p.models || []).forEach(m => { m.type = "model"; m.parent = p.id; m.depth = 3; m.project = p; byId[m.id] = m; });
   });
 
-  if (data.mlops) {                 // MLOps: a hub of its own, not tied to the centre
+  if (data.mlops) {                 // MLOps: its own mini map, tools round the hub
     const o = data.mlops;
-    o.type = "ops"; o.depth = 2; byId[o.id] = o;
-    (o.tools || []).forEach(t => { t.type = "tool"; t.parent = o.id; t.depth = 3; byId[t.id] = t; });
+    o.type = "ops"; o.parent = "centre"; o.depth = 1; byId[o.id] = o;
+    (o.tools || []).forEach(t => { t.type = "tool"; t.parent = o.id; t.depth = 2; byId[t.id] = t; });
   }
 
-  if (data.databricks) {            // Databricks: a purple hub like MLOps, but its points are note chapters
-    const b = data.databricks;
-    b.type = "ops"; b.depth = 2; b.tools = b.chapters; byId[b.id] = b;
-    b.chapters.forEach(c => {
-      c.type = "tool"; c.topic = true; c.parent = b.id; c.depth = 3; byId[c.id] = c;
-      order.push(c); c.num = order.length - (order[0].zero ? 1 : 0);
-    });
+  if (data.ai) {                    // AI engineering: a small teaser map, every point "coming soon"
+    const a = data.ai;
+    a.type = "branch"; a.parent = "centre"; a.depth = 1; a.soon = true; a.teaser = true; byId[a.id] = a;
+    a.children.forEach(c => { c.type = "leaf"; c.parent = a.id; c.depth = 2; c.soon = true; byId[c.id] = c; });
   }
+
+  // round the ring, anticlockwise from the right: Models, AI, the subjects in reading order, MLOps
+  clusters = [byId.models, ...(data.ai ? [data.ai] : []), ...data.tree, ...(data.mlops ? [data.mlops] : [])];
   return d;
 });
 
@@ -141,8 +136,7 @@ function buildIndex() {
         <span>${(p.models || []).map(m => `<a href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""}</a>`).join(" · ")}</span></div>`).join("")}</section>
     ${data.mlops ? `<section><h2>${data.mlops.label}</h2><div class="proj ops"><a href="#/o/${data.mlops.id}"><strong>Tools</strong></a>
         <span>${data.mlops.tools.map(t => `<a href="#/o/${t.id}">${t.label}${t.status ? ` (${t.status})` : ""}</a>`).join(" · ")}</span></div></section>` : ""}
-    ${data.databricks ? `<section><h2>${data.databricks.label}</h2><ol>${data.databricks.chapters.map(c =>
-        `<li><a href="#/t/${c.id}"><span class="num">${c.num}</span>${c.label}</a></li>`).join("")}</ol></section>` : ""}`;
+    ${data.ai ? `<section><h2>${data.ai.label}</h2><p class="muted">Coming soon.</p></section>` : ""}`;
   box.dataset.built = "1";
   document.getElementById("index-back").onclick = closeMap;
 }
@@ -173,92 +167,79 @@ function closeMap() {
 // LAYOUT: angles and radii for every node
 // ---------------------------------------------------------------------
 const rad = d => d * Math.PI / 180;
-// polar → screen. SQUASH flattens the circle into an ellipse.
-const P = (deg, r) => ({ x: r * Math.cos(rad(deg)), y: r * Math.sin(rad(deg)) * SQUASH, a: deg, r });
+
+// one mini map, laid out round its own hub at (0, 0). Returns local positions and its size.
+// Every end point (chapter, model, tool) sits on the outer ring, in reading order, with a small gap
+// between groups. Groups (Supervised, Regression ..., or a project) sit on inner rings, in the middle
+// of their own points. A gap is left on the side facing the centre, where the line from me comes in.
+function miniMap(hub, inward) {
+  const slots = [];                                   // outer-ring points, in order; null = a gap
+  let depth = 1;
+  (function walk(list, level) {
+    list.forEach((k, i) => {
+      if (i > 0 && (kids(k).length || kids(list[i - 1]).length)) slots.push(null);
+      if (kids(k).length) { depth = Math.max(depth, level + 1); walk(kids(k), level + 1); }
+      else slots.push(k);
+    });
+  })(kids(hub), 1);
+  const n = slots.length + 1.5;                       // + the gap facing the centre
+  const minR = depth === 1 ? ONE_R : depth === 2 ? TWO_R : TWO_R + 85 * (depth - 2);
+  const R = Math.max(minR, n * SLOT / (2 * Math.PI));
+  const local = {};
+  const put = (c, a, rr) => local[c.id] = { x: rr * Math.cos(rad(a)), y: rr * Math.sin(rad(a)), deg: a };
+  slots.forEach((c, i) => { if (c) put(c, inward + (i + 1.25) * 360 / n, R); });   // start just past the gap
+  (function groups(list, level) {                     // each group: middle of its points, on its own ring
+    list.forEach(k => {
+      if (!kids(k).length) return;
+      groups(kids(k), level + 1);
+      const ds = kids(k).map(c => local[c.id].deg);
+      put(k, (Math.min(...ds) + Math.max(...ds)) / 2, R * level / depth * (depth === 2 ? 0.94 : 0.85));
+    });
+  })(kids(hub), 1);
+  const longest = Math.max(0, ...slots.filter(Boolean).map(c => labelText(c).length));
+  return { local, R, size: R + longest * CHAR_W * 0.8 + 30 };
+}
 
 function layout() {
-  const pos = { centre: { x: 0, y: 0, a: 180, r: 0 } };
+  const pos = { centre: { x: 0, y: 0, r: 0 } };
 
-  // ---- left half: one slot per note, with gaps between groups ----
-  let slots = 0;
-  const closed = n => n.children && n.depth === 1 && n.id !== openTop;
-  (function count(list, depth) {
-    list.forEach((n, i) => {
-      if (i > 0) slots += depth === 1 ? GAP_TOP : (n.children || list[i - 1].children ? GAP_SUB : 0);
-      if (closed(n)) slots += CLOSED_W;
-      else if (n.children) count(n.children, depth + 1); else slots += 1;
-    });
-  })(data.tree, 1);
-  slots -= 1;
+  // size every mini map first, then pick a ring big enough to fit them side by side
+  const maps = clusters.map(h => ({ h, m: miniMap(h, 0) }));
+  const RING_R = maps.reduce((k, c) => k + c.m.size, 0) * RING_GAP / Math.PI;
 
-  // top of the half-circle first, so reading order runs top → bottom
-  const start = 180 + LEFT_SPAN, step = (2 * LEFT_SPAN) / Math.max(slots, 1);
-  let s = 0;
-  (function place(list, depth) {
-    list.forEach((n, i) => {
-      if (i > 0) s += depth === 1 ? GAP_TOP : (n.children || list[i - 1].children ? GAP_SUB : 0);
-      if (closed(n)) {
-        const p = P(start - (s + (CLOSED_W - 1) / 2) * step, RING[1]);
-        pos[n.id] = p;
-        (function hide(x) { (x.children || []).forEach(c => { pos[c.id] = { ...p }; hide(c); }); })(n);
-        s += CLOSED_W;
-      } else if (n.children) {
-        place(n.children, depth + 1);
-        const kids = n.children.map(c => pos[c.id].a);
-        const a = (Math.min(...kids) + Math.max(...kids)) / 2;
-        pos[n.id] = P(a, RING[depth]);
-      } else {
-        pos[n.id] = P(start - s * step, LEAF_R);
-        s += 1;
-      }
-    });
-  })(data.tree, 1);
-
-  // ---- right half: projects, each with its models ----
-  const projs = data.projects;
-  const nModels = projs.reduce((k, p) => k + Math.max(1, (p.models || []).length), 0) + (projs.length - 1) * 1.2;
-  const rstep = (2 * RIGHT_SPAN) / Math.max(nModels - 1, 1);
-  let t = 0;
-  projs.forEach((p, i) => {
-    if (i > 0) t += 1.2;
-    const ms = p.models || [];
-    const first = t;
-    ms.forEach(m => { pos[m.id] = P(-RIGHT_SPAN + t * rstep, MODEL_R); t += 1; });
-    if (!ms.length) t += 1;
-    const a = -RIGHT_SPAN + ((first + Math.max(t - 1, first)) / 2) * rstep;
-    pos[p.id] = P(a, PROJ_R);
+  // each mini map gets a slice of the ring in proportion to its size, so they always meet up all round
+  const total = maps.reduce((k, c) => k + c.m.size, 0);
+  let ang = 0;
+  maps.forEach((c, i) => {
+    if (i > 0) ang -= (maps[i - 1].m.size + c.m.size) / total * 180;                 // anticlockwise
+    const H = { x: RING_R * X_STRETCH * Math.cos(rad(ang)), y: RING_R * Math.sin(rad(ang)) };
+    const inward = Math.atan2(-H.y, -H.x) * 180 / Math.PI;                         // direction back to me
+    const { local, R } = miniMap(c.h, inward);
+    pos[c.h.id] = { ...H, r: Math.hypot(H.x, H.y), R };
+    for (const id in local) {
+      const p = local[id];
+      pos[id] = { x: H.x + p.x, y: H.y + p.y, hx: H.x, hy: H.y, r: Math.hypot(H.x + p.x, H.y + p.y) };
+    }
   });
-
-  // ---- MLOps: hub past the projects, tools fanned out to its right ----
-  const hub = (o, h) => {
-    const tools = o.tools || [];
-    pos[o.id] = { ...h, a: 0, r: Math.hypot(h.x, h.y) };
-    tools.forEach((t, i) => {
-      const a = rad(-50 + i * (95 / Math.max(tools.length - 1, 1)));
-      const x = h.x + TOOL_R * Math.cos(a), y = h.y + TOOL_R * Math.sin(a);
-      pos[t.id] = { x, y, a: 0, r: Math.hypot(x, y) };
-    });
-  };
-  if (data.mlops) hub(data.mlops, OPS_AT);
-  if (data.databricks) hub(data.databricks, DB_AT);
-
+  pos.ringR = RING_R;
   return pos;
 }
 
 // tree edges, plus dashed threads from projects/models to the notes they use
 function edgeList() {
   const out = [];
-  Object.values(byId).forEach(n => { if (n.id !== "centre" && n.parent) out.push({ from: n.parent, to: n.id, kind: n.type === "tool" ? "tree ops" : "tree" }); });
+  Object.values(byId).forEach(n => { if (n.id !== "centre" && n.parent) out.push({ from: n.parent, to: n.id, kind: n.type === "tool" || n.type === "ops" ? "tree ops" : "tree" }); });
   ((data.mlops || {}).tools || []).forEach(t =>
     (t.used || []).forEach(u => byId[u.project] && out.push({ from: t.id, to: u.project, kind: "cross tool" })));
-  if (data.databricks && byId[data.databricks.project])     // one thread: the Databricks box → its project
-    out.push({ from: data.databricks.id, to: data.databricks.project, kind: "cross tool" });
   data.projects.forEach(p => {
-    (p.uses || []).forEach(u => byId[u] && byId[u].type !== "tool" && out.push({ from: u, to: p.id, kind: "cross" }));
+    (p.uses || []).forEach(u => byId[u] && out.push({ from: u, to: p.id, kind: "cross" }));
     (p.models || []).forEach(m => m.topic && byId[m.topic] && out.push({ from: m.topic, to: m.id, kind: "cross model" }));
   });
   return out;
 }
+
+const labelText = n => n.type === "leaf" && n.num != null ? `${n.num}  ${n.short || n.label}`
+  : (n.short || n.label) + (n.status ? ` · ${n.status}` : "");
 
 // ---------------------------------------------------------------------
 // DRAWING
@@ -273,45 +254,30 @@ let layers = null;
 
 function makeLayers() {
   layers = { web: el("g", { class: "web" }), edges: el("g"), nodes: el("g") };
-  dbBox = null;
   map.append(layers.web, layers.edges, layers.nodes);
-
-  // the "spider web": faint rings at each level, and a few spokes
-  const rings = [...RING.slice(1), LEAF_R];
-  rings.forEach(r => {
-    const leftArc = arc(180 - LEFT_SPAN - 4, 180 + LEFT_SPAN + 4, r);
-    layers.web.append(el("path", { d: leftArc, class: "ring" }));
-  });
-  [PROJ_R, MODEL_R].forEach(r => layers.web.append(el("path", { d: arc(-RIGHT_SPAN - 6, RIGHT_SPAN + 6, r), class: "ring right" })));
-  for (let a = 180 - LEFT_SPAN; a <= 180 + LEFT_SPAN + 0.1; a += LEFT_SPAN / 4) {
-    const p = P(a, LEAF_R + 10);
-    layers.web.append(el("line", { x1: 0, y1: 0, x2: p.x, y2: p.y, class: "spoke" }));
-  }
-  for (let a = -RIGHT_SPAN; a <= RIGHT_SPAN + 0.1; a += RIGHT_SPAN / 2) {
-    const p = P(a, MODEL_R + 10);
-    layers.web.append(el("line", { x1: 0, y1: 0, x2: p.x, y2: p.y, class: "spoke right" }));
-  }
 }
 
-function arc(a0, a1, r) {
-  let d = "";
-  for (let a = a0; a <= a1 + 0.01; a += 2) {
-    const p = P(a, r);
-    d += (d ? "L" : "M") + p.x.toFixed(1) + "," + p.y.toFixed(1);
-  }
-  return d;
+// the faint "web": a ring through every mini map, and a circle round each one
+function drawWeb(pos) {
+  layers.web.innerHTML = "";
+  layers.web.append(el("ellipse", { cx: 0, cy: 0, rx: pos.ringR * X_STRETCH, ry: pos.ringR, class: "ring" }));
+  clusters.forEach(h => {
+    const p = pos[h.id];
+    layers.web.append(el("circle", { cx: p.x, cy: p.y, r: p.R, class: "ring mini" }));
+  });
 }
 
 function makeNode(id, p) {
   const n = byId[id];
-  const side = n.type === "project" || n.type === "model" ? "right"
+  const side = n.type === "project" || n.type === "model" || n.type === "hub" ? "right"
              : n.type === "ops" || n.type === "tool" ? "opsside" : n.type === "centre" ? "" : "left";
   const cls = ["node", n.type, side, "d" + n.depth];
   if (n.soon) cls.push("soon");
+  if (n.teaser) cls.push("teaser");
   if (n.status) cls.push("pending");
   const g = el("g", { class: cls.join(" ") });
 
-  const r = { centre: 42, branch: n.depth === 1 ? 12 : 9, leaf: 6.5, project: 12, model: 7.5, ops: 12, tool: 7 }[n.type];
+  const r = { centre: 42, branch: n.depth === 1 ? 16 : 9, leaf: 6.5, hub: 16, project: 11, model: 7, ops: 16, tool: 7 }[n.type];
   if (n.type === "centre") {
     g.append(el("circle", { r, class: "hit" }));       // dark disc behind, and the click target
     const dots = el("g");
@@ -333,82 +299,51 @@ function makeNode(id, p) {
   return g;
 }
 
-// labels: notes and models radiate outwards along their spoke;
-// branches and projects sit level, just outside their dot
+// labels: every point radiates outwards from its own hub; hubs have their name underneath;
+// the middle ring (groups, projects) sits level, above its dot
 function placeLabel(g, n, p, r) {
-  const t = g.querySelector("text:not(.count)");
+  const t = g.querySelector("text");
   t.removeAttribute("transform"); t.textContent = "";
+  const hubLevel = n.depth === 1;
   if (n.type === "centre") {
     const tip = el("title"); tip.textContent = "Jag Sandhu · click to go back";
     g.append(tip);                                         // name shows on hover; the web needs the space
-  } else if (n.type === "tool") {
-    t.setAttribute("x", r + 8); t.setAttribute("y", 5);       // tools: level text to the right
-    t.textContent = (n.short || n.label) + (n.status ? ` · ${n.status}` : "");
-  } else if (n.type === "ops") {
-    t.setAttribute("x", 0); t.setAttribute("y", r + 22); t.setAttribute("text-anchor", "middle");
+  } else if (hubLevel) {
+    t.setAttribute("x", 0); t.setAttribute("y", r + 30); t.setAttribute("text-anchor", "middle");
     t.textContent = n.label;
-  } else if (n.type === "leaf" || n.type === "model") {
-    const ang = Math.atan2(p.y, p.x) * 180 / Math.PI;     // the label follows the spoke on screen
-    const flip = Math.cos(rad(ang)) < 0;                  // left half: turn text the right way up
+    if (n.teaser) {                                        // the AI map: a small "coming soon" under its name
+      const s = el("tspan", { x: 0, dy: 26, class: "soon-tag" }); s.textContent = "COMING SOON";
+      t.append(s);
+    }
+  } else if (n.type === "branch" || n.type === "project") {
+    t.setAttribute("x", 0); t.setAttribute("y", -r - 8); t.setAttribute("text-anchor", "middle");
+    t.textContent = n.short || n.label;
+  } else {
+    const ang = Math.atan2(p.y - p.hy, p.x - p.hx) * 180 / Math.PI;   // the label follows its spoke
+    const flip = Math.cos(rad(ang)) < 0;                               // left side: turn text the right way up
     t.setAttribute("transform", `rotate(${flip ? ang + 180 : ang})`);
     t.setAttribute("x", flip ? -(r + 8) : r + 8);
     t.setAttribute("y", 4.5);
     t.setAttribute("text-anchor", flip ? "end" : "start");
-    if (n.type === "leaf") {
+    if (n.type === "leaf" && n.num != null) {
       const num = el("tspan", { class: "num" }); num.textContent = n.num + "  ";
-      const lab = el("tspan"); lab.textContent = (n.short || n.label);   // "coming up soon" topics are shown dashed and faded
+      const lab = el("tspan"); lab.textContent = (n.short || n.label);
       // number sits next to the dot: before the label on the right, after it on the left
       if (flip) { lab.textContent += "  "; t.append(lab); num.textContent = String(n.num); t.append(num); }
       else { t.append(num, lab); }
     } else {
-      t.textContent = (n.short || n.label) + (n.status ? ` · ${n.status}` : "");
+      t.textContent = labelText(n);
     }
-  } else {
-    const inner = n.type === "branch" && n.depth === 1;
-    if (inner) {
-      // main note branches: label runs along the spoke, in the empty space towards the centre
-      const ang = Math.atan2(p.y, p.x) * 180 / Math.PI;
-      const flip = Math.cos(rad(ang)) < 0;
-      t.setAttribute("transform", `rotate(${flip ? ang + 180 : ang})`);
-      t.setAttribute("x", flip ? r + 12 : -(r + 12));   // room for the bigger closed dot
-      t.setAttribute("y", 6);
-      t.setAttribute("text-anchor", flip ? "start" : "end");
-      // a closed subject shows, inside its dot, how many chapters are folded into it
-      let k = g.querySelector("text.count");
-      if (!k) { k = el("text", { class: "count", "text-anchor": "middle", y: 3.5 }); g.insertBefore(k, t); }
-      k.textContent = n.id === openTop ? "" : countLeaves(n);
-      g.classList.toggle("closed", n.id !== openTop);
-    } else {
-      // sub-branches and projects: level text placed away from the centre
-      const outward = p.x <= 0 ? -1 : 1;
-      t.setAttribute("x", outward * (r + 8));
-      t.setAttribute("y", p.y > 20 ? r + 17 : -r - 6);   // lower half: label under the dot
-      t.setAttribute("text-anchor", outward < 0 ? "end" : "start");
-    }
-    t.textContent = n.short || n.label;
   }
 }
 
-// curved edge that follows the web: d3-style radial link through the mid-ring
+// edges: straight inside a mini map and out to the centre; threads between maps bow towards me
 function curve(a, b, kind) {
-  if (kind === "ops") return `M${a.x},${a.y} L${b.x},${b.y}`;      // hub to tool: short and straight
-  if (kind === "tool") {
-    // tool to project: a gentle bow, so it doesn't run along the project spokes
-    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y;
-    return `M${a.x},${a.y} Q${mx - dy * 0.25},${my + dx * 0.25} ${b.x},${b.y}`;
+  if (kind.startsWith("cross") || kind === "tool") {
+    return `M${a.x},${a.y} Q${(a.x + b.x) * 0.25},${(a.y + b.y) * 0.25} ${b.x},${b.y}`;
   }
-  if (kind.startsWith("cross")) {
-    // threads between the halves bow through the space above/below the centre
-    const my = (a.y + b.y) / 2;
-    return `M${a.x},${a.y} Q${(a.x + b.x) / 2 * 0.25},${my * 1.25} ${b.x},${b.y}`;
-  }
-  const pa = polar(a), pb = polar(b);
-  const angA = pa.r < 1 ? pb.a : pa.a;
-  const m = (pa.r + pb.r) / 2;
-  const c1 = P(angA, m), c2 = P(pb.a, m);
-  return `M${a.x},${a.y} C${c1.x},${c1.y} ${c2.x},${c2.y} ${b.x},${b.y}`;
+  return `M${a.x},${a.y} L${b.x},${b.y}`;
 }
-const polar = p => ({ a: Math.atan2(p.y / SQUASH, p.x) * 180 / Math.PI, r: Math.hypot(p.x, p.y / SQUASH) });
 
 // ---------------------------------------------------------------------
 // BUILD + OPENING ANIMATION: everything grows out of the centre
@@ -418,6 +353,7 @@ let anim = null;
 function build(animated) {
   if (!layers) makeLayers();
   const pos = layout();
+  drawWeb(pos);
   const ids = Object.keys(byId);
   const D = animated ? 1300 : 0;
 
@@ -425,8 +361,8 @@ function build(animated) {
   ids.forEach(id => {
     if (view[id]) return;
     const p = pos[id];
-    const delay = animated ? (byId[id].depth || 0) * 160 + (p.r / LEAF_R) * 120 : 0;
-    view[id] = { el: makeNode(id, p), x: 0, y: 0, o: 0, fx: 0, fy: 0, fo: 0, tx: p.x, ty: p.y, to: shown(id) ? 1 : 0, delay };
+    const delay = animated ? (byId[id].depth || 0) * 160 + (p.r / pos.ringR) * 120 : 0;
+    view[id] = { el: makeNode(id, p), x: 0, y: 0, o: 0, fx: 0, fy: 0, fo: 0, tx: p.x, ty: p.y, to: 1, delay, p };
   });
 
   edgeList().forEach(e => {
@@ -438,27 +374,29 @@ function build(animated) {
     edgeEls[key] = path;
   });
 
-  home = fitBox(pos);
+  home = fitBox(Object.keys(byId));
+  zoomedHub = null;
   vb = { ...home };
   setVB();
   animate(animated ? 1300 : 0);
 }
 
-// the box that fits everything currently showing, including where each angled label ends
-function fitBox(pos) {
+// the box that fits these nodes, including where each label ends
+function fitBox(ids, pad = 30) {
   const xs = [], ys = [];
-  Object.keys(byId).filter(shown).forEach(id => {
-    const p = pos[id], n = byId[id];
+  ids.forEach(id => {
+    const n = byId[id], p = view[id] ? view[id].p : null;
+    if (!p) return;
     xs.push(p.x); ys.push(p.y);
-    if (n.type === "leaf" || n.type === "model") {
-      const len = 20 + ((n.short || n.label).length + (n.status ? n.status.length + 3 : 0) + 4) * 7.3;
-      const d = Math.hypot(p.x, p.y) || 1;
-      xs.push(p.x + p.x / d * len); ys.push(p.y + p.y / d * len);
+    if (p.hx != null && n.type !== "branch" && n.type !== "project") {     // radial label: where it ends
+      const len = 16 + labelText(n).length * CHAR_W, dx = p.x - p.hx, dy = p.y - p.hy, d = Math.hypot(dx, dy) || 1;
+      xs.push(p.x + dx / d * len); ys.push(p.y + dy / d * len);
     }
-    if (n.type === "tool" || n.type === "ops") ys.push(p.y + 50);       // room for the hub label and the purple box
-    if (n.type === "tool") xs.push(p.x + 45 + ((n.short || n.label).length + (n.status ? n.status.length + 3 : 0)) * 8);
+    if (n.depth === 1) {                                                    // hub name underneath
+      const half = n.label.length * 8;
+      xs.push(p.x - half, p.x + half); ys.push(p.y + (n.teaser ? 80 : 54));
+    }
   });
-  const pad = 30;
   let box = {
     x: Math.min(...xs) - pad, y: Math.min(...ys) - pad,
     w: Math.max(...xs) - Math.min(...xs) + pad * 2, h: Math.max(...ys) - Math.min(...ys) + pad * 2 + 30
@@ -495,43 +433,13 @@ function animate(D) {
   })(t0);
 }
 
-// open one subject (or none): chapters fan out, the other subjects close up
-function setOpen(id, animated = true) {
-  openTop = id;
-  if (!layers) return;
-  const pos = layout();
-  for (const k in view) {
-    const v = view[k], n = byId[k], p = pos[k];
-    Object.assign(v, { fx: v.x, fy: v.y, fo: v.o, tx: p.x, ty: p.y, to: shown(k) ? 1 : 0, delay: 0 });
-    if (isNote(n)) placeLabel(v.el, n, p, +v.el.dataset.r);
-  }
-  home = fitBox(pos);
-  animate(animated ? MOVE_MS : 0);
-  if (animated) flyTo(home, MOVE_MS); else { vb = { ...home }; setVB(); }
-}
-
-// the purple box drawn round the Databricks hub and its chapters (follows them as they move)
-let dbBox = null;
-function drawDbBox() {
-  const b = data.databricks;
-  if (!b || !view[b.id]) return;
-  if (!dbBox) { dbBox = el("rect", { class: "hub-box", rx: 18 }); layers.edges.prepend(dbBox); }
-  const pts = [b, ...b.chapters].map(n => ({ v: view[n.id], w: n.type === "tool" ? 20 + (n.short || n.label).length * 8.2 : 0 }));
-  const x0 = Math.min(...pts.map(p => p.v.x)) - 34, x1 = Math.max(...pts.map(p => p.v.x + p.w)) + 18;
-  const y0 = Math.min(...pts.map(p => p.v.y)) - 26, y1 = Math.max(...pts.map(p => p.v.y)) + 44;
-  Object.entries({ x: x0, y: y0, width: x1 - x0, height: y1 - y0 }).forEach(([k, v]) => dbBox.setAttribute(k, v));
-  dbBox.style.opacity = view[b.id].o;
-}
-
 function drawEdges() {
-  drawDbBox();
   for (const key in edgeEls) {
     const p = edgeEls[key];
     let a = view[p.dataset.from], b = view[p.dataset.to];
     if (!a || !b) continue;
     const c = p.getAttribute("class");
-    if (c.includes("cross") && !c.includes("tool") && !shown(p.dataset.from)) a = view[topOf(p.dataset.from).id];
-    p.setAttribute("d", curve(a, b, c.includes("tool") ? "tool" : c.includes("ops") ? "ops" : c.includes("cross") ? "cross" : "tree"));
+    p.setAttribute("d", curve(a, b, c.includes("cross") ? "cross" : "tree"));
     p.style.opacity = Math.min(a.o, b.o);
   }
 }
@@ -546,7 +454,7 @@ function focus(id, on) {
 
   // the hovered node and everything below it...
   const below = new Set([id]);
-  (function down(x) { (x.children || x.models || x.tools || []).forEach(c => { below.add(c.id); down(c); }); })(byId[id]);
+  (function down(x) { kids(x).forEach(c => { below.add(c.id); down(c); }); })(byId[id]);
   // ...plus its path back to the centre
   const lit = new Set(below);
   let n = byId[id];
@@ -558,7 +466,6 @@ function focus(id, on) {
       // threads across the halves that start or end at the hovered part
       if (below.has(f) || below.has(t)) {
         p.classList.add("hot"); lit.add(f); lit.add(t);
-        if (!shown(f)) lit.add(topOf(f).id);            // a folded chapter lights its subject instead
       }
     } else if (lit.has(f) && lit.has(t)) {
       p.classList.add("hot");
@@ -579,7 +486,7 @@ function toMap(cx, cy) {                    // screen pixel → map units
 
 function zoomAt(cx, cy, factor) {
   const p = toMap(cx, cy);
-  const w = Math.min(home.w * 1.5, Math.max(home.w / 6, vb.w * factor));
+  const w = Math.min(home.w * 1.5, Math.max(home.w / 14, vb.w * factor));
   const k = w / vb.w;
   vb = { x: p.x - (p.x - vb.x) * k, y: p.y - (p.y - vb.y) * k, w: vb.w * k, h: vb.h * k };
   setVB();
@@ -628,7 +535,7 @@ window.addEventListener("pointerup", () => {
 
 document.getElementById("zoom-in").onclick  = () => zoomAt(innerWidth / 2, innerHeight / 2, 0.75);
 document.getElementById("zoom-out").onclick = () => zoomAt(innerWidth / 2, innerHeight / 2, 1.33);
-document.getElementById("zoom-fit").onclick = () => openTop ? setOpen(null) : flyTo(home);
+document.getElementById("zoom-fit").onclick = () => { zoomedHub = null; flyTo(home); };
 
 // ---------------------------------------------------------------------
 // CLICKS
@@ -639,27 +546,20 @@ function onNodeClick(id) {
   if (n.type === "project") return go(`#/p/${id}`);
   if (n.type === "model") return go(`#/m/${id}`);
   if (n.type === "leaf") return go(`#/t/${id}`);
-  if (n.topic) return go(`#/t/${id}`);                                   // a Databricks chapter
-  if (n.chapters) return go(`#/t/${n.chapters[0].id}`);                   // the Databricks hub: its first chapter
-  if (n.type === "ops" || n.type === "tool") return go(`#/o/${id}`);
-  if (n.type === "branch" && n.depth === 1) return setOpen(openTop === id ? null : id);
-  zoomToBranch(id);
+  if (n.type === "tool") return go(`#/o/${id}`);
+  if (n.type === "ops" && zoomedHub === id) return go(`#/o/${id}`);   // MLOps: zoom in first, then its page
+  zoomToMini(id);
 }
 
-// zoom so a branch and everything under it fills the screen
-function zoomToBranch(id) {
-  const ids = [id];
-  (function down(x) { (x.children || []).forEach(c => { ids.push(c.id); down(c); }); })(byId[id]);
-  const xs = ids.map(i => view[i].tx), ys = ids.map(i => view[i].ty);
-  const pad = 260;
-  let box = { x: Math.min(...xs, 0) - pad, y: Math.min(...ys) - 80, w: 0, h: 0 };
-  box.w = Math.max(...xs, 0) + 120 - box.x;
-  box.h = Math.max(...ys) + 80 - box.y;
-  // keep the screen's shape
-  const aspect = innerWidth / innerHeight;
-  if (box.w / box.h < aspect) { const w = box.h * aspect; box.x -= (w - box.w) / 2; box.w = w; }
-  else { const h = box.w / aspect; box.y -= (h - box.h) / 2; box.h = h; }
-  flyTo(box);
+// zoom so one mini map fills the screen; clicking its hub again zooms back out
+function zoomToMini(id) {
+  const hub = hubOf(id);
+  if (zoomedHub === hub.id && id === hub.id) { zoomedHub = null; return flyTo(home); }
+  const ids = [hub.id];
+  (function down(x) { kids(x).forEach(c => { ids.push(c.id); down(c); }); })(hub);
+  zoomedHub = hub.id;
+  const box = fitBox(ids, 60), k = Math.max(1, 1100 / box.w);      // small maps: don't zoom in too far
+  flyTo({ x: box.x - box.w * (k - 1) / 2, y: box.y - box.h * (k - 1) / 2, w: box.w * k, h: box.h * k });
 }
 
 
@@ -733,7 +633,6 @@ const noteCache = {};
 
 async function showTopic(id) {
   const n = byId[id];
-  if (isNote(n) && topOf(id).id !== openTop) setOpen(topOf(id).id, mapOpen && !document.body.classList.contains("list-mode"));
   crumbs.innerHTML = trail(id).map(t => `<span>${t.label}</span>`).join("<i>›</i>");
   paper.className = "paper";
 
@@ -762,7 +661,7 @@ async function showTopic(id) {
       used.map(p => `<a class="chip" href="#/p/${p.id}">${p.label} →</a>`).join("");
   }
   const path = order.filter(o => !o.soon || o.id === id), i = path.indexOf(n);
-  const prev = path[i - 1], next = path[i + 1];
+  const prev = i < 0 ? null : path[i - 1], next = i < 0 ? null : path[i + 1];
   foot += `<nav class="pager">
       ${prev ? `<a href="#/t/${prev.id}">← ${prev.num}. ${prev.label}</a>` : "<span></span>"}
       ${next ? `<a href="#/t/${next.id}">${next.num}. ${next.label} →</a>` : "<span></span>"}
