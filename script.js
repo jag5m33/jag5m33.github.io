@@ -30,6 +30,7 @@ const TWO_R      = 225;                   // two-ring maps: the outer ring (chap
 const SLOT       = 36;                    // space each point needs around its ring
 const CHAR_W     = 7.6;                   // rough width of one label character
 const RING_GAP   = 1.0;                   // breathing room between neighbouring mini maps
+const TITLE_MIN  = 260;                   // the ring of titles is never smaller than this
 const X_STRETCH  = 1.25;                  // wider than tall, to suit screens
 // --------------------------------------------------------------
 
@@ -41,11 +42,14 @@ const edgeEls = {};            // "from>to" -> path element
 let vb = { x: -800, y: -500, w: 1600, h: 1000 };
 let home = null;               // the view box that fits the whole web
 let mapOpen = false;
-let zoomedHub = null;          // the mini map currently zoomed into (null = whole map)
+let zoomedHub = null;          // the mini map currently open and zoomed into (null = only titles showing)
 let clusters = [];             // the hub of each mini map, in order around the ring
 
 const kids = n => n.children || n.models || n.tools || n.projects || [];
 function hubOf(id) { let n = byId[id]; while (n && n.parent && n.parent !== "centre") n = byId[n.parent]; return n; }
+// only the titles show until a mini map is opened; then that map's points show too
+const shown = id => { const n = byId[id]; return !n.parent || n.depth === 1 || hubOf(id).id === zoomedHub; };
+const MOVE_MS = 700;                                    // how long opening / closing a mini map takes
 
 // ---------------------------------------------------------------------
 // LOAD
@@ -204,8 +208,13 @@ function layout() {
   const pos = { centre: { x: 0, y: 0, r: 0 } };
 
   // size every mini map first, then pick a ring big enough to fit them side by side
-  const maps = clusters.map(h => ({ h, m: miniMap(h, 0) }));
-  const RING_R = maps.reduce((k, c) => k + c.m.size, 0) * RING_GAP / Math.PI;
+  // a closed map only needs room for its title; the open one needs its full size
+  const maps = clusters.map(h => {
+    const m = miniMap(h, 0);
+    if (h.id !== zoomedHub) m.size = Math.max(70, h.label.length * 6.2);
+    return { h, m };
+  });
+  const RING_R = Math.max(TITLE_MIN, maps.reduce((k, c) => k + c.m.size, 0) * RING_GAP / Math.PI);
 
   // each mini map gets a slice of the ring in proportion to its size, so they always meet up all round
   const total = maps.reduce((k, c) => k + c.m.size, 0);
@@ -216,9 +225,10 @@ function layout() {
     const inward = Math.atan2(-H.y, -H.x) * 180 / Math.PI;                         // direction back to me
     const { local, R } = miniMap(c.h, inward);
     pos[c.h.id] = { ...H, r: Math.hypot(H.x, H.y), R };
+    const open = c.h.id === zoomedHub;                                               // closed: points wait on the hub
     for (const id in local) {
-      const p = local[id];
-      pos[id] = { x: H.x + p.x, y: H.y + p.y, hx: H.x, hy: H.y, r: Math.hypot(H.x + p.x, H.y + p.y) };
+      const p = open ? local[id] : { x: 0, y: 0 };
+      pos[id] = { x: H.x + p.x, y: H.y + p.y, hx: H.x, hy: H.y, r: Math.hypot(H.x + p.x, H.y + p.y), lx: local[id].x, ly: local[id].y };
     }
   });
   pos.ringR = RING_R;
@@ -261,7 +271,7 @@ function makeLayers() {
 function drawWeb(pos) {
   layers.web.innerHTML = "";
   layers.web.append(el("ellipse", { cx: 0, cy: 0, rx: pos.ringR * X_STRETCH, ry: pos.ringR, class: "ring" }));
-  clusters.forEach(h => {
+  clusters.filter(h => h.id === zoomedHub).forEach(h => {
     const p = pos[h.id];
     layers.web.append(el("circle", { cx: p.x, cy: p.y, r: p.R, class: "ring mini" }));
   });
@@ -319,7 +329,7 @@ function placeLabel(g, n, p, r) {
     t.setAttribute("x", 0); t.setAttribute("y", -r - 8); t.setAttribute("text-anchor", "middle");
     t.textContent = n.short || n.label;
   } else {
-    const ang = Math.atan2(p.y - p.hy, p.x - p.hx) * 180 / Math.PI;   // the label follows its spoke
+    const ang = Math.atan2(p.ly, p.lx) * 180 / Math.PI;                // the label follows its spoke
     const flip = Math.cos(rad(ang)) < 0;                               // left side: turn text the right way up
     t.setAttribute("transform", `rotate(${flip ? ang + 180 : ang})`);
     t.setAttribute("x", flip ? -(r + 8) : r + 8);
@@ -362,7 +372,7 @@ function build(animated) {
     if (view[id]) return;
     const p = pos[id];
     const delay = animated ? (byId[id].depth || 0) * 160 + (p.r / pos.ringR) * 120 : 0;
-    view[id] = { el: makeNode(id, p), x: 0, y: 0, o: 0, fx: 0, fy: 0, fo: 0, tx: p.x, ty: p.y, to: 1, delay, p };
+    view[id] = { el: makeNode(id, p), x: 0, y: 0, o: 0, fx: 0, fy: 0, fo: 0, tx: p.x, ty: p.y, to: shown(id) ? 1 : 0, delay, p };
   });
 
   edgeList().forEach(e => {
@@ -374,8 +384,7 @@ function build(animated) {
     edgeEls[key] = path;
   });
 
-  home = fitBox(Object.keys(byId));
-  zoomedHub = null;
+  home = fitBox(Object.keys(byId).filter(shown));
   vb = { ...home };
   setVB();
   animate(animated ? 1300 : 0);
@@ -433,12 +442,35 @@ function animate(D) {
   })(t0);
 }
 
+// open one mini map (or none): the ring makes room for it, its points fan out, the view flies to it
+function setOpen(id, animated = true) {
+  zoomedHub = id;
+  if (!layers) return;
+  const pos = layout();
+  for (const k in view) {
+    const v = view[k], p = pos[k];
+    Object.assign(v, { fx: v.x, fy: v.y, fo: v.o, tx: p.x, ty: p.y, to: shown(k) ? 1 : 0, delay: 0, p });
+    if (byId[k].depth > 1) placeLabel(v.el, byId[k], p, +v.el.dataset.r);        // spokes may have turned
+  }
+  drawWeb(pos);
+  home = fitBox(Object.keys(byId).filter(k => byId[k].depth <= 1));
+  animate(animated ? MOVE_MS : 0);
+  let box = home;
+  if (id) {
+    const ids = Object.keys(byId).filter(k => hubOf(k) && hubOf(k).id === id);
+    const b = fitBox(ids, 60), k = Math.max(1, 1100 / b.w);        // small maps: don't zoom in too far
+    box = { x: b.x - b.w * (k - 1) / 2, y: b.y - b.h * (k - 1) / 2, w: b.w * k, h: b.h * k };
+  }
+  if (animated) flyTo(box, MOVE_MS); else { vb = { ...box }; setVB(); }
+}
+
 function drawEdges() {
   for (const key in edgeEls) {
     const p = edgeEls[key];
-    let a = view[p.dataset.from], b = view[p.dataset.to];
-    if (!a || !b) continue;
     const c = p.getAttribute("class");
+    const end = id => view[c.includes("cross") && !shown(id) ? hubOf(id).id : id];    // a closed map: thread to its title
+    const a = end(p.dataset.from), b = end(p.dataset.to);
+    if (!a || !b) continue;
     p.setAttribute("d", curve(a, b, c.includes("cross") ? "cross" : "tree"));
     p.style.opacity = Math.min(a.o, b.o);
   }
@@ -466,6 +498,8 @@ function focus(id, on) {
       // threads across the halves that start or end at the hovered part
       if (below.has(f) || below.has(t)) {
         p.classList.add("hot"); lit.add(f); lit.add(t);
+        if (!shown(f)) lit.add(hubOf(f).id);
+        if (!shown(t)) lit.add(hubOf(t).id);
       }
     } else if (lit.has(f) && lit.has(t)) {
       p.classList.add("hot");
@@ -535,7 +569,7 @@ window.addEventListener("pointerup", () => {
 
 document.getElementById("zoom-in").onclick  = () => zoomAt(innerWidth / 2, innerHeight / 2, 0.75);
 document.getElementById("zoom-out").onclick = () => zoomAt(innerWidth / 2, innerHeight / 2, 1.33);
-document.getElementById("zoom-fit").onclick = () => { zoomedHub = null; flyTo(home); };
+document.getElementById("zoom-fit").onclick = () => setOpen(null);
 
 // ---------------------------------------------------------------------
 // CLICKS
@@ -551,15 +585,10 @@ function onNodeClick(id) {
   zoomToMini(id);
 }
 
-// zoom so one mini map fills the screen; clicking its hub again zooms back out
+// open a mini map (zooms into it); clicking its title again closes it
 function zoomToMini(id) {
   const hub = hubOf(id);
-  if (zoomedHub === hub.id && id === hub.id) { zoomedHub = null; return flyTo(home); }
-  const ids = [hub.id];
-  (function down(x) { kids(x).forEach(c => { ids.push(c.id); down(c); }); })(hub);
-  zoomedHub = hub.id;
-  const box = fitBox(ids, 60), k = Math.max(1, 1100 / box.w);      // small maps: don't zoom in too far
-  flyTo({ x: box.x - box.w * (k - 1) / 2, y: box.y - box.h * (k - 1) / 2, w: box.w * k, h: box.h * k });
+  setOpen(zoomedHub === hub.id && id === hub.id ? null : hub.id);
 }
 
 
@@ -633,6 +662,7 @@ const noteCache = {};
 
 async function showTopic(id) {
   const n = byId[id];
+  if (layers && hubOf(id).id !== zoomedHub) setOpen(hubOf(id).id, false);
   crumbs.innerHTML = trail(id).map(t => `<span>${t.label}</span>`).join("<i>›</i>");
   paper.className = "paper";
 

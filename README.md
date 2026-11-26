@@ -89,6 +89,6 @@ The map is a ring of mini mind maps around the centre sphere, one per top-level 
 - **MLOps**: `mlops`
 - **AI engineering**: `ai`, every point shown as "coming soon"
 
-Click a hub to zoom into its mini map (click again to zoom back out). Spacing is set at the top of
+The map opens showing only the title of each mini map, close round the centre. Click a title and that map opens (its points fan out and the view zooms in); click it again, or the fit button, to close it. Spacing is set at the top of
 `script.js` (`ONE_R`, `TWO_R`, `SLOT`, `RING_GAP`, `X_STRETCH`). The older notes above about
 closed subjects and the purple Databricks box no longer apply.
