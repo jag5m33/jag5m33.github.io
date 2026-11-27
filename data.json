@@ -446,25 +446,59 @@
     "children": [
       {
         "id": "ai-dl",
-        "label": "Deep learning"
+        "label": "Deep learning",
+        "children": [
+          {
+            "id": "dlintro",
+            "label": "Deep learning & neural networks",
+            "short": "DL & neural networks"
+          },
+          {
+            "id": "dlforward",
+            "label": "Forward propagation"
+          },
+          {
+            "id": "dlbackprop",
+            "label": "Back propagation & gradient descent",
+            "short": "Back propagation"
+          },
+          {
+            "id": "dlvanishing",
+            "label": "The vanishing gradient problem",
+            "short": "Vanishing gradient"
+          },
+          {
+            "id": "dlactivations",
+            "label": "Activation functions"
+          },
+          {
+            "id": "dlloss",
+            "label": "Loss functions"
+          }
+        ]
       },
       {
         "id": "ai-transformers",
-        "label": "Transformers"
+        "label": "Transformers",
+        "soon": true
       },
       {
         "id": "ai-llms",
-        "label": "LLMs"
+        "label": "LLMs",
+        "soon": true
       },
       {
         "id": "ai-rag",
-        "label": "RAG"
+        "label": "RAG",
+        "soon": true
       },
       {
         "id": "ai-agents",
-        "label": "Agents"
+        "label": "Agents",
+        "soon": true
       }
-    ]
+    ],
+    "tag": "IN PROGRESS"
   },
   "projects": [
     {

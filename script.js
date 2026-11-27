@@ -10,7 +10,7 @@
      - one mini map per subject (Statistics, Linear algebra, SQL, Databricks ...):
        the subject in the middle, its chapters around it, numbered in reading order
      - a Models map: projects in the middle ring, the models I built around them
-     - an MLOps map, and an AI engineering map marked "coming soon"
+     - an MLOps map, and an AI engineering map: deep learning so far, the rest "coming soon"
      - dashed threads join a model or project to the chapters it uses
        (they light up when you hover)
    Scroll to zoom, drag to move, click a subject to zoom into its mini map.
@@ -58,7 +58,7 @@ const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then
   data = d;
   byId.centre = { id: "centre", label: "Jag Sandhu", type: "centre", depth: 0 };
 
-  (function index(list, parent, depth) {
+  function index(list, parent, depth) {
     list.forEach(n => {
       n.parent = parent;
       n.depth = depth;
@@ -68,7 +68,8 @@ const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then
       if (n.children) index(n.children, n.id, depth + 1);
       else { order.push(n); n.num = order.length - (order[0].zero ? 1 : 0); }   // a "zero" first page is page 0
     });
-  })(data.tree, "centre", 1);
+  }
+  index(data.tree, "centre", 1);
 
   // the Models mini map: projects round a "Models" hub, each project's models round it
   byId.models = { id: "models", label: "Models", type: "hub", parent: "centre", depth: 1, projects: data.projects };
@@ -84,10 +85,10 @@ const ready = fetch("data.json", { cache: "no-cache" }).then(r => r.json()).then
     (o.tools || []).forEach(t => { t.type = "tool"; t.parent = o.id; t.depth = 2; byId[t.id] = t; });
   }
 
-  if (data.ai) {                    // AI engineering: a small teaser map, every point "coming soon"
+  if (data.ai) {                    // AI engineering: what I'm learning now; unstarted parts stay "coming soon"
     const a = data.ai;
-    a.type = "branch"; a.parent = "centre"; a.depth = 1; a.soon = true; a.teaser = true; byId[a.id] = a;
-    a.children.forEach(c => { c.type = "leaf"; c.parent = a.id; c.depth = 2; c.soon = true; byId[c.id] = c; });
+    a.type = "branch"; a.parent = "centre"; a.depth = 1; byId[a.id] = a;
+    index(a.children, a.id, 2);
   }
 
   // round the ring, anticlockwise from the right: Models, AI, the subjects in reading order, MLOps
@@ -140,7 +141,7 @@ function buildIndex() {
         <span>${(p.models || []).map(m => `<a href="#/m/${m.id}">${m.label}${m.status ? ` (${m.status})` : ""}</a>`).join(" · ")}</span></div>`).join("")}</section>
     ${data.mlops ? `<section><h2>${data.mlops.label}</h2><div class="proj ops"><a href="#/o/${data.mlops.id}"><strong>Tools</strong></a>
         <span>${data.mlops.tools.map(t => `<a href="#/o/${t.id}">${t.label}${t.status ? ` (${t.status})` : ""}</a>`).join(" · ")}</span></div></section>` : ""}
-    ${data.ai ? `<section><h2>${data.ai.label}</h2><p class="muted">Coming soon.</p></section>` : ""}`;
+    ${data.ai ? `<section><h2>${data.ai.label}</h2><ol>${list(data.ai.children)}</ol></section>` : ""}`;
   box.dataset.built = "1";
   document.getElementById("index-back").onclick = closeMap;
 }
@@ -321,8 +322,8 @@ function placeLabel(g, n, p, r) {
   } else if (hubLevel) {
     t.setAttribute("x", 0); t.setAttribute("y", r + 30); t.setAttribute("text-anchor", "middle");
     t.textContent = n.label;
-    if (n.teaser) {                                        // the AI map: a small "coming soon" under its name
-      const s = el("tspan", { x: 0, dy: 26, class: "soon-tag" }); s.textContent = "COMING SOON";
+    if (n.tag) {                                           // the AI map: a small "in progress" under its name
+      const s = el("tspan", { x: 0, dy: 26, class: "soon-tag" }); s.textContent = n.tag;
       t.append(s);
     }
   } else if (n.type === "branch" || n.type === "project") {
@@ -403,7 +404,7 @@ function fitBox(ids, pad = 30) {
     }
     if (n.depth === 1) {                                                    // hub name underneath
       const half = n.label.length * 8;
-      xs.push(p.x - half, p.x + half); ys.push(p.y + (n.teaser ? 80 : 54));
+      xs.push(p.x - half, p.x + half); ys.push(p.y + (n.tag ? 80 : 54));
     }
   });
   let box = {

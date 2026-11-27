@@ -341,7 +341,7 @@ body.map-open.list-mode #index {
 #about-link:hover { background: rgba(232, 200, 114, .15); }
 
 /* =====================================================================
-   MINI MIND MAPS: a hub per subject, the Models map, the AI teaser
+   MINI MIND MAPS: a hub per subject, the Models map, the AI map
    ===================================================================== */
 .node.branch.d1 text, .node.hub text, .node.ops text { font-size: 32px; }
 .node.hub circle         { fill: var(--teal); }
@@ -349,6 +349,4 @@ body.map-open.list-mode #index {
 .node.project text       { font-size: 16px; }
 .node.branch.d1, .node.hub, .node.ops { cursor: pointer; }
 .web .ring.mini          { fill: rgba(245, 240, 230, .018); stroke: rgba(245, 240, 230, .07); }
-.node.teaser circle      { fill: none; stroke: var(--muted); stroke-dasharray: 3 4; opacity: .8; }
-.node.teaser text        { fill: var(--muted); font-style: normal; }
-.node.teaser .soon-tag   { font-size: 13px; letter-spacing: .25em; fill: var(--gold); font-style: normal; }
+.node .soon-tag          { font-size: 13px; letter-spacing: .25em; fill: var(--gold); font-style: normal; }
